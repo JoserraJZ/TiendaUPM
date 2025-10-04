@@ -1,11 +1,4 @@
-package upm;
+package main.java.upm;
 
-public class App {
-
-    public static void main(String[] args) {
-        System.out.println("Run App..");
-    }
-    //holaaaaaaaaaaaaaaaaaa
-    //imanol navarrete hurtado
-    //Alonso
+public class Ticket {
 }
