@@ -1,11 +1,7 @@
 package main.java.upm;
 
 public class App {
-
     public static void main(String[] args) {
-        System.out.println("Run App..");
+        // Bucle de lectura de comandos
     }
-    //holaaaaaaaaaaaaaaaaaa
-    //imanol navarrete hurtado
-    //Alonso
 }

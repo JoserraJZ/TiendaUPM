@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class Tienda {
 
-    private Map<String, Producto> mapaProductos;
+    private Map<String, Product> mapaProductos;
     private int cantidadProductos;
 
     public static void main(String[] args) {
@@ -19,21 +19,59 @@ public class Tienda {
     }
 
     private boolean ejecutarComando(Scanner scanner) {
-        nombresComandos command = nombresComandos.fromValue(scanner.next());
+        String mainCommand = scanner.next();
         boolean exit = false;
-        switch (command) {
-            case CREATE_USER:
-                this.createUser(scanner);
+
+        switch (mainCommand) {
+            case "prod":
+                String prodCommand = scanner.next();
+                switch (prodCommand) {
+                    case "add":
+                        this.prodAdd(scanner);
+                        break;
+                    case "list":
+                        this.prodList();
+                        break;
+                    case "update":
+                        this.prodUpdate(scanner);
+                        break;
+                    case "remove":
+                        this.prodRemove(scanner);
+                        break;
+                    default:
+                        System.out.println("Comando prod desconocido.");
+                }
                 break;
-            case LIST_USERS:
-                this.findAllUsers();
+            case "ticket":
+                String ticketCommand = scanner.next();
+                switch (ticketCommand) {
+                    case "new":
+                        this.ticketNew();
+                        break;
+                    case "add":
+                        this.ticketAdd(scanner);
+                        break;
+                    case "remove":
+                        this.ticketRemove(scanner);
+                        break;
+                    case "print":
+                        this.ticketPrint();
+                        break;
+                    default:
+                        System.out.println("Comando ticket desconocido.");
+                }
                 break;
-            case HELP:
+            case "help":
                 this.help();
                 break;
-            case EXIT:
+            case "echo":
+                this.echo(scanner);
+                break;
+            case "exit":
                 exit = true;
                 break;
+            default:
+                System.out.println("Comando desconocido.");
         }
         return exit;
     }
