@@ -7,8 +7,6 @@ public class Product {
     private Category category;
     private double price;
 
-    // Constructor, getters, setters, equals/hashCode por ID
-
     public static void main(String[] args) {
 
     }

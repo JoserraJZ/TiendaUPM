@@ -24,7 +24,7 @@ public class Ticket {
         this.cantidadProductos += amount;
     }
 
-    // Ejemplo de método buscar (puedes adaptarlo según tu lógica)
+    // Ejemplo de método buscar
     public int buscar(int idProducto) {
         return items.containsKey(idProducto) ? items.get(idProducto).getQuantity() : 0;
     }
