@@ -4,11 +4,11 @@ import java.util.*;
 
 public class Ticket {
 
-    List<String> shoppingCart = new ArrayList<>();
+    private Map<Producto, Integer> shoppingCart;
     private int cantidadProductos;
 
     public Ticket(){
-        this.shoppingCart=new ArrayList<>();
+        this.shoppingCart=new HashMap<>();
         this.cantidadProductos=0;
     }
 
