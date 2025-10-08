@@ -4,10 +4,12 @@ import java.util.*;
 
 public class Ticket {
 
-    private final Map<Integer, TicketItem> items = new LinkedHashMap<>();
+    private final Map<Integer, TicketItem> items ;
     private int cantidadProductos;
 
+    //Inicializa Ticket
     public Ticket() {
+        this.items = new LinkedHashMap<>();
         this.cantidadProductos = 0;
     }
 
