@@ -1,6 +1,6 @@
 package test.java.upm;
 
-import main.java.upm.App;
+import main.java.upm.Tienda;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -8,6 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 class AppTest {
     @Test
     void testApp() {
-        assertDoesNotThrow(App::new);
+        assertDoesNotThrow(Tienda::new);
     }
 }

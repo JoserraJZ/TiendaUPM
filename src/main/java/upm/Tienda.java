@@ -6,8 +6,6 @@ import java.util.Scanner;
 
 public class Tienda {
 
-    private Map<String, Product> productsMap;
-    private int cantidadProductos;
     private Ticket ticketActual;        ////?
     private ProductCatalog catalog; /////?
 
