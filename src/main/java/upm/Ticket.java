@@ -5,12 +5,12 @@ import java.util.*;
 public class Ticket {
 
     private final Map<Integer, TicketItem> items ;
-    private int cantidadProductos;
+    //private int cantidadProductos;
 
     //Inicializa Ticket
     public Ticket() {
         this.items = new LinkedHashMap<>();
-        this.cantidadProductos = 0;
+        // this.cantidadProductos = 0;
     }
 
     // Agrega un producto y su cantidad al ticket
@@ -23,7 +23,7 @@ public class Ticket {
         } else {
             items.put(id, new TicketItem(product, amount));
         }
-        this.cantidadProductos += amount;
+        // this.cantidadProductos += amount;
     }
 
     // Ejemplo de método buscar
@@ -37,6 +37,23 @@ public class Ticket {
     }
 
     public int getCantidadProductos() {
-        return cantidadProductos;
+        return items.size();
+    }
+
+
+    public boolean ticketRemove(int idProducto) {
+        if (items.containsKey(idProducto)) {
+            // Obtener el item que vamos a eliminar
+            TicketItem item = items.get(idProducto);
+            // Restar su cantidad al total de productos
+            // cantidadProductos -= item.getQuantity();
+            // Eliminar del mapa
+            items.remove(idProducto);
+            System.out.println("Producto con ID " + idProducto + " eliminado correctamente.");
+            return true;
+        } else {
+            System.out.println("El producto con ID " + idProducto + " no existe en el ticket.");
+            return false;
+        }
     }
 }

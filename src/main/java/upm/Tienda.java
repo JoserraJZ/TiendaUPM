@@ -1,7 +1,5 @@
 package main.java.upm;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 
 public class Tienda {
@@ -23,36 +21,36 @@ public class Tienda {
     }
 
     public Tienda() {
-        this.productsMap = new HashMap<>();
-        this.cantidadProductos = 0;
+        this.ticketActual = new Ticket();
         this.catalog= new ProductCatalog();
     }
 
-    private boolean ejecutarComando(Scanner scanner) {
+    private boolean executeCommand(Scanner scanner) {
         String mainCommand = scanner.nextLine();
-        String[]atributos= mainCommand.split(" ");
+        String[] atributes = mainCommand.split(" ");
+        /// validador*******
         boolean exit = false;
-        switch (atributos[0]) {
+        switch (atributes[0]) {
             case "prod":
-                switch (atributos [1]) {
+                switch (atributes[1]) {
                     case "add":
-                        catalog.add(new Product(Integer.parseInt(atributos[2]), atributos[3], Category.valueOf(atributos[4]),Double.parseDouble(atributos[5]) ));
+                        catalog.add(new Product(Integer.parseInt(atributes[2]), atributes[3], Category.valueOf(atributes[4]),Double.parseDouble(atributes[5]) ));
                         break;
                     case "list":
                         catalog.list();
                         break;
                     case "update":
-                        switch (atributos[3]){
-                            case "nombre":catalog.update(Integer.parseInt(atributos[2]),"nombre", atributos[4]);
+                        switch (atributes[3]){
+                            case "nombre":catalog.update(Integer.parseInt(atributes[2]),"nombre", atributes[4]);
                                 break;
-                            case "categoria":catalog.update(Integer.parseInt(atributos[2]),"categoria", atributos[4]);
+                            case "categoria":catalog.update(Integer.parseInt(atributes[2]),"categoria", atributes[4]);
                                 break;
-                            case "precio":catalog.update(Integer.parseInt(atributos[2]),"precio", atributos[4]);
+                            case "precio":catalog.update(Integer.parseInt(atributes[2]),"precio", atributes[4]);
                                 break;
                         }
                         break;
                     case "remove":
-                        catalog.remove(Integer.parseInt(atributos[2]));
+                        catalog.remove(Integer.parseInt(atributes[2]));
                         break;
                     default:
                         System.out.println("Comando prod desconocido.");
@@ -60,7 +58,7 @@ public class Tienda {
                 break;
             case "ticket":
                 String ticketCommand = scanner.next();
-                switch (atributos[1]) {
+                switch (atributes[1]) {
                     case "new":
                         this.ticketActual= new Ticket();
                         break;
