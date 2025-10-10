@@ -1,4 +1,4 @@
-package main.java.upm;
+package upm;
 
 public class TicketItem {
     private final Product product;
@@ -9,14 +9,8 @@ public class TicketItem {
         this.quantity = quantity;
     }
 
-    // Calcula el descuento total para este ítem
-    public double calcularDescuento() {
-        int descuento = product.getCat().getDiscountPercent();
-        double subtotal = product.getPrecio() * quantity;
-        return subtotal * descuento / 100.0;
-    }
-
     // Imprime la línea del ticket
+    /**
     public void imprimirLinea() {
         double subtotal = product.getPrecio() * quantity;
         double descuento = calcularDescuento();
@@ -28,6 +22,8 @@ public class TicketItem {
                 descuento
         );
     }
+    */
+
 
     public Product getProduct() {
         return product;

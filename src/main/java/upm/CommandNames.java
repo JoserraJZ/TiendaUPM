@@ -1,4 +1,4 @@
-package main.java.upm;
+package upm;
 
 public enum CommandNames {
     PROD_ADD("prod add", "<id> \"<name>\" <category> <price>"),

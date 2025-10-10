@@ -1,4 +1,4 @@
-package main.java.upm;
+package upm;
 
 public class CommandProcessor {
     private final ProductCatalog catalog;

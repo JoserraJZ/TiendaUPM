@@ -1,4 +1,4 @@
-package main.java.upm;
+package upm;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,8 +34,13 @@ public class ProductCatalog {
         return products.remove(id) != null;
     }
 
-    public List<Product> list() {
-        return new ArrayList<>(products.values());
+    public void list() {
+        for (Product product : products.values()) {
+            System.out.println("ID: " + product.getIdProducto() +
+                    ", Nombre: " + product.getNombreProducto() +
+                    ", Categoria: " + product.getCat() +
+                    ", Precio: " + product.getPrecio());
+        }
     }
 
     public Product getById(int id) {

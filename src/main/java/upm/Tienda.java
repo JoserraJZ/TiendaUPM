@@ -1,4 +1,4 @@
-package main.java.upm;
+package upm;
 
 import java.util.Scanner;
 
@@ -15,7 +15,7 @@ public class Tienda {
         boolean exit=false;
         do {
             System.out.print("tUPM> ");
-            exit= st1.ejecutarComando(sc);
+            exit= st1.executeCommand(sc);
         }while (!exit);
 
     }
@@ -57,19 +57,20 @@ public class Tienda {
                 }
                 break;
             case "ticket":
-                String ticketCommand = scanner.next();
                 switch (atributes[1]) {
                     case "new":
                         this.ticketActual= new Ticket();
                         break;
                     case "add":
-                        ticketActual.add(new Product());
+                        if (catalog.getById(Integer.parseInt(atributes[2]))!=null){
+                            ticketActual.add(catalog.getById(Integer.parseInt(atributes[2])), Integer.parseInt(atributes[3]));
+                        }
                         break;
                     case "remove":
-                        this.ticketRemove(scanner);
+                        this.ticketActual.ticketRemove(Integer.parseInt(atributes[1]));
                         break;
                     case "print":
-                        this.ticketPrint();
+                        ticketActual.ticketPrint();
                         break;
                     default:
                         System.out.println("Comando ticket desconocido.");
@@ -79,7 +80,7 @@ public class Tienda {
                 this.help();
                 break;
             case "echo":
-                this.echo(scanner);
+                this.echo(mainCommand.substring(5));
                 break;
             case "exit":
                 exit = true;
@@ -102,18 +103,15 @@ public class Tienda {
         System.out.println("  MERCH 0%, STATIONERY 5%, CLOTHES 7%, BOOK 10%, ELECTRONICS 3%.");
     }
 
-    private void echo(Scanner scanner){
-        if (scanner.hasNextLine()) {
-            String text = scanner.nextLine().trim();
-            if (text.startsWith("\"") && text.endsWith("\"")) {
-                text = text.substring(1, text.length() - 1);
-            }
-            System.out.println("echo \"" + text + "\"");
-            System.out.println(text);
-        } else {
+    public void echo(String text) {
+        if (text == null) {
             System.out.println("Uso: echo \"<texto>\"");
+            return;
         }
+        System.out.println(text);
     }
+
+
 
 
 
