@@ -34,62 +34,67 @@ public class Tienda {
         boolean exit = false;
         switch (atributes[0]) {
             case "prod":
-                switch (atributes[1]) {
-                    case "add":
-                        Product p = catalog.add(new Product(Integer.parseInt(atributes[2]), atributes[3], Category.valueOf(atributes[4]),Double.parseDouble(atributes[5]) ));
-                        System.out.printf("{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
-                                "Product", p.getIdProducto(), p.getNombreProducto(), p.getCat().toString(), p.getPrecio());
-                        System.out.println("prod add: ok");
-                        break;
-                    case "list":
-                        catalog.list();
-                        break;
-                    case "update":
-                        switch (atributes[3]){
-                            case "NAME":catalog.update(Integer.parseInt(atributes[2]),"nombre", atributes[4]);
-                                break;
-                            case "CATEGORY":catalog.update(Integer.parseInt(atributes[2]),"categoria", atributes[4]);
-                                break;
-                            case "PRICE":catalog.update(Integer.parseInt(atributes[2]),"precio", atributes[4]);
-                                break;
-                        }
-                        System.out.println("prod update: ok");
-                        break;
-                    case "remove":
-                        Product prod = catalog.remove(Integer.parseInt(atributes[2]));
-                        System.out.printf("{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
-                                "Product", prod.getIdProducto(), prod.getNombreProducto(), prod.getCat().toString(), prod.getPrecio());
-                        System.out.println("prod remove: ok");
-                        break;
-                    default:
-                        System.out.println("Comando prod desconocido.");
-                }
+                if(atributes.length==6){
+                    switch (atributes[1]) {
+                        case "add":
+
+                            Product p = catalog.add(new Product(Integer.parseInt(atributes[2]), atributes[3], Category.valueOf(atributes[4]),Double.parseDouble(atributes[5]) ));
+                            System.out.printf("{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
+                                    "Product", p.getIdProducto(), p.getNombreProducto(), p.getCat().toString(), p.getPrecio());
+                            System.out.println("prod add: ok");
+                            break;
+                        case "list":
+                            catalog.list();
+                            break;
+                        case "update":
+                            switch (atributes[3]){
+                                case "NAME":catalog.update(Integer.parseInt(atributes[2]),"nombre", atributes[4]);
+                                    break;
+                                case "CATEGORY":catalog.update(Integer.parseInt(atributes[2]),"categoria", atributes[4]);
+                                    break;
+                                case "PRICE":catalog.update(Integer.parseInt(atributes[2]),"precio", atributes[4]);
+                                    break;
+                            }
+                            System.out.println("prod update: ok");
+                            break;
+                        case "remove":
+                            Product prod = catalog.remove(Integer.parseInt(atributes[2]));
+                            System.out.printf("{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
+                                    "Product", prod.getIdProducto(), prod.getNombreProducto(), prod.getCat().toString(), prod.getPrecio());
+                            System.out.println("prod remove: ok");
+                            break;
+                        default:
+                            System.out.println("Comando prod desconocido.");
+                    }
                 break;
+                }else System.out.println("Comando prod desconocido.");break;
             case "ticket":
-                switch (atributes[1]) {
-                    case "new":
-                        this.ticketActual= new Ticket();
-                        System.out.println("ticket new: ok");
-                        break;
-                    case "add":
-                        if (catalog.getById(Integer.parseInt(atributes[2]))!=null){
-                            ticketActual.add(catalog.getById(Integer.parseInt(atributes[2])), Integer.parseInt(atributes[3]));
-                        }
-                        ticketActual.ticketPrint();
-                        System.out.println("ticket add: ok");
-                        break;
-                    case "remove":
-                        this.ticketActual.ticketRemove(Integer.parseInt(atributes[1]));
-                        System.out.println("ticket remove: ok");
-                        break;
-                    case "print":
-                        ticketActual.ticketPrint();
-                        System.out.println("ticket print: ok");
-                        break;
-                    default:
-                        System.out.println("Comando ticket desconocido.");
-                }
-                break;
+                if(atributes.length>1) {
+                    switch (atributes[1]) {
+                        case "new":
+                            this.ticketActual = new Ticket();
+                            System.out.println("ticket new: ok");
+                            break;
+                        case "add":
+                            if (catalog.getById(Integer.parseInt(atributes[2])) != null) {
+                                ticketActual.add(catalog.getById(Integer.parseInt(atributes[2])), Integer.parseInt(atributes[3]));
+                            }
+                            ticketActual.ticketPrint();
+                            System.out.println("ticket add: ok");
+                            break;
+                        case "remove":
+                            this.ticketActual.ticketRemove(Integer.parseInt(atributes[1]));
+                            System.out.println("ticket remove: ok");
+                            break;
+                        case "print":
+                            ticketActual.ticketPrint();
+                            System.out.println("ticket print: ok");
+                            break;
+                        default:
+                            System.out.println("Comando ticket desconocido.");
+                    }
+                    break;
+                }else System.out.println("Comando ticket desconocido.");break;
             case "help":
                 this.help();
                 break;
