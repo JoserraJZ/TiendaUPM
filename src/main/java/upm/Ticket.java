@@ -27,18 +27,13 @@ public class Ticket {
     }
 
     // Ejemplo de método buscar
-    public int buscar(int idProducto) {
-        return items.containsKey(idProducto) ? items.get(idProducto).getQuantity() : 0;
-    }
 
     // Getter para los items
     public Collection<TicketItem> getItems() {
         return items.values();
     }
 
-    public int getCantidadProductos() {
-        return items.size();
-    }
+    //public int getCantidadProductos() {return items.size();}
 
 
     public boolean ticketRemove(int idProducto) {

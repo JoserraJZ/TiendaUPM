@@ -34,9 +34,7 @@ public class Product {
         return price;
     }
 
-    public void setIdProducto(int idProducto) {
-        this.id = idProducto;
-    }
+    //public void setIdProducto(int idProducto) {this.id = idProducto;}
 
     public void setNombreProducto(String nombreProducto) {
         this.name = nombreProducto;
