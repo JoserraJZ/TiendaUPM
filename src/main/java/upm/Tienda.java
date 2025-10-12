@@ -34,35 +34,41 @@ public class Tienda {
         boolean exit = false;
         switch (atributes[0]) {
             case "prod":
-                if(atributes.length==6){
+                if(atributes.length>1){
                     switch (atributes[1]) {
                         case "add":
+                            if(atributes.length==6) {
 
-                            Product p = catalog.add(new Product(Integer.parseInt(atributes[2]), atributes[3], Category.valueOf(atributes[4]),Double.parseDouble(atributes[5]) ));
-                            System.out.printf("{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
-                                    "Product", p.getIdProducto(), p.getNombreProducto(), p.getCat().toString(), p.getPrecio());
-                            System.out.println("prod add: ok");
-                            break;
+                                Product p = catalog.add(new Product(Integer.parseInt(atributes[2]), atributes[3], Category.valueOf(atributes[4]), Double.parseDouble(atributes[5])));
+                                System.out.printf("{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
+                                        "Product", p.getIdProducto(), p.getNombreProducto(), p.getCat().toString(), p.getPrecio());
+                                System.out.println("prod add: ok");
+                                break;
+                            }else System.out.println("Comando prod desconocido.");break;
                         case "list":
                             catalog.list();
                             break;
                         case "update":
-                            switch (atributes[3]){
-                                case "NAME":catalog.update(Integer.parseInt(atributes[2]),"nombre", atributes[4]);
-                                    break;
-                                case "CATEGORY":catalog.update(Integer.parseInt(atributes[2]),"categoria", atributes[4]);
-                                    break;
-                                case "PRICE":catalog.update(Integer.parseInt(atributes[2]),"precio", atributes[4]);
-                                    break;
-                            }
-                            System.out.println("prod update: ok");
-                            break;
+                            if(atributes.length==5) {
+                                switch (atributes[3]){
+                                    case "NAME":catalog.update(Integer.parseInt(atributes[2]),"nombre", atributes[4]);
+                                        break;
+                                    case "CATEGORY":catalog.update(Integer.parseInt(atributes[2]),"categoria", atributes[4]);
+                                        break;
+                                    case "PRICE":catalog.update(Integer.parseInt(atributes[2]),"precio", atributes[4]);
+                                        break;
+                                }
+                                System.out.println("prod update: ok");
+                                break;
+                            }else System.out.println("Comando prod desconocido.");break;
                         case "remove":
-                            Product prod = catalog.remove(Integer.parseInt(atributes[2]));
-                            System.out.printf("{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
-                                    "Product", prod.getIdProducto(), prod.getNombreProducto(), prod.getCat().toString(), prod.getPrecio());
-                            System.out.println("prod remove: ok");
-                            break;
+                            if(atributes.length==3) {
+                                Product prod = catalog.remove(Integer.parseInt(atributes[2]));
+                                System.out.printf("{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
+                                        "Product", prod.getIdProducto(), prod.getNombreProducto(), prod.getCat().toString(), prod.getPrecio());
+                                System.out.println("prod remove: ok");
+                                break;
+                            }else System.out.println("Comando prod desconocido.");break;
                         default:
                             System.out.println("Comando prod desconocido.");
                     }
@@ -76,12 +82,14 @@ public class Tienda {
                             System.out.println("ticket new: ok");
                             break;
                         case "add":
-                            if (catalog.getById(Integer.parseInt(atributes[2])) != null) {
-                                ticketActual.add(catalog.getById(Integer.parseInt(atributes[2])), Integer.parseInt(atributes[3]));
-                            }
-                            ticketActual.ticketPrint();
-                            System.out.println("ticket add: ok");
-                            break;
+                            if(atributes.length==4) {
+                                if (catalog.getById(Integer.parseInt(atributes[2])) != null) {
+                                    ticketActual.add(catalog.getById(Integer.parseInt(atributes[2])), Integer.parseInt(atributes[3]));
+                                }
+                                ticketActual.ticketPrint();
+                                System.out.println("ticket add: ok");
+                                break;
+                            }else System.out.println("Comando ticket desconocido.");break;
                         case "remove":
                             this.ticketActual.ticketRemove(Integer.parseInt(atributes[1]));
                             System.out.println("ticket remove: ok");
@@ -99,7 +107,7 @@ public class Tienda {
                 this.help();
                 break;
             case "echo":
-                this.echo(mainCommand.substring(5));
+                this.echo(mainCommand.substring(5)+"\n");
                 break;
             case "exit":
                 System.out.println("Closing application.\n" +
@@ -118,8 +126,8 @@ public class Tienda {
             System.out.println(" " + command.getHelp());
         }
 
-        System.out.println("Categories: MERCH, STATIONERY, CLOTHES, BOOK, ELECTRONICS");
-        System.out.println("Discounts if there are ≥2 units in the category: MERCH 0%, STATIONERY 5%, CLOTHES 7%, BOOK 10%, ELECTRONICS 3%.");
+        System.out.println("\nCategories: MERCH, STATIONERY, CLOTHES, BOOK, ELECTRONICS");
+        System.out.println("Discounts if there are ≥2 units in the category: MERCH 0%, STATIONERY 5%, CLOTHES 7%, BOOK 10%, ELECTRONICS 3%.\n");
     }
 
     public void echo(String text) {
