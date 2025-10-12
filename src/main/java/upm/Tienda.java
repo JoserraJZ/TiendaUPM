@@ -1,6 +1,6 @@
 package upm;
-
-import java.util.Scanner;
+import java.util.*;
+import java.util.regex.*;
 
 public class Tienda {
 
@@ -29,30 +29,37 @@ public class Tienda {
 
     private boolean executeCommand(Scanner scanner) {
         String mainCommand = scanner.nextLine();
-        String[] atributes = mainCommand.split(" ");
+        String[] atributes = splitCommand(mainCommand);
         /// validador*******
         boolean exit = false;
         switch (atributes[0]) {
             case "prod":
                 switch (atributes[1]) {
                     case "add":
-                        catalog.add(new Product(Integer.parseInt(atributes[2]), atributes[3], Category.valueOf(atributes[4]),Double.parseDouble(atributes[5]) ));
+                        Product p = catalog.add(new Product(Integer.parseInt(atributes[2]), atributes[3], Category.valueOf(atributes[4]),Double.parseDouble(atributes[5]) ));
+                        System.out.printf("{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
+                                "Product", p.getIdProducto(), p.getNombreProducto(), p.getCat().toString(), p.getPrecio());
+                        System.out.println("prod add: ok");
                         break;
                     case "list":
                         catalog.list();
                         break;
                     case "update":
                         switch (atributes[3]){
-                            case "nombre":catalog.update(Integer.parseInt(atributes[2]),"nombre", atributes[4]);
+                            case "NAME":catalog.update(Integer.parseInt(atributes[2]),"nombre", atributes[4]);
                                 break;
-                            case "categoria":catalog.update(Integer.parseInt(atributes[2]),"categoria", atributes[4]);
+                            case "CATEGORY":catalog.update(Integer.parseInt(atributes[2]),"categoria", atributes[4]);
                                 break;
-                            case "precio":catalog.update(Integer.parseInt(atributes[2]),"precio", atributes[4]);
+                            case "PRICE":catalog.update(Integer.parseInt(atributes[2]),"precio", atributes[4]);
                                 break;
                         }
+                        System.out.println("prod update: ok");
                         break;
                     case "remove":
-                        catalog.remove(Integer.parseInt(atributes[2]));
+                        Product prod = catalog.remove(Integer.parseInt(atributes[2]));
+                        System.out.printf("{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
+                                "Product", prod.getIdProducto(), prod.getNombreProducto(), prod.getCat().toString(), prod.getPrecio());
+                        System.out.println("prod remove: ok");
                         break;
                     default:
                         System.out.println("Comando prod desconocido.");
@@ -62,17 +69,22 @@ public class Tienda {
                 switch (atributes[1]) {
                     case "new":
                         this.ticketActual= new Ticket();
+                        System.out.println("ticket new: ok");
                         break;
                     case "add":
                         if (catalog.getById(Integer.parseInt(atributes[2]))!=null){
                             ticketActual.add(catalog.getById(Integer.parseInt(atributes[2])), Integer.parseInt(atributes[3]));
                         }
+                        ticketActual.ticketPrint();
+                        System.out.println("ticket add: ok");
                         break;
                     case "remove":
                         this.ticketActual.ticketRemove(Integer.parseInt(atributes[1]));
+                        System.out.println("ticket remove: ok");
                         break;
                     case "print":
                         ticketActual.ticketPrint();
+                        System.out.println("ticket print: ok");
                         break;
                     default:
                         System.out.println("Comando ticket desconocido.");
@@ -85,6 +97,8 @@ public class Tienda {
                 this.echo(mainCommand.substring(5));
                 break;
             case "exit":
+                System.out.println("Closing application.\n" +
+                        "Goodbye!");
                 exit = true;
                 break;
             default:
@@ -94,15 +108,13 @@ public class Tienda {
     }
 
     private void help() {
-        System.out.println("Commands:");
+        System.out.println("\nCommands:");
         for (CommandNames command : CommandNames.values()) {
-            System.out.println("  " + command.getHelp());
+            System.out.println(" " + command.getHelp());
         }
 
-        System.out.println();
         System.out.println("Categories: MERCH, STATIONERY, CLOTHES, BOOK, ELECTRONICS");
-        System.out.println("Discounts if there are ≥2 units in the category:");
-        System.out.println("  MERCH 0%, STATIONERY 5%, CLOTHES 7%, BOOK 10%, ELECTRONICS 3%.");
+        System.out.println("Discounts if there are ≥2 units in the category: MERCH 0%, STATIONERY 5%, CLOTHES 7%, BOOK 10%, ELECTRONICS 3%.");
     }
 
     public void echo(String text) {
@@ -111,10 +123,16 @@ public class Tienda {
             return;
         }
         System.out.println("echo "+text);
+
     }
 
 
-
+    public static String[] splitCommand(String command) {
+        List<String> parts = new ArrayList<>();
+        Matcher m = Pattern.compile("\"([^\"]*)\"|(\\S+)").matcher(command);
+        while (m.find()) parts.add(m.group(1) != null ? m.group(1) : m.group(2));
+        return parts.toArray(new String[0]);
+    }
 
 
 

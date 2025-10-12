@@ -7,11 +7,12 @@ import java.util.List;
 public class ProductCatalog {
     private final HashMap<Integer, Product> products = new HashMap<>();
 
-    public void add(Product product) {
+    public Product add(Product product) {
         products.put(product.getIdProducto(), product);
+        return product;
     }
 
-    public boolean update(int id, String campo, Object valor) {
+    public boolean update(int id, String campo, String valor) {
         Product prod = products.get(id);
         if (prod == null) return false;
         switch (campo) {
@@ -19,28 +20,35 @@ public class ProductCatalog {
                 prod.setNombreProducto((String) valor);
                 break;
             case "categoria":
-                prod.setCat((Category) valor);
+                prod.setCat(Category.valueOf(valor));
                 break;
             case "precio":
-                prod.setPrecio((Double) valor);
+                prod.setPrecio(Double.parseDouble(valor));
                 break;
             default:
                 return false;
         }
+
+        System.out.printf("{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
+                "Product", prod.getIdProducto(), prod.getNombreProducto(), prod.getCat().toString(), prod.getPrecio());
+
         return true;
     }
 
-    public boolean remove(int id) {
-        return products.remove(id) != null;
+    public Product remove(int id) {
+        Product prod = products.get(id);
+        products.remove(id);
+        return prod;
     }
 
     public void list() {
+        System.out.println("Catalog:");
         for (Product product : products.values()) {
-            System.out.println("ID: " + product.getIdProducto() +
-                    ", Nombre: " + product.getNombreProducto() +
-                    ", Categoria: " + product.getCat() +
-                    ", Precio: " + product.getPrecio());
+            System.out.printf(" {class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
+                    "Product", product.getIdProducto(), product.getNombreProducto(), product.getCat().toString(), product.getPrecio());
+
         }
+        System.out.println("prod list: ok");
     }
 
     public Product getById(int id) {

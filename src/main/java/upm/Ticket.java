@@ -73,17 +73,16 @@ public class Ticket {
             double price = p.getPrecio();
             for (int i = 0; i < quantity; i++) {
                 System.out.printf("{class:Product, id:%d, name:'%s', category:%s, price:%.1f} **discount -%.1f\n",
-                        p.getIdProducto(), p.getNombreProducto(), p.getCat(), price, discount);
+                        p.getIdProducto(), p.getNombreProducto(), p.getCat(), price, discount*price/100);
             }
             totalPrice += price * quantity;
-            totalDiscount += discount * quantity;
+            totalDiscount += totalPrice*discount/100;
         }
 
         double finalPrice = totalPrice - totalDiscount;
         System.out.printf("Total price: %.1f\n", totalPrice);
         System.out.printf("Total discount: %.1f\n", totalDiscount);
         System.out.printf("Final Price: %.1f\n", finalPrice);
-        System.out.println("ticket print: ok");
     }
 
     public double calcularDescuento() {

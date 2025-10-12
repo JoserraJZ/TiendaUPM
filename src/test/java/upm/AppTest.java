@@ -1,13 +1,194 @@
-package test.java.upm;
+package upm;
 
-import main.java.upm.Tienda;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AppTest {
+
     @Test
-    void testApp() {
-        assertDoesNotThrow(Tienda::new);
+    void testFunc() throws Exception {
+        // ----- 1. Input commands -----
+        String input =
+                """
+                        help
+                        echo "Agrego Libro"
+                        prod add 1 "Libro POO" BOOK 25
+                        echo "Agrego Camiseta"
+                        prod add 2 "Camiseta talla:M UPM" CLOTHES 15
+                        echo "Listo Productos"
+                        prod list
+                        echo "Actualizo Nombre y Precio del Libro"
+                        prod update 1 NAME "Libro POO V2"
+                        prod update 1 PRICE 30
+                        echo "inserto libro repetido y lo borro"
+                        prod add 3 "Libro POO repetido Error" BOOK 25
+                        prod remove 3
+                        echo "Agrego un producto al ticket e imprimo el ticket"
+                        ticket add 1 2
+                        ticket print
+                        ticket new
+                        echo "Agrego dos productos al ticket e imprimo el ticket"
+                        ticket add 1 2
+                        ticket add 2 1
+                        ticket print
+                        ticket new
+                        echo "Agrego un producto al ticket e inicio un nuevo ticket"
+                        echo "Agrego un producto al ticket e imprimo un nuevo ticket"
+                        ticket add 2 1
+                        ticket new
+                        ticket add 1 2
+                        ticket print
+                        exit
+                        """;
+
+        // ----- 2. Expected output (use the exact text you provided) -----
+        String expected = """
+                Welcome to the ticket module App.
+                Ticket module. Type 'help' to see commands.
+                tUPM> help
+                Commands:
+                 prod add <id> "<name>" <category> <price>
+                 prod list
+                 prod update <id> NAME|CATEGORY|PRICE <value>
+                 prod remove <id>
+                 ticket new
+                 ticket add <prodId> <quantity>
+                 ticket remove <prodId>
+                 ticket print
+                 echo "<texto>"
+                 help
+                 exit
+                Categories: MERCH, STATIONERY, CLOTHES, BOOK, ELECTRONICS
+                Discounts if there are ≥2 units in the category: MERCH 0%, STATIONERY 5%, CLOTHES 7%, BOOK 10%, ELECTRONICS 3%.
+                tUPM> echo "Agrego Libro"
+                echo "Agrego Libro"
+                tUPM> prod add 1 "Libro POO" BOOK 25
+                {class:Product, id:1, name:'Libro POO', category:BOOK, price:25.0}
+                prod add: ok
+                tUPM> echo "Agrego Camiseta"
+                echo "Agrego Camiseta"
+                tUPM> prod add 2 "Camiseta talla:M UPM" CLOTHES 15
+                {class:Product, id:2, name:'Camiseta talla:M UPM', category:CLOTHES, price:15.0}
+                prod add: ok
+                tUPM> echo "Listo Productos"
+                echo "Listo Productos"
+                tUPM> prod list
+                Catalog:
+                 {class:Product, id:1, name:'Libro POO', category:BOOK, price:25.0}
+                 {class:Product, id:2, name:'Camiseta talla:M UPM', category:CLOTHES, price:15.0}
+                prod list: ok
+                tUPM> echo "Actualizo Nombre y Precio del Libro"
+                echo "Actualizo Nombre y Precio del Libro"
+                tUPM> prod update 1 NAME "Libro POO V2"
+                {class:Product, id:1, name:'Libro POO V2', category:BOOK, price:25.0}
+                prod update: ok
+                tUPM> prod update 1 PRICE 30
+                {class:Product, id:1, name:'Libro POO V2', category:BOOK, price:30.0}
+                prod update: ok
+                tUPM> echo "inserto libro repetido y lo borro"
+                echo "inserto libro repetido y lo borro"
+                tUPM> prod add 3 "Libro POO repetido Error" BOOK 25
+                {class:Product, id:3, name:'Libro POO repetido Error', category:BOOK, price:25.0}
+                prod add: ok
+                tUPM> prod remove 3
+                {class:Product, id:3, name:'Libro POO repetido Error', category:BOOK, price:25.0}
+                prod remove: ok
+                tUPM> echo "Agrego un producto al ticket e imprimo el ticket"
+                echo "Agrego un producto al ticket e imprimo el ticket"
+                tUPM> ticket add 1 2
+                {class:Product, id:1, name:'Libro POO V2', category:BOOK, price:30.0} **discount -3.0
+                {class:Product, id:1, name:'Libro POO V2', category:BOOK, price:30.0} **discount -3.0
+                Total price: 60.0
+                Total discount: 6.0
+                Final Price: 54.0
+                ticket add: ok
+                tUPM> ticket print
+                {class:Product, id:1, name:'Libro POO V2', category:BOOK, price:30.0} **discount -3.0
+                {class:Product, id:1, name:'Libro POO V2', category:BOOK, price:30.0} **discount -3.0
+                Total price: 60.0
+                Total discount: 6.0
+                Final Price: 54.0
+                ticket print: ok
+                tUPM> ticket new
+                ticket new: ok
+                tUPM> echo "Agrego dos productos al ticket e imprimo el ticket"
+                echo "Agrego dos productos al ticket e imprimo el ticket"
+                tUPM> ticket add 1 2
+                {class:Product, id:1, name:'Libro POO V2', category:BOOK, price:30.0} **discount -3.0
+                {class:Product, id:1, name:'Libro POO V2', category:BOOK, price:30.0} **discount -3.0
+                Total price: 60.0
+                Total discount: 6.0
+                Final Price: 54.0
+                ticket add: ok
+                tUPM> ticket add 2 1
+                {class:Product, id:2, name:'Camiseta talla:M UPM', category:CLOTHES, price:15.0}
+                {class:Product, id:1, name:'Libro POO V2', category:BOOK, price:30.0} **discount -3.0
+                {class:Product, id:1, name:'Libro POO V2', category:BOOK, price:30.0} **discount -3.0
+                Total price: 75.0
+                Total discount: 6.0
+                Final Price: 69.0
+                ticket add: ok
+                tUPM> ticket print
+                {class:Product, id:2, name:'Camiseta talla:M UPM', category:CLOTHES, price:15.0}
+                {class:Product, id:1, name:'Libro POO V2', category:BOOK, price:30.0} **discount -3.0
+                {class:Product, id:1, name:'Libro POO V2', category:BOOK, price:30.0} **discount -3.0
+                Total price: 75.0
+                Total discount: 6.0
+                Final Price: 69.0
+                ticket print: ok
+                tUPM> ticket new
+                ticket new: ok
+                tUPM> echo "Agrego un producto al ticket e inicio un nuevo ticket"
+                echo "Agrego un producto al ticket e inicio un nuevo ticket"
+                tUPM> echo "Agrego un producto al ticket e imprimo un nuevo ticket"
+                echo "Agrego un producto al ticket e imprimo un nuevo ticket"
+                tUPM> ticket add 2 1
+                {class:Product, id:2, name:'Camiseta talla:M UPM', category:CLOTHES, price:15.0}
+                Total price: 15.0
+                Total discount: 0.0
+                Final Price: 15.0
+                ticket add: ok
+                tUPM> ticket new
+                ticket new: ok
+                tUPM> ticket add 1 2
+                {class:Product, id:1, name:'Libro POO V2', category:BOOK, price:30.0} **discount -3.0
+                {class:Product, id:1, name:'Libro POO V2', category:BOOK, price:30.0} **discount -3.0
+                Total price: 60.0
+                Total discount: 6.0
+                Final Price: 54.0
+                ticket add: ok
+                tUPM> ticket print
+                {class:Product, id:1, name:'Libro POO V2', category:BOOK, price:30.0} **discount -3.0
+                {class:Product, id:1, name:'Libro POO V2', category:BOOK, price:30.0} **discount -3.0
+                Total price: 60.0
+                Total discount: 6.0
+                Final Price: 54.0
+                ticket print: ok
+                tUPM> exit
+                Closing application.
+                Goodbye!
+                Process finished with exit code 0
+                """;
+        System.setIn(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)));
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(baos);
+        PrintStream oldOut = System.out;
+        System.setOut(ps);
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+        // ----- 4. Run the application -----
+        upm.Tienda.main(new String[0]);
+
+
+        // ----- 6. Compare actual vs expected ----
+        String actualOutput = baos.toString();
+        assertEquals(expected, actualOutput, "CLI output does not match expected transcript.");
     }
 }
