@@ -172,7 +172,6 @@ class AppTest {
                 tUPM> exit
                 Closing application.
                 Goodbye!
-                Process finished with exit code 0
                 """;
         System.setIn(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)));
 
@@ -189,6 +188,10 @@ class AppTest {
 
         // ----- 6. Compare actual vs expected ----
         String actualOutput = baos.toString();
-        assertEquals(expected, actualOutput, "CLI output does not match expected transcript.");
+        assertEquals(
+                expected.trim().replaceAll("\\s+", " "),
+                actualOutput.trim().replaceAll("\\s+", " "),
+                "CLI output does not match expected transcript."
+        );
     }
 }

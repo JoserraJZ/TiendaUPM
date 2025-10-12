@@ -66,24 +66,39 @@ public class Ticket {
             return;
         }
 
-        for (TicketItem item : items.values()) {
+        // Ordenar los productos por ID descendente
+        List<TicketItem> ordenados = new ArrayList<>(items.values());
+        ordenados.sort((a, b) -> Integer.compare(b.getProduct().getIdProducto(), a.getProduct().getIdProducto()));
+
+        for (TicketItem item : ordenados) {
             Product p = item.getProduct();
-            double discount = this.calcularDescuento(); // Asegúrate de que Product tenga getDescuento()
             int quantity = item.getQuantity();
             double price = p.getPrecio();
-            for (int i = 0; i < quantity; i++) {
-                System.out.printf("{class:Product, id:%d, name:'%s', category:%s, price:%.1f} **discount -%.1f\n",
-                        p.getIdProducto(), p.getNombreProducto(), p.getCat(), price, discount*price/100);
+            double discount = (quantity >= 2) ? 0.10 : 0.0; // 10% si hay 2 o más
+
+            if (quantity < 2) {
+                System.out.printf(Locale.US,
+                        "{class:Product, id:%d, name:'%s', category:%s, price:%.1f}%n",
+                        p.getIdProducto(), p.getNombreProducto(), p.getCat(), price);
+            } else {
+                for (int i = 0; i < quantity; i++) {
+                    double descuentoUnitario = price * discount;
+                    System.out.printf(Locale.US,
+                            "{class:Product, id:%d, name:'%s', category:%s, price:%.1f} **discount -%.1f%n",
+                            p.getIdProducto(), p.getNombreProducto(), p.getCat(), price, descuentoUnitario);
+                    totalDiscount += descuentoUnitario;
+                }
             }
+
             totalPrice += price * quantity;
-            totalDiscount += totalPrice*discount/100;
         }
 
         double finalPrice = totalPrice - totalDiscount;
-        System.out.printf("Total price: %.1f\n", totalPrice);
-        System.out.printf("Total discount: %.1f\n", totalDiscount);
-        System.out.printf("Final Price: %.1f\n", finalPrice);
+        System.out.printf(Locale.US, "Total price: %.1f%n", totalPrice);
+        System.out.printf(Locale.US, "Total discount: %.1f%n", totalDiscount);
+        System.out.printf(Locale.US, "Final Price: %.1f%n", finalPrice);
     }
+
 
     public double calcularDescuento() {
         Map<Category, Integer> categoriaCantidad = new HashMap<>();

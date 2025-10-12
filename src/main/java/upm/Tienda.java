@@ -16,9 +16,8 @@ public class Tienda {
         System.out.print("Welcome to the ticket module App.\n" +
                 "Ticket module. Type 'help' to see commands.\n");
         do {
-            System.out.print("tUPM> ");
-            exit= st1.executeCommand(sc);
-        }while (!exit);
+            exit = st1.executeCommand(sc);
+        } while (!exit);
 
     }
 
@@ -29,6 +28,7 @@ public class Tienda {
 
     private boolean executeCommand(Scanner scanner) {
         String mainCommand = scanner.nextLine();
+        System.out.println("tUPM> " + mainCommand);
         String[] atributes = splitCommand(mainCommand);
         /// validador*******
         boolean exit = false;
@@ -38,9 +38,8 @@ public class Tienda {
                     switch (atributes[1]) {
                         case "add":
                             if(atributes.length==6) {
-
-                                Product p = catalog.add(new Product(Integer.parseInt(atributes[2]), atributes[3], Category.valueOf(atributes[4]), Double.parseDouble(atributes[5])));
-                                System.out.printf("{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
+                                Product p = catalog.add(new Product(Integer.parseInt(atributes[2]), atributes[3], Category.valueOf(atributes[4]), Integer.parseInt(atributes[5])));
+                                System.out.printf(Locale.US, "{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
                                         "Product", p.getIdProducto(), p.getNombreProducto(), p.getCat().toString(), p.getPrecio());
                                 System.out.println("prod add: ok");
                                 break;
@@ -64,7 +63,7 @@ public class Tienda {
                         case "remove":
                             if(atributes.length==3) {
                                 Product prod = catalog.remove(Integer.parseInt(atributes[2]));
-                                System.out.printf("{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
+                                System.out.printf(Locale.US,"{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
                                         "Product", prod.getIdProducto(), prod.getNombreProducto(), prod.getCat().toString(), prod.getPrecio());
                                 System.out.println("prod remove: ok");
                                 break;
@@ -91,7 +90,7 @@ public class Tienda {
                                 break;
                             }else System.out.println("Comando ticket desconocido.");break;
                         case "remove":
-                            this.ticketActual.ticketRemove(Integer.parseInt(atributes[1]));
+                            this.ticketActual.ticketRemove(Integer.parseInt(atributes[2]));
                             System.out.println("ticket remove: ok");
                             break;
                         case "print":
@@ -121,13 +120,13 @@ public class Tienda {
     }
 
     private void help() {
-        System.out.println("\nCommands:");
+        System.out.println("Commands:");
         for (CommandNames command : CommandNames.values()) {
             System.out.println(" " + command.getHelp());
         }
 
-        System.out.println("\nCategories: MERCH, STATIONERY, CLOTHES, BOOK, ELECTRONICS");
-        System.out.println("Discounts if there are ≥2 units in the category: MERCH 0%, STATIONERY 5%, CLOTHES 7%, BOOK 10%, ELECTRONICS 3%.\n");
+        System.out.println("Categories: MERCH, STATIONERY, CLOTHES, BOOK, ELECTRONICS");
+        System.out.println("Discounts if there are ≥2 units in the category: MERCH 0%, STATIONERY 5%, CLOTHES 7%, BOOK 10%, ELECTRONICS 3%.");
     }
 
     public void echo(String text) {
@@ -136,7 +135,7 @@ public class Tienda {
             return;
         }
         System.out.println("echo "+text);
-
+        System.out.flush();
     }
 
 

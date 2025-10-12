@@ -3,6 +3,7 @@ package upm;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class ProductCatalog {
     private final HashMap<Integer, Product> products = new HashMap<>();
@@ -23,13 +24,13 @@ public class ProductCatalog {
                 prod.setCat(Category.valueOf(valor));
                 break;
             case "precio":
-                prod.setPrecio(Double.parseDouble(valor));
+                prod.setPrecio(Integer.parseInt(valor));
                 break;
             default:
                 return false;
         }
 
-        System.out.printf("{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
+        System.out.printf(Locale.US,"{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
                 "Product", prod.getIdProducto(), prod.getNombreProducto(), prod.getCat().toString(), prod.getPrecio());
 
         return true;
@@ -44,7 +45,7 @@ public class ProductCatalog {
     public void list() {
         System.out.println("Catalog:");
         for (Product product : products.values()) {
-            System.out.printf(" {class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
+            System.out.printf(Locale.US," {class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
                     "Product", product.getIdProducto(), product.getNombreProducto(), product.getCat().toString(), product.getPrecio());
 
         }

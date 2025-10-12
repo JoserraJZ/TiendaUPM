@@ -46,7 +46,7 @@ public class Product {
         this.category = cat;
     }
 
-    public void setPrecio(double precio) {
+    public void setPrecio(int precio) {
         this.price = precio;
     }
 
