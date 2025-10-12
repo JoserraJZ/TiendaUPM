@@ -107,7 +107,7 @@ public class Tienda {
                 this.help();
                 break;
             case "echo":
-                this.echo(mainCommand.substring(5)+"\n");
+                this.echo(mainCommand.substring(5));
                 break;
             case "exit":
                 System.out.println("Closing application.\n" +
