@@ -4,11 +4,12 @@ public enum CommandNames {
     PROD_ADD("prod add", "<id> \"<name>\" <category> <price>"),
     PROD_LIST("prod list", ""),
     PROD_UPDATE("prod update", "<id> NAME|CATEGORY|PRICE <value>"),
-    PROD_REMOVE("prod remove", "remove <id>"),
+    PROD_REMOVE("prod remove", "<id>"),
     TICKET_NEW("ticket new", ""),
     TICKET_ADD("ticket add", "<prodId> <quantity>"),
     TICKET_REMOVE("ticket remove", "<prodId>"),
     TICKET_PRINT("ticket print", ""),
+    ECHO("echo", "\"<texto>\""),
     HELP("help", ""),
     EXIT("exit", "");
 
@@ -39,7 +40,7 @@ public enum CommandNames {
     }
 
     public String getHelp() {
-        String params = this.getParameters().isEmpty() ? "Sin parámetros" : this.getParameters();
-        return this.getValue() + " (" + params + ")";
+        String params = this.getParameters();
+        return this.getValue() + (params.isEmpty() ? "": " ") + this.getParameters();
     }
 }

@@ -1,6 +1,6 @@
 package upm;
-
-import java.util.Scanner;
+import java.util.*;
+import java.util.regex.*;
 
 public class Tienda {
 
@@ -13,6 +13,9 @@ public class Tienda {
         Tienda st1 = new Tienda();
         Scanner sc = new Scanner(System.in);
         boolean exit=false;
+
+        System.out.println("Welcome to the ticket module App.\n" +
+                "Ticket module. Type 'help' to see commands.");
         do {
             System.out.print("tUPM> ");
             exit= st1.executeCommand(sc);
@@ -27,14 +30,17 @@ public class Tienda {
 
     private boolean executeCommand(Scanner scanner) {
         String mainCommand = scanner.nextLine();
-        String[] atributes = mainCommand.split(" ");
+        String[] atributes = splitCommand(mainCommand);
         /// validador*******
         boolean exit = false;
         switch (atributes[0]) {
             case "prod":
                 switch (atributes[1]) {
                     case "add":
-                        catalog.add(new Product(Integer.parseInt(atributes[2]), atributes[3], Category.valueOf(atributes[4]),Double.parseDouble(atributes[5]) ));
+                        Product p = catalog.add(new Product(Integer.parseInt(atributes[2]), atributes[3], Category.valueOf(atributes[4]),Double.parseDouble(atributes[5]) ));
+                        System.out.printf("{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
+                                "Product", p.getIdProducto(), atributes[3], p.getCat().toString(), p.getPrecio());
+                        System.out.println("prod add: ok");
                         break;
                     case "list":
                         catalog.list();
@@ -92,15 +98,13 @@ public class Tienda {
     }
 
     private void help() {
-        System.out.println("Commands:");
+        System.out.println("\nCommands:");
         for (CommandNames command : CommandNames.values()) {
-            System.out.println("  " + command.getHelp());
+            System.out.println(" " + command.getHelp());
         }
 
-        System.out.println();
         System.out.println("Categories: MERCH, STATIONERY, CLOTHES, BOOK, ELECTRONICS");
-        System.out.println("Discounts if there are ≥2 units in the category:");
-        System.out.println("  MERCH 0%, STATIONERY 5%, CLOTHES 7%, BOOK 10%, ELECTRONICS 3%.");
+        System.out.println("Discounts if there are ≥2 units in the category: MERCH 0%, STATIONERY 5%, CLOTHES 7%, BOOK 10%, ELECTRONICS 3%.");
     }
 
     public void echo(String text) {
@@ -108,11 +112,16 @@ public class Tienda {
             System.out.println("Uso: echo \"<texto>\"");
             return;
         }
-        System.out.println(text);
+        System.out.println("echo "+text);
     }
 
 
-
+    public static String[] splitCommand(String command) {
+        List<String> parts = new ArrayList<>();
+        Matcher m = Pattern.compile("\"([^\"]*)\"|(\\S+)").matcher(command);
+        while (m.find()) parts.add(m.group(1) != null ? m.group(1) : m.group(2));
+        return parts.toArray(new String[0]);
+    }
 
 
 
