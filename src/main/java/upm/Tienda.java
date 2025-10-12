@@ -13,6 +13,8 @@ public class Tienda {
         Tienda st1 = new Tienda();
         Scanner sc = new Scanner(System.in);
         boolean exit=false;
+        System.out.print("Welcome to the ticket module App.\n" +
+                "Ticket module. Type 'help' to see commands.\n");
         do {
             System.out.print("tUPM> ");
             exit= st1.executeCommand(sc);
@@ -108,7 +110,7 @@ public class Tienda {
             System.out.println("Uso: echo \"<texto>\"");
             return;
         }
-        System.out.println(text);
+        System.out.println("echo "+text);
     }
 
 
