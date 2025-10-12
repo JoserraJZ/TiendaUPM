@@ -35,8 +35,10 @@ public class ProductCatalog {
         return true;
     }
 
-    public boolean remove(int id) {
-        return products.remove(id) != null;
+    public Product remove(int id) {
+        Product prod = products.get(id);
+        products.remove(id);
+        return prod;
     }
 
     public void list() {

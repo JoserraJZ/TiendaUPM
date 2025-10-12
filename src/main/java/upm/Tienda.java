@@ -39,7 +39,7 @@ public class Tienda {
                     case "add":
                         Product p = catalog.add(new Product(Integer.parseInt(atributes[2]), atributes[3], Category.valueOf(atributes[4]),Double.parseDouble(atributes[5]) ));
                         System.out.printf("{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
-                                "Product", p.getIdProducto(), atributes[3], p.getCat().toString(), p.getPrecio());
+                                "Product", p.getIdProducto(), p.getNombreProducto(), p.getCat().toString(), p.getPrecio());
                         System.out.println("prod add: ok");
                         break;
                     case "list":
@@ -57,7 +57,10 @@ public class Tienda {
                         System.out.println("prod update: ok");
                         break;
                     case "remove":
-                        catalog.remove(Integer.parseInt(atributes[2]));
+                        Product prod = catalog.remove(Integer.parseInt(atributes[2]));
+                        System.out.printf("{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
+                                "Product", prod.getIdProducto(), prod.getNombreProducto(), prod.getCat().toString(), prod.getPrecio());
+                        System.out.println("prod remove: ok");
                         break;
                     default:
                         System.out.println("Comando prod desconocido.");
@@ -67,17 +70,22 @@ public class Tienda {
                 switch (atributes[1]) {
                     case "new":
                         this.ticketActual= new Ticket();
+                        System.out.println("ticket new: ok");
                         break;
                     case "add":
                         if (catalog.getById(Integer.parseInt(atributes[2]))!=null){
                             ticketActual.add(catalog.getById(Integer.parseInt(atributes[2])), Integer.parseInt(atributes[3]));
                         }
+                        ticketActual.ticketPrint();
+                        System.out.println("ticket add: ok");
                         break;
                     case "remove":
                         this.ticketActual.ticketRemove(Integer.parseInt(atributes[1]));
+                        System.out.println("ticket remove: ok");
                         break;
                     case "print":
                         ticketActual.ticketPrint();
+                        System.out.println("ticket print: ok");
                         break;
                     default:
                         System.out.println("Comando ticket desconocido.");
@@ -90,6 +98,8 @@ public class Tienda {
                 this.echo(mainCommand.substring(5));
                 break;
             case "exit":
+                System.out.println("Closing application.\n" +
+                        "Goodbye!");
                 exit = true;
                 break;
             default:
