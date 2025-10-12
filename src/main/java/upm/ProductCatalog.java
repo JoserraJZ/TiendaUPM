@@ -12,7 +12,7 @@ public class ProductCatalog {
         return product;
     }
 
-    public boolean update(int id, String campo, Object valor) {
+    public boolean update(int id, String campo, String valor) {
         Product prod = products.get(id);
         if (prod == null) return false;
         switch (campo) {
@@ -20,14 +20,18 @@ public class ProductCatalog {
                 prod.setNombreProducto((String) valor);
                 break;
             case "categoria":
-                prod.setCat((Category) valor);
+                prod.setCat(Category.valueOf(valor));
                 break;
             case "precio":
-                prod.setPrecio((Double) valor);
+                prod.setPrecio(Double.parseDouble(valor));
                 break;
             default:
                 return false;
         }
+
+        System.out.printf("{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
+                "Product", prod.getIdProducto(), prod.getNombreProducto(), prod.getCat().toString(), prod.getPrecio());
+
         return true;
     }
 

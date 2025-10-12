@@ -47,13 +47,14 @@ public class Tienda {
                         break;
                     case "update":
                         switch (atributes[3]){
-                            case "nombre":catalog.update(Integer.parseInt(atributes[2]),"nombre", atributes[4]);
+                            case "NAME":catalog.update(Integer.parseInt(atributes[2]),"nombre", atributes[4]);
                                 break;
-                            case "categoria":catalog.update(Integer.parseInt(atributes[2]),"categoria", atributes[4]);
+                            case "CATEGORY":catalog.update(Integer.parseInt(atributes[2]),"categoria", atributes[4]);
                                 break;
-                            case "precio":catalog.update(Integer.parseInt(atributes[2]),"precio", atributes[4]);
+                            case "PRICE":catalog.update(Integer.parseInt(atributes[2]),"precio", atributes[4]);
                                 break;
                         }
+                        System.out.println("prod update: ok");
                         break;
                     case "remove":
                         catalog.remove(Integer.parseInt(atributes[2]));
