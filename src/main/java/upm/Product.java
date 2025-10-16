@@ -7,10 +7,6 @@ public class Product {
     private Category category;
     private double price;
 
-    public static void main(String[] args) {
-
-    }
-
     public Product(int idProd, String productName, Category category, double price){
         this.id = idProd;
         this.name = productName;
@@ -33,8 +29,6 @@ public class Product {
     public double getPrecio() {
         return price;
     }
-
-    //public void setIdProducto(int idProducto) {this.id = idProducto;}
 
     public void setNombreProducto(String nombreProducto) {
         this.name = nombreProducto;

@@ -4,10 +4,8 @@ import java.util.regex.*;
 
 public class Tienda {
 
-    private Ticket ticketActual;        ////?
-    private ProductCatalog catalog; /////?
-
-    //crear un objeto productCatalog?
+    private Ticket ticketActual;
+    private ProductCatalog catalog;
 
     public static void main(String[] args) {
         Tienda st1 = new Tienda();
@@ -138,15 +136,10 @@ public class Tienda {
         System.out.flush();
     }
 
-
     public static String[] splitCommand(String command) {
         List<String> parts = new ArrayList<>();
         Matcher m = Pattern.compile("\"([^\"]*)\"|(\\S+)").matcher(command);
         while (m.find()) parts.add(m.group(1) != null ? m.group(1) : m.group(2));
         return parts.toArray(new String[0]);
     }
-
-
-
-
 }
