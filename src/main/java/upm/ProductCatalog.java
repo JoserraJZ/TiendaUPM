@@ -7,8 +7,12 @@ public class ProductCatalog {
     private final HashMap<Integer, Product> products = new HashMap<>();
 
     public Product add(Product product) {
-        products.put(product.getIdProducto(), product);
-        return product;
+
+        if (products.size()<200) {
+            products.put(product.getIdProducto(), product);
+            return product;
+        }
+        return null;
     }
 
     public boolean update(int id, String campo, String valor) {

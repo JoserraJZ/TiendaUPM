@@ -37,9 +37,13 @@ public class Tienda {
                         case "add":
                             if(atributes.length==6) {
                                 Product p = catalog.add(new Product(Integer.parseInt(atributes[2]), atributes[3], Category.valueOf(atributes[4]), Integer.parseInt(atributes[5])));
-                                System.out.printf(Locale.US, "{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
-                                        "Product", p.getIdProducto(), p.getNombreProducto(), p.getCat().toString(), p.getPrecio());
-                                System.out.println("prod add: ok");
+                                if (p==null){
+                                    System.out.println("No se pueden añadir más de 200 productos");
+                                }else {
+                                    System.out.printf(Locale.US, "{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
+                                            "Product", p.getIdProducto(), p.getNombreProducto(), p.getCat().toString(), p.getPrecio());
+                                    System.out.println("prod add: ok");
+                                }
                                 break;
                             }else System.out.println("Comando prod desconocido.");break;
                         case "list":
@@ -136,10 +140,17 @@ public class Tienda {
         System.out.flush();
     }
 
-    public static String[] splitCommand(String command) {
-        List<String> parts = new ArrayList<>();
+    private String[] splitCommand(String command) {
+        List<String> tokens = new ArrayList<>();
         Matcher m = Pattern.compile("\"([^\"]*)\"|(\\S+)").matcher(command);
-        while (m.find()) parts.add(m.group(1) != null ? m.group(1) : m.group(2));
-        return parts.toArray(new String[0]);
+        while (m.find()) {
+            if (m.group(1) != null) {
+                tokens.add(m.group(1)); // texto entre comillas
+            } else {
+                tokens.add(m.group(2)); // texto sin comillas
+            }
+        }
+        return tokens.toArray(new String[0]);
     }
+
 }

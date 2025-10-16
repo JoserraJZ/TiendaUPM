@@ -52,18 +52,21 @@ public class Ticket {
             Product p = item.getProduct();
             int quantity = item.getQuantity();
             double price = p.getPrecio();
-            if (quantity < 2) {
-                System.out.printf(Locale.US,
-                        "{class:Product, id:%d, name:'%s', category:%s, price:%.1f}%n",
-                        p.getIdProducto(), p.getNombreProducto(), p.getCat(), price);
-            } else {
-                double descuentoUnitario = price * p.getCat().getDiscountPercent() / 100.0;
-                for (int i = 0; i < quantity; i++) {
-                    System.out.printf(Locale.US,
-                            "{class:Product, id:%d, name:'%s', category:%s, price:%.1f} **discount -%.1f%n",
-                            p.getIdProducto(), p.getNombreProducto(), p.getCat(), price, descuentoUnitario);
+                double descuentoUnitario=0;
+                if(quantity>=2) {
+                        descuentoUnitario=price * p.getCat().getDiscountPercent() / 100.0;
                 }
-            }
+                for (int i = 0; i < quantity; i++) {
+                    if (descuentoUnitario!=0) {
+                        System.out.printf(Locale.US,
+                                "{class:Product, id:%d, name:'%s', category:%s, price:%.1f} **discount -%.1f%n",
+                                p.getIdProducto(), p.getNombreProducto(), p.getCat(), price, descuentoUnitario);
+                    }else {
+                        System.out.printf(Locale.US,
+                                "{class:Product, id:%d, name:'%s', category:%s, price:%.1f}\n",p.getIdProducto(), p.getNombreProducto(), p.getCat(), price);
+                    }
+                }
+
             totalPrice += price * quantity;
         }
 
