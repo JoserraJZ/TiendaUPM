@@ -1,18 +1,20 @@
 package upm;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 public class ProductCatalog {
     private final HashMap<Integer, Product> products = new HashMap<>();
 
     public Product add(Product product) {
-
-        if (products.size()<200) {
+        if (products.values().size()<200){
             products.put(product.getIdProducto(), product);
             return product;
+        }else{
+            return null;
         }
-        return null;
     }
 
     public boolean update(int id, String campo, String valor) {

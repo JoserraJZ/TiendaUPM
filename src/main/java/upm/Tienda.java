@@ -4,8 +4,10 @@ import java.util.regex.*;
 
 public class Tienda {
 
-    private Ticket ticketActual;
-    private ProductCatalog catalog;
+    private Ticket ticketActual;        ////?
+    private ProductCatalog catalog; /////?
+
+    //crear un objeto productCatalog?
 
     public static void main(String[] args) {
         Tienda st1 = new Tienda();
@@ -30,93 +32,100 @@ public class Tienda {
         String[] atributes = splitCommand(mainCommand);
         /// validador*******
         boolean exit = false;
-        switch (atributes[0]) {
-            case "prod":
-                if(atributes.length>1){
-                    switch (atributes[1]) {
-                        case "add":
-                            if(atributes.length==6) {
-                                Product p = catalog.add(new Product(Integer.parseInt(atributes[2]), atributes[3], Category.valueOf(atributes[4]), Integer.parseInt(atributes[5])));
-                                if (p==null){
-                                    System.out.println("No se pueden añadir más de 200 productos");
-                                }else {
-                                    System.out.printf(Locale.US, "{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
-                                            "Product", p.getIdProducto(), p.getNombreProducto(), p.getCat().toString(), p.getPrecio());
-                                    System.out.println("prod add: ok");
-                                }
+        try{
+
+            switch (atributes[0]) {
+                case "prod":
+                    if(atributes.length>1){
+                        switch (atributes[1]) {
+                            case "add":
+                                if(atributes.length==6) {
+                                    Product p = catalog.add(new Product(Integer.parseInt(atributes[2]), atributes[3], Category.valueOf(atributes[4]), Integer.parseInt(atributes[5])));
+
+                                    if(p== null){
+                                        System.out.println("No se pueden añadir más de 200 productos");
+                                    }else{
+                                        System.out.printf(Locale.US, "{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
+                                                "Product", p.getIdProducto(), p.getNombreProducto(), p.getCat().toString(), p.getPrecio());
+                                        System.out.println("prod add: ok");
+                                    }
+                                    break;
+                                }else System.out.println("Comando prod desconocido.");break;
+                            case "list":
+                                catalog.list();
                                 break;
-                            }else System.out.println("Comando prod desconocido.");break;
-                        case "list":
-                            catalog.list();
-                            break;
-                        case "update":
-                            if(atributes.length==5) {
-                                switch (atributes[3]){
-                                    case "NAME":catalog.update(Integer.parseInt(atributes[2]),"nombre", atributes[4]);
-                                        break;
-                                    case "CATEGORY":catalog.update(Integer.parseInt(atributes[2]),"categoria", atributes[4]);
-                                        break;
-                                    case "PRICE":catalog.update(Integer.parseInt(atributes[2]),"precio", atributes[4]);
-                                        break;
-                                }
-                                System.out.println("prod update: ok");
+                            case "update":
+                                if(atributes.length==5) {
+                                    switch (atributes[3]){
+                                        case "NAME":catalog.update(Integer.parseInt(atributes[2]),"nombre", atributes[4]);
+                                            break;
+                                        case "CATEGORY":catalog.update(Integer.parseInt(atributes[2]),"categoria", atributes[4]);
+                                            break;
+                                        case "PRICE":catalog.update(Integer.parseInt(atributes[2]),"precio", atributes[4]);
+                                            break;
+                                    }
+                                    System.out.println("prod update: ok");
+                                    break;
+                                }else System.out.println("Comando prod desconocido.");break;
+                            case "remove":
+                                if(atributes.length==3) {
+                                    Product prod = catalog.remove(Integer.parseInt(atributes[2]));
+                                    System.out.printf(Locale.US,"{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
+                                            "Product", prod.getIdProducto(), prod.getNombreProducto(), prod.getCat().toString(), prod.getPrecio());
+                                    System.out.println("prod remove: ok");
+                                    break;
+                                }else System.out.println("Comando prod desconocido.");break;
+                            default:
+                                System.out.println("Comando prod desconocido.");
+                        }
+                        break;
+                    }else System.out.println("Comando prod desconocido.");break;
+                case "ticket":
+                    if(atributes.length>1) {
+                        switch (atributes[1]) {
+                            case "new":
+                                this.ticketActual = new Ticket();
+                                System.out.println("ticket new: ok");
                                 break;
-                            }else System.out.println("Comando prod desconocido.");break;
-                        case "remove":
-                            if(atributes.length==3) {
-                                Product prod = catalog.remove(Integer.parseInt(atributes[2]));
-                                System.out.printf(Locale.US,"{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
-                                        "Product", prod.getIdProducto(), prod.getNombreProducto(), prod.getCat().toString(), prod.getPrecio());
-                                System.out.println("prod remove: ok");
+                            case "add":
+                                if(atributes.length==4) {
+                                    if (catalog.getById(Integer.parseInt(atributes[2])) != null) {
+                                        ticketActual.add(catalog.getById(Integer.parseInt(atributes[2])), Integer.parseInt(atributes[3]));
+                                    }
+                                    ticketActual.ticketPrint();
+                                    System.out.println("ticket add: ok");
+                                    break;
+                                }else System.out.println("Comando ticket desconocido.");break;
+                            case "remove":
+                                this.ticketActual.ticketRemove(Integer.parseInt(atributes[2]));
+                                System.out.println("ticket remove: ok");
                                 break;
-                            }else System.out.println("Comando prod desconocido.");break;
-                        default:
-                            System.out.println("Comando prod desconocido.");
-                    }
-                break;
-                }else System.out.println("Comando prod desconocido.");break;
-            case "ticket":
-                if(atributes.length>1) {
-                    switch (atributes[1]) {
-                        case "new":
-                            this.ticketActual = new Ticket();
-                            System.out.println("ticket new: ok");
-                            break;
-                        case "add":
-                            if(atributes.length==4) {
-                                if (catalog.getById(Integer.parseInt(atributes[2])) != null) {
-                                    ticketActual.add(catalog.getById(Integer.parseInt(atributes[2])), Integer.parseInt(atributes[3]));
-                                }
+                            case "print":
                                 ticketActual.ticketPrint();
-                                System.out.println("ticket add: ok");
+                                System.out.println("ticket print: ok");
                                 break;
-                            }else System.out.println("Comando ticket desconocido.");break;
-                        case "remove":
-                            this.ticketActual.ticketRemove(Integer.parseInt(atributes[2]));
-                            System.out.println("ticket remove: ok");
-                            break;
-                        case "print":
-                            ticketActual.ticketPrint();
-                            System.out.println("ticket print: ok");
-                            break;
-                        default:
-                            System.out.println("Comando ticket desconocido.");
-                    }
+                            default:
+                                System.out.println("Comando ticket desconocido.");
+                        }
+                        break;
+                    }else System.out.println("Comando ticket desconocido.");break;
+                case "help":
+                    this.help();
                     break;
-                }else System.out.println("Comando ticket desconocido.");break;
-            case "help":
-                this.help();
-                break;
-            case "echo":
-                this.echo(mainCommand.substring(5));
-                break;
-            case "exit":
-                System.out.println("Closing application.\n" +
-                        "Goodbye!");
-                exit = true;
-                break;
-            default:
-                System.out.println("Comando desconocido.");
+                case "echo":
+                    this.echo(mainCommand.substring(5));
+                    break;
+                case "exit":
+                    System.out.println("Closing application.\n" +
+                            "Goodbye!");
+                    exit = true;
+                    break;
+                default:
+                    System.out.println("Comando desconocido.");
+            }
+        }
+        catch (Exception e){
+            System.out.println("Comando no reconocido.");
         }
         return exit;
     }
@@ -140,17 +149,15 @@ public class Tienda {
         System.out.flush();
     }
 
-    private String[] splitCommand(String command) {
-        List<String> tokens = new ArrayList<>();
+
+    public static String[] splitCommand(String command) {
+        List<String> parts = new ArrayList<>();
         Matcher m = Pattern.compile("\"([^\"]*)\"|(\\S+)").matcher(command);
-        while (m.find()) {
-            if (m.group(1) != null) {
-                tokens.add(m.group(1)); // texto entre comillas
-            } else {
-                tokens.add(m.group(2)); // texto sin comillas
-            }
-        }
-        return tokens.toArray(new String[0]);
+        while (m.find()) parts.add(m.group(1) != null ? m.group(1) : m.group(2));
+        return parts.toArray(new String[0]);
     }
+
+
+
 
 }
