@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -183,7 +182,7 @@ class AppTest {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         // ----- 4. Run the application -----
-        upm.Tienda.main(new String[0]);
+        main.java.upm.Tienda.main(new String[0]);
 
 
         // ----- 6. Compare actual vs expected ----

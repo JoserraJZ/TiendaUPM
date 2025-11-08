@@ -6,6 +6,8 @@ public class Tienda {
 
     private Ticket ticketActual;        ////?
     private ProductCatalog catalog; /////?
+    ///
+    /// Crear lista o array de int con los ids registrados de tickets?
 
     //crear un objeto productCatalog?
 
@@ -22,7 +24,7 @@ public class Tienda {
     }
 
     public Tienda() {
-        this.ticketActual = new Ticket();
+        this.ticketActual = new Ticket(000000);
         this.catalog= new ProductCatalog();
     }
 
@@ -84,7 +86,7 @@ public class Tienda {
                     if(atributes.length>1) {
                         switch (atributes[1]) {
                             case "new":
-                                this.ticketActual = new Ticket();
+                                this.ticketActual = new Ticket(000000);//CAAAAAMBIARLO
                                 System.out.println("ticket new: ok");
                                 break;
                             case "add":

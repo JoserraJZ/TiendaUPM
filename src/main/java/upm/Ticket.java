@@ -1,16 +1,21 @@
 package upm;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class Ticket {
 
     private final Map<Integer, TicketItem> items ;
+    private int ticketId;
+    private String lastUpdateDate;
     //private int cantidadProductos;
 
     //Inicializa Ticket
-    public Ticket() {
+    public Ticket(int id) {
         this.items = new LinkedHashMap<>();
         // this.cantidadProductos = 0;
+        ticketId=id;
+        lastUpdateDate= LocalDateTime.now()+"-"+ticketId;
     }
 
     // Agrega un producto y su cantidad al ticket
