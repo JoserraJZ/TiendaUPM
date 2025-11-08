@@ -24,7 +24,7 @@ public class Tienda {
     }
 
     public Tienda() {
-        this.ticketActual = new Ticket(000000);
+        this.ticketActual = new Ticket(22222);
         this.catalog= new ProductCatalog();
     }
 

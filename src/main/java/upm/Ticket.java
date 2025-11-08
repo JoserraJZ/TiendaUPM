@@ -6,16 +6,16 @@ import java.util.*;
 public class Ticket {
 
     private final Map<Integer, TicketItem> items ;
-    private int ticketId;
-    private String lastUpdateDate;
+    private int numberId;
+    private String ticketDateId;
     //private int cantidadProductos;
 
     //Inicializa Ticket
     public Ticket(int id) {
         this.items = new LinkedHashMap<>();
         // this.cantidadProductos = 0;
-        ticketId=id;
-        lastUpdateDate= LocalDateTime.now()+"-"+ticketId;
+        numberId=id;
+        ticketDateId= LocalDateTime.now()+"-"+numberId;
     }
 
     // Agrega un producto y su cantidad al ticket
