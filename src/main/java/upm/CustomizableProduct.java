@@ -1,4 +1,4 @@
-package main.java.upm;
+package upm;
 
 
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ public class CustomizableProduct extends Product {
     private final int maxTexts;
     private final List<String> personalizedTexts;
 
-    public CustomizableProduct(int idProd, String productName, Category category, double basePrice, int maxTexts) {
+    public CustomizableProduct(int idProd, String productName, ProductCategory category, double basePrice, int maxTexts) {
         super(idProd, productName, category, basePrice);
         this.maxTexts = maxTexts;
         this.personalizedTexts = new ArrayList<>();
@@ -34,8 +34,8 @@ public class CustomizableProduct extends Product {
     }
 
     @Override
-    public double getPrecio() {
-        double basePrice = super.getPrecio();
+    public double getPrice() {
+        double basePrice = super.getPrice();
         double surcharge = basePrice * 0.10 * personalizedTexts.size();
         return basePrice + surcharge;
     }

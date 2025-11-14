@@ -12,7 +12,6 @@ public class TicketItem {
     public Product getProduct() {
         return product;
     }
-
     public int getQuantity() {
         return quantity;
     }

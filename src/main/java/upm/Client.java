@@ -1,11 +1,12 @@
-package main.java.upm;
+package upm;
 
-public class Cliente {
+public class Client {
     private String name;
     private String DNI;
     private String email;
-    private Cajero cashier;
-    public Cliente(String newName, String newDni, String newEmail, Cajero newCashier){
+    private Cashier cashier;
+
+    public Client(String newName, String newDni, String newEmail, Cashier newCashier){
         this.name=newName;
         this.DNI=newDni;
         this.email=newEmail;

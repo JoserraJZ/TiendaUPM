@@ -182,7 +182,7 @@ class AppTest {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         // ----- 4. Run the application -----
-        main.java.upm.Tienda.main(new String[0]);
+        upm.Tienda.main(new String[0]);
 
 
         // ----- 6. Compare actual vs expected ----

@@ -1,8 +1,6 @@
 package upm;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 
 public class ProductCatalog {
@@ -10,7 +8,7 @@ public class ProductCatalog {
 
     public Product add(Product product) {
         if (products.values().size()<200){
-            products.put(product.getIdProducto(), product);
+            products.put(product.getId(), product);
             return product;
         }else{
             return null;
@@ -21,21 +19,20 @@ public class ProductCatalog {
         Product prod = products.get(id);
         if (prod == null) return false;
         switch (campo) {
-            case "nombre":
-                prod.setNombreProducto((String) valor);
+            case "NAME":
+                prod.setName((String) valor);
                 break;
-            case "categoria":
-                prod.setCat(Category.valueOf(valor));
+            case "CATEGORY":
+                prod.setCategory(ProductCategory.valueOf(valor));
                 break;
-            case "precio":
-                prod.setPrecio(Integer.parseInt(valor));
+            case "PRICE":
+                prod.setPrice(Integer.parseInt(valor));
                 break;
             default:
                 return false;
         }
 
-        System.out.printf(Locale.US,"{class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
-                "Product", prod.getIdProducto(), prod.getNombreProducto(), prod.getCat().toString(), prod.getPrecio());
+        System.out.println(prod);
 
         return true;
     }
@@ -48,12 +45,10 @@ public class ProductCatalog {
 
     public void list() {
         System.out.println("Catalog:");
-        for (Product product : products.values()) {
-            System.out.printf(Locale.US," {class:%s, id:%d, name:'%s', category:%s, price:%.1f}%n",
-                    "Product", product.getIdProducto(), product.getNombreProducto(), product.getCat().toString(), product.getPrecio());
+        for (Product prod : products.values()) {
+            System.out.println(prod);
 
         }
-        System.out.println("prod list: ok");
     }
 
     public Product getById(int id) {
