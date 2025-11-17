@@ -3,7 +3,7 @@ import java.util.*;
 
 public class Tienda {
 
-    private Ticket currentTicket;        ////?
+    //private Ticket currentTicket;        ////?
     private ProductCatalog catalog; /////?
     private Map<Integer, Cashier> cajeros;
     ///
@@ -29,7 +29,7 @@ public class Tienda {
     }
 
     private boolean executeCommand(Scanner scanner) {
-        System.out.print("tUPM> ");
+        System.out.print("\ntUPM> ");
         String inputCommand = scanner.nextLine();
 
         boolean exit = false;
@@ -88,7 +88,7 @@ public class Tienda {
             case TICKET_PRINT -> currentTicket.printTicket();
 
             case HELP -> this.help();
-            case ECHO -> this.echo(inputCommand.length() > 5 ? inputCommand.substring(5) : "");//Comprueba si la distancia es correcta
+            case ECHO -> System.out.println(inputCommand.substring(5));
             case EXIT -> exit = true;
 
         }
@@ -106,16 +106,8 @@ public class Tienda {
             System.out.println(" " + command.getHelp());
         }
 
-        System.out.println("Categories: MERCH, STATIONERY, CLOTHES, BOOK, ELECTRONICS\n" +
+        System.out.println("\nCategories: MERCH, STATIONERY, CLOTHES, BOOK, ELECTRONICS\n" +
                 "Discounts if there are ≥2 units in the category: MERCH 0%, STATIONERY 5%, CLOTHES 7%, BOOK 10%, ELECTRONICS 3%.");
     }
 
-    public void echo(String text) {
-        if (text == null) {
-            System.out.println("Uso: echo \"<texto>\"");
-            return;
-        }
-        System.out.println("echo "+text);
-        System.out.flush();
-    }
 }

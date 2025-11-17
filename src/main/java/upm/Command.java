@@ -10,10 +10,10 @@ public enum Command {
     CLIENT_REMOVE("client remove", new String[]{"<DNI>"}, 3, 3),
     CLIENT_LIST("client list", new String[]{}, 2, 2),
 
-    CASH_ADD("cash add", new String[]{"[<id>]", "\"<nombre>\"", "<email>"}, 4, 5),
-    CASH_REMOVE("cash remove", new String[]{"<id>"}, 3, 3),
+    CASH_ADD("cash add", new String[]{"[<cashId>]", "\"<nombre>\"", "<email>"}, 4, 5),
+    CASH_REMOVE("cash remove", new String[]{"<cashId>"}, 3, 3),
     CASH_LIST("cash list", new String[]{}, 2, 2),
-    CASH_TICKETS("cash tickets", new String[]{"<id>"}, 3, 3),
+    CASH_TICKETS("cash tickets", new String[]{"<cashId>"}, 3, 3),
 
     TICKET_NEW("ticket new", new String[]{"[<id>]", "<cashId>", "<userId>"}, 4, 5),
     // TODO: HACER QUE TICKET ADD FUNCIONE CORRECTAMENTE CON EL --P
@@ -24,13 +24,13 @@ public enum Command {
 
     PROD_ADD("prod add", new String[]{"[<id>]", "\"<name>\"", "<category>", "<price>", "[<maxPers>]"}, 5, 7),
     PROD_UPDATE("prod update", new String[]{"<id>", "NAME|CATEGORY|PRICE", "<value>"}, 5, 5),
-    PROD_REMOVE("prod remove", new String[]{"<id>"}, 3, 3),
-    PROD_LIST("prod list", new String[]{}, 2, 2),
     PROD_ADDFOOD("prod addFood", new String[]{"[<id>]", "\"<name>\"", "<price>", "<expiration: yyyy-MM-dd>", "<max_people>"}, 6, 7),
     PROD_ADDMEETING("prod addMeeting", new String[]{"[<id>]", "\"<name>\"", "<price>", "<expiration: yyyy-MM-dd>", "<max_people>"}, 6, 7),
+    PROD_LIST("prod list", new String[]{}, 2, 2),
+    PROD_REMOVE("prod remove", new String[]{"<id>"}, 3, 3),
 
-    ECHO("echo", new String[]{"\"<texto>\""}, 1, 0), // 0 = unlimited
     HELP("help", new String[]{}, 1, 1),
+    ECHO("echo", new String[]{"\"<text>\""}, 2, 0), // 0 = unlimited
     EXIT("exit", new String[]{}, 1, 1);
 
     public final String commandText;
@@ -65,6 +65,7 @@ public enum Command {
     }
 
     private static boolean matchesFormat(String[] commandExpected, String[] commandGiven, int offsetAmount, String[] returnParams){
+        String errorCode = "";
         for (int i = 0; i < commandExpected.length; i++) {
             if ((i + offsetAmount) >= commandGiven.length) return true;//TODO ERROR
 
@@ -76,31 +77,31 @@ public enum Command {
                     : commandExpected[i]){
                 case "<id>"->{
                     if (!commandGiven[i+offsetAmount].matches("\\d+")){
-                        System.out.printf("El parámetro %d ('%s') debería ser un número%n", i+1, commandGiven[i+offsetAmount]);
+                        errorCode = String.format("El parámetro %d ('%s') debería ser un número%n", i+1, commandGiven[i+offsetAmount]);
                         matches = false;
                     }
                 }
                 case "<category>"->{
                     try{ ProductCategory.valueOf(commandGiven[i+offsetAmount]); } catch (IllegalArgumentException e) {
-                        System.out.printf("El parámetro %d ('%s') debería ser una categoría válida%n", i+1, commandGiven[i+offsetAmount]);
+                        errorCode = String.format("El parámetro %d ('%s') debería ser una categoría válida%n", i+1, commandGiven[i+offsetAmount]);
                         matches = false;
                     }
                 }
                 case "<price>" -> {
                     if (!commandGiven[i + offsetAmount].matches("\\d+(\\.\\d+)?")) {
-                        System.out.printf("El parámetro %d ('%s') debería ser un número%n", i + 1, commandGiven[i + offsetAmount]);
+                        errorCode = String.format("El parámetro %d ('%s') debería ser un número%n", i + 1, commandGiven[i + offsetAmount]);
                         matches = false;
                     }
                 }
                 case "<DNI>", "<userId>" -> {
-                    if (!commandGiven[i + offsetAmount].matches("\\d{8}[A-Za-z]")) {
+                    if (!commandGiven[i + offsetAmount].matches("[A-Za-z0-9]{9}")){//"\\d{8}[A-Za-z]")) {
                         System.out.printf("El parámetro %d ('%s') debería ser un DNI válido%n", i + 1, commandGiven[i + offsetAmount]);
                         matches = false;
                     }
                 }
                 case "<cashId>" ->{
                     if (!commandGiven[i + offsetAmount].matches("UW\\d{7}")) {
-                        System.out.printf("El parámetro %d ('%s') debería ser un código válido%n", i + 1, commandGiven[i + offsetAmount]);
+                        errorCode = String.format("El parámetro %d ('%s') debería ser un código válido%n", i + 1, commandGiven[i + offsetAmount]);
                         matches = false;
                     }
                 }
@@ -110,7 +111,9 @@ public enum Command {
                 returnParams[i] = null;
                 offsetAmount-=1;
             }
-            else if (!matches) return false;
+            else if (!matches) {
+                System.out.print(errorCode);
+            }
             else{
                 returnParams[i] = commandGiven[i + offsetAmount];
             }
