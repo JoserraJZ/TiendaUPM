@@ -4,12 +4,9 @@ import java.util.*;
 public class Tienda {
 
     //private Ticket currentTicket;        ////?
-    private ProductCatalog catalog; /////?
-    private Map<Integer, Cashier> cajeros;
-    ///
-    /// Crear lista o array de int con los ids registrados de tickets?
-
-    //crear un objeto productCatalog?
+    private final ProductCatalog catalog; /////?
+    private final Set<Cashier> cashiers;
+    private final Set<Client> clients;
 
     public static void main(String[] args) {
         System.out.println("Welcome to the ticket module App.\n" +
@@ -24,8 +21,9 @@ public class Tienda {
     }
 
     public Tienda() {
-        //this.currentTicket = new Ticket(22222);
-        this.catalog= new ProductCatalog();
+        this.catalog = new ProductCatalog();
+        this.cashiers = new HashSet<>();
+        this.clients = new HashSet<>();
     }
 
     private boolean executeCommand(Scanner scanner) {
@@ -41,11 +39,57 @@ public class Tienda {
         String[] commandParameters = commandAndParams.parameters;
 
         switch (command){
+            case CASH_ADD -> {
+                if(!cashiers.add(new Cashier(commandParameters[0], commandParameters[1], commandParameters[2]))){
+                    System.out.println("El id introducido ya existe");
+                }
+            }
+            case CASH_LIST -> {
+                List<Cashier> cashierList = new ArrayList<>(cashiers);
+                cashierList.sort(Comparator.comparing(Cashier::getName));//cashierlist.sort((c1, c2) -> c1.getName().compareTo(c2.getName()));
+
+                System.out.println("Cash:");
+                cashierList.forEach(System.out::println);
+            }
+            case CASH_REMOVE -> {
+                if (!cashiers.removeIf(c -> commandParameters[0].equals(c.getId()))){
+                    System.out.println("No se ha encontrado ningún cajero con el identificador introducido");
+                }
+            }
+            case CLIENT_ADD -> {
+                Cashier cash = findCashierById(commandParameters[3]);
+                if (cash != null){
+                     if (!clients.add(new Client(commandParameters[0],
+                            commandParameters[1],
+                            commandParameters[2],
+                            cash))){
+                         System.out.println("El identificador de usuario introducido ya existe");
+                     }
+                }else{
+                    System.out.println("El identificador de cajero introducido no existe");
+                }
+            }
+            case CLIENT_LIST -> {
+                List<Client> clientList = new ArrayList<>(clients);
+                clientList.sort(Comparator.comparing(Client::getName)); //clientList.sort((c1, c2) -> c1.getName().compareTo(c2.getName()));
+
+
+                System.out.println("Client:");
+                clientList.forEach(System.out::println);
+            }
+            case CLIENT_REMOVE -> {
+                if (!clients.removeIf(c -> commandParameters[0].equals(c.getId()))){
+                    System.out.println("No se ha encontrado ningún cliente con el identificador introducido");
+                }
+            }
             case PROD_ADD -> {
                 //TODO: TEMPORAL, CAMBIAR Y AÑADIR MAXPERS
                 int id = (int)(Math.random()*10000);
                 try{id = Integer.parseInt(commandParameters[0]);} catch (NumberFormatException ignored) {}
 
+                if (commandParameters[3] != null){
+                    //PRODUCTO PERSONALIZADO
+                }
                 Product prod = catalog.add(new Product(
                         id,
                         commandParameters[1],
@@ -109,5 +153,14 @@ public class Tienda {
         System.out.println("\nCategories: MERCH, STATIONERY, CLOTHES, BOOK, ELECTRONICS\n" +
                 "Discounts if there are ≥2 units in the category: MERCH 0%, STATIONERY 5%, CLOTHES 7%, BOOK 10%, ELECTRONICS 3%.");
     }
+    public Cashier findCashierById(String id) {
+        if (id == null) return null;
 
+        for (Cashier c : cashiers) {
+            if (id.equals(c.getId())) {  // compare IDs safely
+                return c;
+            }
+        }
+        return null; // not found
+    }
 }

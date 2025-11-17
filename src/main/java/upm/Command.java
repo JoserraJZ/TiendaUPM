@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum Command {
+    //TODO: HE CAMBIADO ID POR CASHID PARA QUE FUNCIONE EN CIERTOS CASOS
     CLIENT_ADD("client add", new String[]{"\"<nombre>\"", "<DNI>", "<email>", "<cashId>"}, 6, 6),
     CLIENT_REMOVE("client remove", new String[]{"<DNI>"}, 3, 3),
     CLIENT_LIST("client list", new String[]{}, 2, 2),
@@ -17,9 +18,9 @@ public enum Command {
 
     TICKET_NEW("ticket new", new String[]{"[<id>]", "<cashId>", "<userId>"}, 4, 5),
     // TODO: HACER QUE TICKET ADD FUNCIONE CORRECTAMENTE CON EL --P
-    TICKET_ADD("ticket add", new String[]{"<ticketId>", "<cashId>", "<prodId>", "<amount>", "[--p<txt> --p<txt>]"}, 6, 0), // 0 = unlimited personalizations
-    TICKET_REMOVE("ticket remove", new String[]{"<ticketId>", "<cashId>", "<prodId>"}, 4, 4),
-    TICKET_PRINT("ticket print", new String[]{"<ticketId>", "<cashId>"}, 3, 3),
+    TICKET_ADD("ticket add", new String[]{"<ticketId>", "<cashId>", "<prodId>", "<amount>", "[--p<txt> --p<txt>]"}, 6, 0),
+    TICKET_REMOVE("ticket remove", new String[]{"<ticketId>", "<cashId>", "<prodId>"}, 5, 5),
+    TICKET_PRINT("ticket print", new String[]{"<ticketId>", "<cashId>"}, 4, 4),
     TICKET_LIST("ticket list", new String[]{}, 2, 2),
 
     PROD_ADD("prod add", new String[]{"[<id>]", "\"<name>\"", "<category>", "<price>", "[<maxPers>]"}, 5, 7),
@@ -105,6 +106,16 @@ public enum Command {
                         matches = false;
                     }
                 }
+                case "--p<txt> --p<txt>" ->{
+                    for (int j = i + offsetAmount; j < commandGiven.length; j++) {
+                        if (!commandGiven[j].matches("^--p\\S+$")) {
+                            matches = false;
+                            break;
+                        }else{
+                            returnParams[j-offsetAmount] = commandGiven[j].replaceFirst("^--p", "");
+                        }
+                    }
+                }
             }
 
             if (!matches && isOptional){
@@ -113,13 +124,12 @@ public enum Command {
             }
             else if (!matches) {
                 System.out.print(errorCode);
+                return false;
             }
             else{
-                returnParams[i] = commandGiven[i + offsetAmount];
+                if(i != (commandExpected.length-1) || !commandGiven[commandGiven.length-1].startsWith("--p")) returnParams[i] = commandGiven[i + offsetAmount];
             }
         }
-
-
         return true;
     }
 
@@ -132,7 +142,7 @@ public enum Command {
                 int wordCount = cmd.commandText.trim().split("\\s+").length;//trim quita los espacios de inicio y final, split separa por espacios (\s) del tamaño que sea (+)
 
                 if(cmd.matchesLength(command.length)){
-                    String[] returnParams = new String[command.length];
+                    String[] returnParams = new String[Math.max(cmd.maxLength, command.length-wordCount)];
                     if (matchesFormat(cmd.parameters, command, wordCount, returnParams)) {
 
                         return new ValidatedCommand(cmd, returnParams);

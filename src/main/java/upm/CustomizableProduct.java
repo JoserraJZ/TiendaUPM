@@ -39,4 +39,6 @@ public class CustomizableProduct extends Product {
         double surcharge = basePrice * 0.10 * personalizedTexts.size();
         return basePrice + surcharge;
     }
+
+
 }
