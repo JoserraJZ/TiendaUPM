@@ -24,7 +24,7 @@ public class Tienda {
     }
 
     public Tienda() {
-        this.currentTicket = new Ticket(22222);
+        //this.currentTicket = new Ticket(22222);
         this.catalog= new ProductCatalog();
     }
 
@@ -75,7 +75,7 @@ public class Tienda {
                 }
             }
 
-            case TICKET_NEW -> this.currentTicket = new Ticket(0);
+            //case TICKET_NEW -> this.currentTicket = new Ticket(0);
             //case TICKET_ADD -> {
             //    if (catalog.getById(Integer.parseInt(args[2])) != null) {
             //        currentTicket.addProducts(catalog.getById(Integer.parseInt(args[2])), Integer.parseInt(args[3]));
@@ -85,7 +85,7 @@ public class Tienda {
             //    currentTicket.printTicket();
             //}
             //case TICKET_REMOVE -> this.currentTicket.removeProduct(Integer.parseInt(args[2]));
-            case TICKET_PRINT -> currentTicket.printTicket();
+            //case TICKET_PRINT -> currentTicket.printTicket();
 
             case HELP -> this.help();
             case ECHO -> System.out.println(inputCommand.substring(5));
