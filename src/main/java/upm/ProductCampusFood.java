@@ -1,8 +1,10 @@
 package upm;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Locale;
 
 public class ProductCampusFood extends Product {
     private LocalDateTime expirationDate;
@@ -10,24 +12,40 @@ public class ProductCampusFood extends Product {
     private LocalDateTime creationDate;
 
     public ProductCampusFood(int idProd, String productName, double pricePerPerson, LocalDateTime expirationDate, int maxParticipants) {
-        super(idProd, productName, null, pricePerPerson);
-        this.expirationDate = expirationDate;
-        this.maxParticipants = Math.min(maxParticipants, 100);
-        this.creationDate = LocalDateTime.now();
-        validatePlanningTime();
-    }
 
-    private void validatePlanningTime() {
-        if (ChronoUnit.DAYS.between(creationDate, expirationDate) < 3) {
-            //TODO: HACER QUE ESTO HAGA UN SOUT Y DE ERROR EN VEZ DE UN EXCEPTION
-            throw new IllegalArgumentException("Las comidas requieren al menos 3 días de planificación.");
+
+        super(idProd, productName, null, pricePerPerson);
+        LocalDateTime fechaCreacion= LocalDateTime.now();
+        try {
+            if (Duration.between(fechaCreacion, expirationDate).toDays() < 3) {
+                throw new IllegalArgumentException("Las comidas requieren al menos 3 dias de planificación.");
+            }
+
+            this.expirationDate = expirationDate;
+            this.maxParticipants = Math.min(maxParticipants, 100);
+            this.creationDate = fechaCreacion;
+            System.out.println("prod addFood: ok");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
-
+    
     public double calculateTotalPrice() {
         return getPrice() * maxParticipants;
     }
 
     // Getters y setters si los necesitas
+
+    @Override
+    public double getPrice() {
+        return super.getPrice();
+    }
+
+    @Override
+    public String toString() {
+        return String.format(Locale.US,
+                "{class:%s, id:%d, name:'%s', price:%.1f, date of Event:'%s', max people allowed:%d}",
+                "Food", super.getId(), super.getPrice(), super.getPrice(), expirationDate, maxParticipants);
+    }
 }
 

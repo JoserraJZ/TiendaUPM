@@ -2,6 +2,7 @@ package upm;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 public class ProductMeeting extends Product {
     private LocalDateTime expirationDateTime;
@@ -10,22 +11,30 @@ public class ProductMeeting extends Product {
 
     public ProductMeeting(int idProd, String productName, double pricePerPerson, LocalDateTime expirationDateTime, int maxParticipants, LocalDateTime creationDateTime) {
         super(idProd, productName, null, pricePerPerson);
-        this.expirationDateTime = expirationDateTime;
-        this.maxParticipants = Math.min(maxParticipants, 100);
-        this.creationDateTime = LocalDateTime.now();
-        validatePlanningTime();
-    }
+        try {
+            if (Duration.between(creationDateTime, expirationDateTime).toHours() < 12) {
+                throw new IllegalArgumentException("Las reuniones requieren al menos 12 horas de planificación.");
+            }
 
-    private void validatePlanningTime() {
-        if (Duration.between(creationDateTime, expirationDateTime).toHours() < 12) {
-            //TODO: HACER QUE ESTO HAGA UN SOUT Y DE ERROR EN VEZ DE UN EXCEPTION
-            throw new IllegalArgumentException("Las reuniones requieren al menos 12 horas de planificación.");
+            this.expirationDateTime = expirationDateTime;
+            this.maxParticipants = Math.min(maxParticipants, 100);
+            this.creationDateTime = LocalDateTime.now();
+            System.out.println("prod addMeeting: ok");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
         }
+
     }
 
     public double calculateTotalPrice() {
         return getPrice() * maxParticipants;
     }
 
+    @Override
+    public String toString() {
+        return String.format(Locale.US,
+                "{class:%s, id:%d, name:'%s', price:%.1f, date of Event:'%s', max people allowed:%d}",
+                "Meeting", super.getId(), super.getName(), super.getPrice(), expirationDateTime, maxParticipants);
+    }
     // Getters y setters si los necesitas
 }

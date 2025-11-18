@@ -3,6 +3,7 @@ package upm;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class CustomizableProduct extends Product {
 
@@ -40,5 +41,17 @@ public class CustomizableProduct extends Product {
         return basePrice + surcharge;
     }
 
+    @Override
+    public String toString() {
+        if (maxTexts>0){
+            return String.format(Locale.US,
+                    "{class:%s, id:%d, name:'%s', category:%s, price:%.1f, maxPersonal:%d, personalizationList:'%s'}",
+                    "Product", super.getId(), super.getName(), super.getCategory(), getPrice(), getMaxTexts(), personalizedTexts);
+        }else {
+            return String.format(Locale.US,
+                "{class:%s, id:%d, name:'%s', category:%s, price:%.1f, maxPersonal:%d }",
+                "Product", super.getId(), super.getName(), super.getCategory(), getPrice(), getMaxTexts());
+        }
+    }
 
 }
