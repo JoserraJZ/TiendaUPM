@@ -1,5 +1,7 @@
 package upm;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class Tienda {
@@ -96,7 +98,7 @@ public class Tienda {
                 //TODO: TEMPORAL, CAMBIAR Y AÑADIR MAXPERS
 
                 Product prod;
-                if (commandParameters[3] != null){
+                if (commandParameters[4] != null){
                     //PRODUCTO PERSONALIZADO (creo que esta bien pero no lo se seguro)
                     prod = catalog.add(new CustomizableProduct(
                             commandParameters[0],
@@ -134,7 +136,7 @@ public class Tienda {
                         commandParameters[0],
                         commandParameters[1],
                         Integer.parseInt(commandParameters[2]),
-                        LocalDateTime.parse(commandParameters[3]),
+                        LocalDate.parse(commandParameters[3], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay(),
                         Integer.parseInt(commandParameters[4])
                 ));
 
@@ -151,7 +153,7 @@ public class Tienda {
                         commandParameters[0],
                         commandParameters[1],
                         Integer.parseInt(commandParameters[2]),
-                        LocalDateTime.parse(commandParameters[3]),
+                        LocalDate.parse(commandParameters[3], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay(),
                         Integer.parseInt(commandParameters[4]),
                         LocalDateTime.now()
                 ));

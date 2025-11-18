@@ -19,7 +19,6 @@ public class ProductMeeting extends Product {
             this.expirationDateTime = expirationDateTime;
             this.maxParticipants = Math.min(maxParticipants, 100);
             this.creationDateTime = LocalDateTime.now();
-            System.out.println("prod addMeeting: ok");
         } catch (IllegalArgumentException e) {
             System.out.println("Error: " + e.getMessage());
         }

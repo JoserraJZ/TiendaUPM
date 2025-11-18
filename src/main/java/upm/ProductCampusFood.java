@@ -24,7 +24,6 @@ public class ProductCampusFood extends Product {
             this.expirationDate = expirationDate;
             this.maxParticipants = Math.min(maxParticipants, 100);
             this.creationDate = fechaCreacion;
-            System.out.println("prod addFood: ok");
         } catch (IllegalArgumentException e) {
             System.out.println("Error: " + e.getMessage());
         }
