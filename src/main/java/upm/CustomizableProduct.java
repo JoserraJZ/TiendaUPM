@@ -9,8 +9,8 @@ public class CustomizableProduct extends Product {
     private final int maxTexts;
     private final List<String> personalizedTexts;
 
-    public CustomizableProduct(int idProd, String productName, ProductCategory category, double basePrice, int maxTexts) {
-        super(idProd, productName, category, basePrice);
+    public CustomizableProduct(String stringId, String productName, ProductCategory category, double basePrice, int maxTexts) {
+        super(stringId, productName, category, basePrice);
         this.maxTexts = maxTexts;
         this.personalizedTexts = new ArrayList<>();
 

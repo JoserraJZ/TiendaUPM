@@ -55,4 +55,7 @@ public class ProductCatalog {
         return products.get(id);
     }
 
+    public boolean doesIdExist(int id){
+        return products.containsKey(id);
+    }
 }

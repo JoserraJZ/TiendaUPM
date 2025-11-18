@@ -8,8 +8,8 @@ public class ProductMeeting extends Product {
     private int maxParticipants;
     private LocalDateTime creationDateTime;
 
-    public ProductMeeting(int idProd, String productName, double pricePerPerson, LocalDateTime expirationDateTime, int maxParticipants, LocalDateTime creationDateTime) {
-        super(idProd, productName, null, pricePerPerson);
+    public ProductMeeting(String stringId, String productName, double pricePerPerson, LocalDateTime expirationDateTime, int maxParticipants, LocalDateTime creationDateTime) {
+        super(stringId, productName, null, pricePerPerson);
         this.expirationDateTime = expirationDateTime;
         this.maxParticipants = Math.min(maxParticipants, 100);
         this.creationDateTime = LocalDateTime.now();

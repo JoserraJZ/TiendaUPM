@@ -9,8 +9,8 @@ public class ProductCampusFood extends Product {
     private int maxParticipants;
     private LocalDateTime creationDate;
 
-    public ProductCampusFood(int idProd, String productName, double pricePerPerson, LocalDateTime expirationDate, int maxParticipants) {
-        super(idProd, productName, null, pricePerPerson);
+    public ProductCampusFood(String stringId, String productName, double pricePerPerson, LocalDateTime expirationDate, int maxParticipants) {
+        super(stringId, productName, null, pricePerPerson);
         this.expirationDate = expirationDate;
         this.maxParticipants = Math.min(maxParticipants, 100);
         this.creationDate = LocalDateTime.now();
