@@ -68,6 +68,20 @@ public class Tienda {
                     System.out.println("No se ha encontrado ningún cajero con el identificador introducido");
                 }
             }
+            case CASH_TICKETS -> {
+                Cashier cash = findCashierById(commandParameters[0]);
+                if (cash != null) {
+                    // Obtener colección de tickets desde el cajero
+                    List<Ticket> tickets = new ArrayList<>(cash.getTickets());
+                    // Ordenar por Id (asumiendo Id entero)
+                    tickets.sort(Comparator.comparingInt(Ticket::getId));
+                    System.out.println("Tickets: ");
+                    tickets.forEach(t -> System.out.println(t.getId() + " " + t.getCurrentState()));
+                } else {
+                    System.out.println("El identificador de cajero introducido no existe");
+                }
+            }
+
             case CLIENT_ADD -> {
                 Cashier cash = findCashierById(commandParameters[3]);
                 if (cash != null){
@@ -186,7 +200,7 @@ public class Tienda {
             }
             case TICKET_REMOVE -> this.currentTicket.removeProduct(Integer.parseInt(commandParameters[2]));
             case TICKET_PRINT -> currentTicket.printTicket();
-
+            case TICKET_PRINT
              */
             case HELP -> this.help();
             case ECHO -> System.out.println(inputCommand.substring(5));

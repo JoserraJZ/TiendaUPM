@@ -9,13 +9,11 @@ public class Ticket {
     private final Map<Integer, TicketItem> items ;
     private final int id;
     private String timestampID;
-
     private TicketState currentState;
 
-    public Ticket(int id) {
+    public Ticket(String id) {
+        this.id = (id == null) ? RandomGenerator.generateTicketId() : Integer.parseInt(id);
         this.items = new LinkedHashMap<>();
-
-        this.id =id;
         this.timestampID = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yy-HH:mm"))+"-"+ this.id;
         this.currentState = TicketState.VACIO;
     }
@@ -54,6 +52,15 @@ public class Ticket {
 
         System.out.println(this);
     }
+
+    int getId() {
+        return id;
+    }
+
+    TicketState getCurrentState() {
+        return currentState;
+    }
+
     @Override
     public String toString() {
         List<TicketItem> sorted = new ArrayList<>(items.values());

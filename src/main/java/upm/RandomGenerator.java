@@ -61,4 +61,10 @@ public class RandomGenerator {
         }
         throw new RuntimeException("No se pudo generar un ID único en 1000 intentos");
     }
+
+    public static int generateTicketId(){
+
+        return 0;
+    }
+
 }
