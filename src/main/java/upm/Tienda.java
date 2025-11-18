@@ -94,6 +94,7 @@ public class Tienda {
             }
             case PROD_ADD -> {
                 //TODO: TEMPORAL, CAMBIAR Y AÑADIR MAXPERS
+<<<<<<< Updated upstream
 
                 Product prod;
                 if (commandParameters[3] != null){
@@ -131,6 +132,8 @@ public class Tienda {
             case PROD_ADDFOOD -> {
                 int id = (int)(Math.random()*10000);
                 try{id = Integer.parseInt(commandParameters[0]);} catch (NumberFormatException ignored) {}
+=======
+>>>>>>> Stashed changes
 
                 Product prod;
 
@@ -139,6 +142,7 @@ public class Tienda {
 =======
                 Product prod = catalog.add(new Product(
                         commandParameters[0],
+<<<<<<< Updated upstream
 >>>>>>> Stashed changes
                         commandParameters[1],
                         Integer.parseInt(commandParameters[2]),
@@ -160,6 +164,8 @@ public class Tienda {
 
                 prod = catalog.add(new ProductMeeting(
                         id,
+=======
+>>>>>>> Stashed changes
                         commandParameters[1],
                         Integer.parseInt(commandParameters[2]),
                         LocalDateTime.parse(commandParameters[3]),
