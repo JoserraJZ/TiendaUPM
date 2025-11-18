@@ -9,8 +9,8 @@ public class Product {
     private ProductCategory category;
     private double price;
 
-    public Product(int idProd, String productName, ProductCategory category, double price){
-        this.id = idProd;
+    public Product(String stringId, String productName, ProductCategory category, double price){
+        this.id = (stringId == null) ? RandomGenerator.generateProductId() : Integer.parseInt(stringId);
         this.name = productName;
         this.category = category;
         this.price = price;

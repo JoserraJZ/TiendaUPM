@@ -16,8 +16,15 @@ public class Tienda {
         Tienda store = new Tienda();
         Scanner scanner = new Scanner(System.in);
 
-        while (!store.executeCommand(scanner));
-
+        while (true) {
+            try {
+                if (store.executeCommand(scanner)) {
+                    break; // exit loop if executeCommand returns true
+                }
+            } catch (Exception e) {
+                System.err.println("Se ha dado el error: " + e.getMessage());
+            }
+        }
         System.out.println("Closing application.\nGoodbye!");
     }
 
@@ -25,6 +32,8 @@ public class Tienda {
         this.catalog = new ProductCatalog();
         this.cashiers = new HashSet<>();
         this.clients = new HashSet<>();
+
+        RandomGenerator.Init(catalog, cashiers, clients);
     }
 
     private boolean executeCommand(Scanner scanner) {
@@ -85,8 +94,7 @@ public class Tienda {
             }
             case PROD_ADD -> {
                 //TODO: TEMPORAL, CAMBIAR Y AÑADIR MAXPERS
-                int id = (int)(Math.random()*10000);
-                try{id = Integer.parseInt(commandParameters[0]);} catch (NumberFormatException ignored) {}
+<<<<<<< Updated upstream
 
                 Product prod;
                 if (commandParameters[3] != null){
@@ -106,6 +114,7 @@ public class Tienda {
                             Integer.parseInt(commandParameters[3])
                     ));
                 }
+<<<<<<< Updated upstream
 
                 if (prod == null) {
                     System.out.println("No se pueden añadir más de 200 productos");
@@ -123,11 +132,18 @@ public class Tienda {
             case PROD_ADDFOOD -> {
                 int id = (int)(Math.random()*10000);
                 try{id = Integer.parseInt(commandParameters[0]);} catch (NumberFormatException ignored) {}
+=======
+>>>>>>> Stashed changes
 
                 Product prod;
 
                 prod = catalog.add(new ProductCampusFood(
                         id,
+=======
+                Product prod = catalog.add(new Product(
+                        commandParameters[0],
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
                         commandParameters[1],
                         Integer.parseInt(commandParameters[2]),
                         LocalDateTime.parse(commandParameters[3]),
@@ -148,6 +164,8 @@ public class Tienda {
 
                 prod = catalog.add(new ProductMeeting(
                         id,
+=======
+>>>>>>> Stashed changes
                         commandParameters[1],
                         Integer.parseInt(commandParameters[2]),
                         LocalDateTime.parse(commandParameters[3]),
