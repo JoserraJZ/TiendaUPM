@@ -11,10 +11,10 @@ public class ProductCampusFood extends Product {
     private int maxParticipants;
     private LocalDateTime creationDate;
 
-    public ProductCampusFood(int idProd, String productName, double pricePerPerson, LocalDateTime expirationDate, int maxParticipants) {
+    public ProductCampusFood(String stringId, String productName, double pricePerPerson, LocalDateTime expirationDate, int maxParticipants) {
 
 
-        super(idProd, productName, null, pricePerPerson);
+        super(stringId, productName, null, pricePerPerson);
         LocalDateTime fechaCreacion= LocalDateTime.now();
         try {
             if (Duration.between(fechaCreacion, expirationDate).toDays() < 3) {

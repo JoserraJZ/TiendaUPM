@@ -69,12 +69,12 @@ public class Tienda {
             case CLIENT_ADD -> {
                 Cashier cash = findCashierById(commandParameters[3]);
                 if (cash != null){
-                     if (!clients.add(new Client(commandParameters[0],
+                    if (!clients.add(new Client(commandParameters[0],
                             commandParameters[1],
                             commandParameters[2],
                             cash))){
-                         System.out.println("El identificador de usuario introducido ya existe");
-                     }
+                        System.out.println("El identificador de usuario introducido ya existe");
+                    }
                 }else{
                     System.out.println("El identificador de cajero introducido no existe");
                 }
@@ -94,13 +94,12 @@ public class Tienda {
             }
             case PROD_ADD -> {
                 //TODO: TEMPORAL, CAMBIAR Y AÑADIR MAXPERS
-<<<<<<< Updated upstream
 
                 Product prod;
                 if (commandParameters[3] != null){
                     //PRODUCTO PERSONALIZADO (creo que esta bien pero no lo se seguro)
                     prod = catalog.add(new CustomizableProduct(
-                            id,
+                            commandParameters[0],
                             commandParameters[1],
                             ProductCategory.valueOf(commandParameters[2]),
                             Integer.parseInt(commandParameters[3]),
@@ -108,13 +107,12 @@ public class Tienda {
                     ));
                 } else {
                     prod = catalog.add(new Product(
-                            id,
+                            commandParameters[0],
                             commandParameters[1],
                             ProductCategory.valueOf(commandParameters[2]),
                             Integer.parseInt(commandParameters[3])
                     ));
                 }
-<<<<<<< Updated upstream
 
                 if (prod == null) {
                     System.out.println("No se pueden añadir más de 200 productos");
@@ -130,20 +128,10 @@ public class Tienda {
             }
             // Pongo los de addfood y addmeeting como creo que serán
             case PROD_ADDFOOD -> {
-                int id = (int)(Math.random()*10000);
-                try{id = Integer.parseInt(commandParameters[0]);} catch (NumberFormatException ignored) {}
-=======
->>>>>>> Stashed changes
-
                 Product prod;
 
                 prod = catalog.add(new ProductCampusFood(
-                        id,
-=======
-                Product prod = catalog.add(new Product(
                         commandParameters[0],
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
                         commandParameters[1],
                         Integer.parseInt(commandParameters[2]),
                         LocalDateTime.parse(commandParameters[3]),
@@ -157,15 +145,10 @@ public class Tienda {
                 }
             }
             case PROD_ADDMEETING -> {
-                int id = (int)(Math.random()*10000);
-                try{id = Integer.parseInt(commandParameters[0]);} catch (NumberFormatException ignored) {}
-
                 Product prod;
 
                 prod = catalog.add(new ProductMeeting(
-                        id,
-=======
->>>>>>> Stashed changes
+                        commandParameters[0],
                         commandParameters[1],
                         Integer.parseInt(commandParameters[2]),
                         LocalDateTime.parse(commandParameters[3]),
