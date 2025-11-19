@@ -7,14 +7,13 @@ import java.time.format.DateTimeFormatter;
 public class Ticket {
 
     private final Map<Integer, TicketItem> items ;
-    private final int id;
+    private final String id;
     private String timestampID;
     private TicketState currentState;
 
     public Ticket(String id) {
-        this.id = (id == null) ? RandomGenerator.generateTicketId() : Integer.parseInt(id);
+        this.id = (id == null) ? RandomGenerator.generateTicketId() : id;
         this.items = new LinkedHashMap<>();
-        this.timestampID = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yy-HH:mm"))+"-"+ this.id;
         this.currentState = TicketState.VACIO;
     }
 
@@ -53,7 +52,7 @@ public class Ticket {
         System.out.println(this);
     }
 
-    int getId() {
+    String getId() {
         return id;
     }
 

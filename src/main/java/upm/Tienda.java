@@ -10,6 +10,7 @@ public class Tienda {
     private final ProductCatalog catalog; /////?
     private final Set<Cashier> cashiers;
     private final Set<Client> clients;
+    private final Set<Ticket> tickets;
 
     public static void main(String[] args) {
         System.out.println("Welcome to the ticket module App.\n" +
@@ -34,6 +35,7 @@ public class Tienda {
         this.catalog = new ProductCatalog();
         this.cashiers = new HashSet<>();
         this.clients = new HashSet<>();
+        this.tickets = new HashSet<>();
 
         RandomGenerator.Init(catalog, cashiers, clients);
     }
@@ -74,7 +76,7 @@ public class Tienda {
                     // Obtener colección de tickets desde el cajero
                     List<Ticket> tickets = new ArrayList<>(cash.getTickets());
                     // Ordenar por Id (asumiendo Id entero)
-                    tickets.sort(Comparator.comparingInt(Ticket::getId));
+                    // tickets.sort(Comparator.comparingInt(Ticket::getId));
                     System.out.println("Tickets: ");
                     tickets.forEach(t -> System.out.println(t.getId() + " " + t.getCurrentState()));
                 } else {
@@ -188,20 +190,27 @@ public class Tienda {
                 }
             }
 
-            /*
-            case TICKET_NEW -> this.currentTicket = new Ticket(0);
+            case TICKET_NEW -> this.tickets.add(new Ticket(commandParameters[1]));
+            //COMPROBAR ADD Y REMOVE
             case TICKET_ADD -> {
                 if (catalog.getById(Integer.parseInt(commandParameters[2])) != null) {
-                    currentTicket.addProducts(catalog.getById(Integer.parseInt(commandParameters[2])), Integer.parseInt(commandParameters[3]));
+                    getTicketById(commandParameters[1]).addProducts(catalog.getById(Integer.parseInt(commandParameters[2])), Integer.parseInt(commandParameters[3]));
                 } else {
                     System.out.println("Producto no encontrado en catálogo");
                 }
-                currentTicket.printTicket();
+                getTicketById(commandParameters[1]).printTicket();
             }
-            case TICKET_REMOVE -> this.currentTicket.removeProduct(Integer.parseInt(commandParameters[2]));
-            case TICKET_PRINT -> currentTicket.printTicket();
-            case TICKET_PRINT
-             */
+            case TICKET_REMOVE -> {
+                if (getTicketById(commandParameters[1]).removeProduct(Integer.parseInt(commandParameters[2]))) {
+                    System.out.println("Producto eliminado del ticket.");
+                } else {
+                    System.out.println("No se pudo eliminar el producto del ticket.");
+                }
+                getTicketById(commandParameters[1]).printTicket();
+            }
+            case TICKET_PRINT -> getTicketById(commandParameters[1]).printTicket();
+            case TICKET_LIST -> {}
+
             case HELP -> this.help();
             case ECHO -> System.out.println(inputCommand.substring(5));
             case EXIT -> exit = true;
@@ -214,6 +223,16 @@ public class Tienda {
         }
 
         return exit;
+    }
+
+    public Ticket getTicketById(String id) {
+        if (id == null) return null;
+        for (Ticket t : tickets) {
+            if (id.equals(t.getId())) {
+                return t;
+            }
+        }
+        return null;
     }
 
     private void help() {

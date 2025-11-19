@@ -1,8 +1,12 @@
 package upm;
 
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Random;
 import java.util.Set;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class RandomGenerator {
     private static final Random random = new Random();
@@ -62,9 +66,13 @@ public class RandomGenerator {
         throw new RuntimeException("No se pudo generar un ID único en 1000 intentos");
     }
 
-    public static int generateTicketId(){
-
-        return 0;
+    public static String generateTicketId() {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
+        String datePart = now.format(fmt);
+        int rand = random.nextInt(100_000); // 0..99999
+        String randPart = String.format("%05d", rand);
+        return datePart + "-" + randPart;
     }
 
 }
