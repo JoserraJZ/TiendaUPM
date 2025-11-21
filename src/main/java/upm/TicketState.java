@@ -1,7 +1,7 @@
 package upm;
 
 public enum TicketState {
-    VACIO,
-    ACTIVO,
-    CERRADO
+    EMPTY,
+    OPEN,
+    CLOSE
 }

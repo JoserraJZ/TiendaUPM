@@ -1,3 +1,4 @@
+// java
 package upm;
 
 import java.time.LocalDateTime;
@@ -11,16 +12,28 @@ public class Ticket {
     private String timestampID;
     private TicketState currentState;
 
+    private String chasId;
+    private String userId;
+
     public Ticket(String id) {
         this.id = (id == null) ? RandomGenerator.generateTicketId() : id;
         this.items = new LinkedHashMap<>();
-        this.currentState = TicketState.VACIO;
+        this.currentState = TicketState.EMPTY;
+    }
+
+    public Ticket(String id, String chasId, String userId) {
+        this.id = (id == null) ? RandomGenerator.generateTicketId() : id;
+        this.items = new LinkedHashMap<>();
+        //this.timestampID = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm"));
+        this.currentState = TicketState.EMPTY;
+        this.chasId = chasId;
+        this.userId = userId;
     }
 
 
     //TODO: HACER ESTO CON UN ITEMS.MERGE
     public void addProducts(Product product, int amount) {
-        if (currentState != TicketState.CERRADO){
+        if (currentState != TicketState.CLOSE){
             int id = product.getId();
 
             if (items.containsKey(id)) {
@@ -30,12 +43,13 @@ public class Ticket {
             } else {
                 items.put(id, new TicketItem(product, amount));
             }
+            this.currentState = TicketState.OPEN;
         }
     }
 
 
     public boolean removeProduct(int productId) {
-        if (currentState != TicketState.CERRADO){
+        if (currentState != TicketState.CLOSE){
             if (items.remove(productId) != null) {
                 System.out.println("Producto con ID " + productId + " eliminado correctamente.");
                 return true;
@@ -47,8 +61,11 @@ public class Ticket {
     }
 
     public void printTicket() {
-        this.currentState = TicketState.CERRADO;
+        this.currentState = TicketState.CLOSE;
+        System.out.println(this);
+    }
 
+    public void printTicketNoClose() {
         System.out.println(this);
     }
 
@@ -58,6 +75,22 @@ public class Ticket {
 
     TicketState getCurrentState() {
         return currentState;
+    }
+
+    public String getChasId() {
+        return chasId;
+    }
+
+    public void setChasId(String chasId) {
+        this.chasId = chasId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
 
@@ -70,8 +103,10 @@ public class Ticket {
         double totalPrice = 0.0;
         double totalDiscount = 0.0;
 
+
+        //"-"+LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm"))
         StringBuilder sb = new StringBuilder("Ticket : ");
-        sb.append(timestampID).append("\n");
+        sb.append(id).append("\n");
 
 
         for (TicketItem ticketItem : sorted) {
@@ -94,9 +129,9 @@ public class Ticket {
         }
 
         double finalPrice = totalPrice - totalDiscount;
-        sb.append(String.format(Locale.US, "Total price: %.1f%n", totalPrice));
-        sb.append(String.format(Locale.US, "Total discount: %.1f%n", totalDiscount));
-        sb.append(String.format(Locale.US, "Final Price: %.1f%n", finalPrice));
+        sb.append(String.format(Locale.US, "  Total price: %.1f%n", totalPrice));
+        sb.append(String.format(Locale.US, "  Total discount: %.1f%n", totalDiscount));
+        sb.append(String.format(Locale.US, "  Final Price: %.1f", finalPrice));
 
         return sb.toString();
     }

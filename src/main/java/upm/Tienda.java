@@ -1,4 +1,5 @@
 package upm;
+import javax.security.auth.callback.CallbackHandler;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -53,6 +54,7 @@ public class Tienda {
         String[] commandParameters = commandAndParams.parameters;
 
         switch (command){
+            //CASHIER COMMANDS
             case CASH_ADD -> {
                 if(!cashiers.add(new Cashier(commandParameters[0], commandParameters[1], commandParameters[2]))){
                     System.out.println("El id introducido ya existe");
@@ -78,12 +80,12 @@ public class Tienda {
                     // Ordenar por Id (asumiendo Id entero)
                     // tickets.sort(Comparator.comparingInt(Ticket::getId));
                     System.out.println("Tickets: ");
-                    tickets.forEach(t -> System.out.println(t.getId() + " " + t.getCurrentState()));
+                    tickets.forEach(t -> System.out.println(t.getId() + " ->" + t.getCurrentState()));
                 } else {
                     System.out.println("El identificador de cajero introducido no existe");
                 }
             }
-
+            //CLIENT COMMANDS
             case CLIENT_ADD -> {
                 Cashier cash = findCashierById(commandParameters[3]);
                 if (cash != null){
@@ -110,6 +112,7 @@ public class Tienda {
                     System.out.println("No se ha encontrado ningún cliente con el identificador introducido");
                 }
             }
+            //PRODUCT COMMANDS
             case PROD_ADD -> {
                 //TODO: TEMPORAL, CAMBIAR Y AÑADIR MAXPERS
 
@@ -131,7 +134,6 @@ public class Tienda {
                             Integer.parseInt(commandParameters[3])
                     ));
                 }
-
                 if (prod == null) {
                     System.out.println("No se pueden añadir más de 200 productos");
                 } else {
@@ -147,7 +149,6 @@ public class Tienda {
             // Pongo los de addfood y addmeeting como creo que serán
             case PROD_ADDFOOD -> {
                 Product prod;
-
                 prod = catalog.add(new ProductCampusFood(
                         commandParameters[0],
                         commandParameters[1],
@@ -155,7 +156,6 @@ public class Tienda {
                         LocalDate.parse(commandParameters[3], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay(),
                         Integer.parseInt(commandParameters[4])
                 ));
-
                 if (prod == null) {
                     System.out.println("No se pueden añadir más de 200 productos");
                 } else {
@@ -164,7 +164,6 @@ public class Tienda {
             }
             case PROD_ADDMEETING -> {
                 Product prod;
-
                 prod = catalog.add(new ProductMeeting(
                         commandParameters[0],
                         commandParameters[1],
@@ -173,7 +172,6 @@ public class Tienda {
                         Integer.parseInt(commandParameters[4]),
                         LocalDateTime.now()
                 ));
-
                 if (prod == null) {
                     System.out.println("No se pueden añadir más de 200 productos");
                 } else {
@@ -189,36 +187,55 @@ public class Tienda {
                     System.out.println("Producto no encontrado");
                 }
             }
+            //TICKET COMMANDS
+            case TICKET_NEW -> {
+                String id = commandParameters[0];      // puede ser null si no se pasa
+                String cashId = commandParameters[1];
+                String userId = commandParameters[2];
+                Ticket nuevo = new Ticket(id, cashId, userId);
 
-            case TICKET_NEW -> this.tickets.add(new Ticket(commandParameters[1]));
+                Cashier cajero = null;
+                for (Cashier c : cashiers) {
+                    if (c.getId().equals(commandParameters[1])) {
+                        cajero = c;
+                        this.tickets.add(nuevo);
+                        c.addTicket(nuevo);
+                    }
+                }
+                //this.tickets.add(nuevo);
+                System.out.println(nuevo);
+            }
             //COMPROBAR ADD Y REMOVE
             case TICKET_ADD -> {
                 if (catalog.getById(Integer.parseInt(commandParameters[2])) != null) {
-                    getTicketById(commandParameters[1]).addProducts(catalog.getById(Integer.parseInt(commandParameters[2])), Integer.parseInt(commandParameters[3]));
+                    getTicketById(commandParameters[0]).addProducts(
+                            catalog.getById(Integer.parseInt(commandParameters[2])),
+                            Integer.parseInt(commandParameters[3])
+                    );
                 } else {
                     System.out.println("Producto no encontrado en catálogo");
                 }
-                getTicketById(commandParameters[1]).printTicket();
+                getTicketById(commandParameters[0]).printTicketNoClose();
             }
+
             case TICKET_REMOVE -> {
                 if (getTicketById(commandParameters[1]).removeProduct(Integer.parseInt(commandParameters[2]))) {
                     System.out.println("Producto eliminado del ticket.");
                 } else {
                     System.out.println("No se pudo eliminar el producto del ticket.");
                 }
-                getTicketById(commandParameters[1]).printTicket();
+                getTicketById(commandParameters[0]).printTicketNoClose();
             }
-            case TICKET_PRINT -> getTicketById(commandParameters[1]).printTicket();
+            case TICKET_PRINT -> getTicketById(commandParameters[0]).printTicket();
             case TICKET_LIST -> {
                 for (Ticket t : tickets) {
                     System.out.println(t.getId() + " - " + t.getCurrentState());
                 }
             }
-
+            //GENERAL COMMANDS
             case HELP -> this.help();
             case ECHO -> System.out.println(inputCommand.substring(5));
             case EXIT -> exit = true;
-
 
         }
         if (command.commandText.contains("prod") || command.commandText.contains("ticket") ||
