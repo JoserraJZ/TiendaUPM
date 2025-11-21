@@ -3,6 +3,7 @@ package upm;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 
@@ -12,8 +13,6 @@ public class ProductCampusFood extends Product {
     private LocalDateTime creationDate;
 
     public ProductCampusFood(String stringId, String productName, double pricePerPerson, LocalDateTime expirationDate, int maxParticipants) {
-
-
         super(stringId, productName, null, pricePerPerson);
         LocalDateTime fechaCreacion= LocalDateTime.now();
         try {
@@ -43,8 +42,8 @@ public class ProductCampusFood extends Product {
     @Override
     public String toString() {
         return String.format(Locale.US,
-                "{class:%s, id:%d, name:'%s', price:%.1f, date of Event:'%s', max people allowed:%d}",
-                "Food", super.getId(), super.getPrice(), super.getPrice(), expirationDate, maxParticipants);
+                "{class:%s, id:%d, name:'%s', price:%.1f, date of Event:%s, max people allowed:%d}",
+                "Food", super.getId(), super.getName(), super.getPrice(), expirationDate.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), maxParticipants);
     }
 }
 

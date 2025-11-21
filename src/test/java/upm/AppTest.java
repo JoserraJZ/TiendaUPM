@@ -65,10 +65,10 @@ ticket list
 ticket print 212123 UW1234567
 ticket list
 echo "Trabajamos con productos de personas"
-prod addMeeting 23456 "Reunion Rotonda" 12 2025-11-21 100
-prod addMeeting 23457 "Graduacion ETSISI" 40 2025-11-21 30
-prod addFood 23458 "Cafeteria ETSISI" 5 2025-11-21 300
-prod addFood 23459 "Restaurante Asador" 50 2025-11-21 40
+prod addMeeting 23456 "Reunion Rotonda" 12 2025-11-30 100
+prod addMeeting 23457 "Graduacion ETSISI" 40 2025-11-30 30
+prod addFood 23458 "Cafeteria ETSISI" 5 2025-11-30 300
+prod addFood 23459 "Restaurante Asador" 50 2025-11-30 40
 prod list
 ticket new 212127 UW1234567 98948334B
 ticket add 212127 UW1234567 23456 20
@@ -448,23 +448,23 @@ exit
                 
                 tUPM> "Trabajamos con productos de personas"\s
                 
-                tUPM> {class:Meeting, id:23456, name:'Reunion Rotonda', price:0.0, date of Event:2025-11-21, max people allowed:100}
+                tUPM> {class:Meeting, id:23456, name:'Reunion Rotonda', price:12.0, date of Event:2025-11-30, max people allowed:100}
                 prod addMeeting: ok
                 
-                tUPM> {class:Meeting, id:23457, name:'Graduacion ETSISI', price:0.0, date of Event:2025-11-21, max people allowed:30}
+                tUPM> {class:Meeting, id:23457, name:'Graduacion ETSISI', price:40.0, date of Event:2025-11-30, max people allowed:30}
                 prod addMeeting: ok
                 
                 tUPM> Error processing ->prod addFood ->Error adding product
                 
-                tUPM> {class:Food, id:23459, name:'Restaurante Asador', price:0.0, date of Event:2025-11-21, max people allowed:40}
+                tUPM> {class:Food, id:23459, name:'Restaurante Asador', price:50.0, date of Event:2025-11-30, max people allowed:40}
                 prod addFood: ok
                 
                 tUPM> Catalog:
                   {class:Product, id:1, name:'Libro POO V2', category:BOOK, price:30.0}
                   {class:Product, id:2, name:'Camiseta talla:M UPM', category:CLOTHES, price:15.0}
-                  {class:Meeting, id:23456, name:'Reunion Rotonda', price:0.0, date of Event:2025-11-21, max people allowed:100}
-                  {class:Meeting, id:23457, name:'Graduacion ETSISI', price:0.0, date of Event:2025-11-21, max people allowed:30}
-                  {class:Food, id:23459, name:'Restaurante Asador', price:0.0, date of Event:2025-11-21, max people allowed:40}
+                  {class:Meeting, id:23456, name:'Reunion Rotonda', price:12.0, date of Event:2025-11-30, max people allowed:100}
+                  {class:Meeting, id:23457, name:'Graduacion ETSISI', price:40.0, date of Event:2025-11-30, max people allowed:30}
+                  {class:Food, id:23459, name:'Restaurante Asador', price:50.0, date of Event:2025-11-30, max people allowed:40}
                 prod list: ok
                 
                 tUPM> Ticket : 212127
@@ -474,7 +474,7 @@ exit
                 ticket new: ok
                 
                 tUPM> Ticket : 212127
-                  {class:Meeting, id:23456, name:'Reunion Rotonda', price:240.0, date of Event:2025-11-21, max people allowed:100, actual people in event:20}
+                  {class:Meeting, id:23456, name:'Reunion Rotonda', price:240.0, date of Event:2025-11-30, max people allowed:100, actual people in event:20}
                   Total price: 240.0
                   Total discount: 0.0
                   Final Price: 240.0
@@ -484,7 +484,7 @@ exit
                   {class:Product, id:2, name:'Camiseta talla:M UPM', category:CLOTHES, price:15.0} **discount -1.05
                   {class:Product, id:2, name:'Camiseta talla:M UPM', category:CLOTHES, price:15.0} **discount -1.05
                   {class:Product, id:2, name:'Camiseta talla:M UPM', category:CLOTHES, price:15.0} **discount -1.05
-                  {class:Meeting, id:23456, name:'Reunion Rotonda', price:240.0, date of Event:2025-11-21, max people allowed:100, actual people in event:20}
+                  {class:Meeting, id:23456, name:'Reunion Rotonda', price:240.0, date of Event:2025-11-30, max people allowed:100, actual people in event:20}
                   Total price: 285.0
                   Total discount: 3.1499999
                   Final Price: 281.85
@@ -494,7 +494,7 @@ exit
                   {class:Product, id:2, name:'Camiseta talla:M UPM', category:CLOTHES, price:15.0} **discount -1.05
                   {class:Product, id:2, name:'Camiseta talla:M UPM', category:CLOTHES, price:15.0} **discount -1.05
                   {class:Product, id:2, name:'Camiseta talla:M UPM', category:CLOTHES, price:15.0} **discount -1.05
-                  {class:Meeting, id:23456, name:'Reunion Rotonda', price:240.0, date of Event:2025-11-21, max people allowed:100, actual people in event:20}
+                  {class:Meeting, id:23456, name:'Reunion Rotonda', price:240.0, date of Event:2025-11-30, max people allowed:100, actual people in event:20}
                   Total price: 285.0
                   Total discount: 3.1499999
                   Final Price: 281.85

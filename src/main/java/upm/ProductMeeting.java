@@ -2,6 +2,7 @@ package upm;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 public class ProductMeeting extends Product {
@@ -32,8 +33,8 @@ public class ProductMeeting extends Product {
     @Override
     public String toString() {
         return String.format(Locale.US,
-                "{class:%s, id:%d, name:'%s', price:%.1f, date of Event:'%s', max people allowed:%d}",
-                "Meeting", super.getId(), super.getName(), super.getPrice(), expirationDateTime, maxParticipants);
+                "{class:%s, id:%d, name:'%s', price:%.1f, date of Event:%s, max people allowed:%d}",
+                "Meeting", super.getId(), super.getName(), super.getPrice(), expirationDateTime.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), maxParticipants);
     }
     // Getters y setters si los necesitas
 }

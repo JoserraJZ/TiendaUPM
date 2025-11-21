@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 public class Ticket {
 
     private final Map<Integer, TicketItem> items ;
-    private final String id;
+    private String id;
     private String timestampID;
     private TicketState currentState;
 
@@ -51,7 +51,7 @@ public class Ticket {
     public boolean removeProduct(int productId) {
         if (currentState != TicketState.CLOSE){
             if (items.remove(productId) != null) {
-                System.out.println("Producto con ID " + productId + " eliminado correctamente.");
+                //System.out.println("Producto con ID " + productId + " eliminado correctamente.");
                 return true;
             }
             System.out.println("El producto con ID " + productId + " no existe en el ticket.");
@@ -62,6 +62,7 @@ public class Ticket {
 
     public void printTicket() {
         this.currentState = TicketState.CLOSE;
+        id = id + "-"+LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm"));
         System.out.println(this);
     }
 
@@ -103,11 +104,17 @@ public class Ticket {
         double totalPrice = 0.0;
         double totalDiscount = 0.0;
 
-
-        //"-"+LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm"))
         StringBuilder sb = new StringBuilder("Ticket : ");
-        sb.append(id).append("\n");
+        sb.append(id).append("\n");;
 
+        /*
+        if (this.currentState == TicketState.CLOSE) {
+            sb.append("-"+LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm"))).append("\n");;
+        } else {
+            sb.append("\n");
+        }
+
+         */
 
         for (TicketItem ticketItem : sorted) {
             Product prod = ticketItem.getProduct();

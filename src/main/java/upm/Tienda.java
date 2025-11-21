@@ -53,6 +53,8 @@ public class Tienda {
         Command command = commandAndParams.command;
         String[] commandParameters = commandAndParams.parameters;
 
+        boolean correcto = true;
+
         switch (command){
             //CASHIER COMMANDS
             case CASH_ADD -> {
@@ -148,32 +150,42 @@ public class Tienda {
             }
             // Pongo los de addfood y addmeeting como creo que serán
             case PROD_ADDFOOD -> {
-                Product prod;
-                prod = catalog.add(new ProductCampusFood(
-                        commandParameters[0],
-                        commandParameters[1],
-                        Integer.parseInt(commandParameters[2]),
-                        LocalDate.parse(commandParameters[3], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay(),
-                        Integer.parseInt(commandParameters[4])
-                ));
+                Product prod = null;
+                if (Integer.parseInt(commandParameters[4]) <= 100) {
+                    prod = catalog.add(new ProductCampusFood(
+                            commandParameters[0],
+                            commandParameters[1],
+                            Double.parseDouble(commandParameters[2]),
+                            LocalDate.parse(commandParameters[3], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay(),
+                            Integer.parseInt(commandParameters[4])
+                    ));
+                } else {
+                    System.out.println("Error processing ->prod addFood ->Error adding product");
+                    correcto = false;
+                }
                 if (prod == null) {
-                    System.out.println("No se pueden añadir más de 200 productos");
+                    //System.out.println("No se pueden añadir más de 200 productos");
                 } else {
                     System.out.println(prod);
                 }
             }
             case PROD_ADDMEETING -> {
-                Product prod;
-                prod = catalog.add(new ProductMeeting(
-                        commandParameters[0],
-                        commandParameters[1],
-                        Integer.parseInt(commandParameters[2]),
-                        LocalDate.parse(commandParameters[3], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay(),
-                        Integer.parseInt(commandParameters[4]),
-                        LocalDateTime.now()
-                ));
+                Product prod = null;
+                if (Integer.parseInt(commandParameters[4]) <= 100) {
+                    prod = catalog.add(new ProductMeeting(
+                            commandParameters[0],
+                            commandParameters[1],
+                            Double.parseDouble(commandParameters[2]),
+                            LocalDate.parse(commandParameters[3], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay(),
+                            Integer.parseInt(commandParameters[4]),
+                            LocalDateTime.now()
+                    ));
+                } else {
+                    System.out.println("Error processing ->prod addMeeting ->Error adding meeting");
+                    correcto = false;
+                }
                 if (prod == null) {
-                    System.out.println("No se pueden añadir más de 200 productos");
+                    //System.out.println("No se pueden añadir más de 200 productos");
                 } else {
                     System.out.println(prod);
                 }
@@ -198,10 +210,10 @@ public class Tienda {
                 for (Cashier c : cashiers) {
                     if (c.getId().equals(commandParameters[1])) {
                         cajero = c;
-                        this.tickets.add(nuevo);
-                        c.addTicket(nuevo);
                     }
                 }
+                this.tickets.add(nuevo);
+                cajero.addTicket(nuevo);
                 //this.tickets.add(nuevo);
                 System.out.println(nuevo);
             }
@@ -219,17 +231,20 @@ public class Tienda {
             }
 
             case TICKET_REMOVE -> {
-                if (getTicketById(commandParameters[1]).removeProduct(Integer.parseInt(commandParameters[2]))) {
-                    System.out.println("Producto eliminado del ticket.");
-                } else {
-                    System.out.println("No se pudo eliminar el producto del ticket.");
+                boolean removed = getTicketById(commandParameters[0]).removeProduct(Integer.parseInt(commandParameters[2]));
+                if (removed) {
+                    getTicketById(commandParameters[0]).printTicketNoClose();
                 }
-                getTicketById(commandParameters[0]).printTicketNoClose();
             }
             case TICKET_PRINT -> getTicketById(commandParameters[0]).printTicket();
             case TICKET_LIST -> {
+                System.out.println("Ticket List:");
                 for (Ticket t : tickets) {
-                    System.out.println(t.getId() + " - " + t.getCurrentState());
+                    if (t.getCurrentState()!=TicketState.CLOSE) {
+                        System.out.println(t.getId() + " - " + t.getCurrentState());
+                    } else {
+                        System.out.println(t.getId() + " - " + t.getCurrentState());
+                    }
                 }
             }
             //GENERAL COMMANDS
@@ -238,8 +253,8 @@ public class Tienda {
             case EXIT -> exit = true;
 
         }
-        if (command.commandText.contains("prod") || command.commandText.contains("ticket") ||
-                command.commandText.contains("cash") || command.commandText.contains("client")){
+        if ((command.commandText.contains("prod") || command.commandText.contains("ticket") ||
+                command.commandText.contains("cash") || command.commandText.contains("client"))&& correcto) {
             System.out.println(command.commandText + ": ok");
         }
 
