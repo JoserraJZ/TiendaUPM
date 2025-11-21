@@ -209,7 +209,11 @@ public class Tienda {
                 getTicketById(commandParameters[1]).printTicket();
             }
             case TICKET_PRINT -> getTicketById(commandParameters[1]).printTicket();
-            case TICKET_LIST -> {}
+            case TICKET_LIST -> {
+                for (Ticket t : tickets) {
+                    System.out.println(t.getId() + " - " + t.getCurrentState());
+                }
+            }
 
             case HELP -> this.help();
             case ECHO -> System.out.println(inputCommand.substring(5));
