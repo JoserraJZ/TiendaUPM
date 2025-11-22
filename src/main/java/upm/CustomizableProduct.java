@@ -43,14 +43,14 @@ public class CustomizableProduct extends Product {
 
     @Override
     public String toString() {
-        if (maxTexts>0){
+        if (!personalizedTexts.isEmpty()){
             return String.format(Locale.US,
-                    "{class:%s, id:%d, name:'%s', category:%s, price:%.1f, maxPersonal:%d, personalizationList:'%s'}",
-                    "Product", super.getId(), super.getName(), super.getCategory(), getPrice(), getMaxTexts(), personalizedTexts);
+                    "{class:%s, id:%d, name:'%s', category:%s, price:%.1f, maxPersonal:%d, personalizationList:%s}",
+                    "ProductPersonalized", super.getId(), super.getName(), super.getCategory(), getPrice(), getMaxTexts(), personalizedTexts);
         }else {
             return String.format(Locale.US,
-                "{class:%s, id:%d, name:'%s', category:%s, price:%.1f, maxPersonal:%d }",
-                "Product", super.getId(), super.getName(), super.getCategory(), getPrice(), getMaxTexts());
+                "{class:%s, id:%d, name:'%s', category:%s, price:%.1f, maxPersonal:%d}",
+                "ProductPersonalized", super.getId(), super.getName(), super.getCategory(), getPrice(), getMaxTexts());
         }
     }
 

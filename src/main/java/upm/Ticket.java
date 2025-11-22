@@ -1,6 +1,8 @@
 // java
 package upm;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.time.format.DateTimeFormatter;
@@ -39,7 +41,12 @@ public class Ticket {
             if (items.containsKey(id)) {
                 TicketItem item = items.get(id);
 
-                items.put(id, new TicketItem(product, item.getQuantity() + amount));
+                if (product instanceof ProductMeeting || product instanceof ProductCampusFood){
+                    items.put(id, new TicketItem(product, 1));
+                }else {
+                    items.put(id, new TicketItem(product, item.getQuantity() + amount));
+                }
+
             } else {
                 items.put(id, new TicketItem(product, amount));
             }
@@ -104,6 +111,10 @@ public class Ticket {
         double totalPrice = 0.0;
         double totalDiscount = 0.0;
 
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
+        symbols.setDecimalSeparator('.');
+        DecimalFormat df = new DecimalFormat("0.0#######", symbols); // hasta 2 decimales, sin ceros innecesarios
+        String formatted = null;
         StringBuilder sb = new StringBuilder("Ticket : ");
         sb.append(id).append("\n");;
 
@@ -120,15 +131,32 @@ public class Ticket {
             Product prod = ticketItem.getProduct();
             int quantity = ticketItem.getQuantity();
             double price = prod.getPrice();
-            double discount = (double) prod.getCategory().getDiscountPercent() / 100;
+
+
+
 
             if (quantity < 2) {
                 sb.append(prod).append("\n");
             } else {
-                for (int i = 0; i < quantity; i++) {
-                    double unitDiscount = price * discount;
-                    sb.append(String.format(Locale.US, "%s **discount -%.1f%n", prod, unitDiscount));
-                    totalDiscount += unitDiscount;
+                if (prod.getCategory()!=null) {
+                    double discount = (double) prod.getCategory().getDiscountPercent() / 100;
+                    for (int i = 0; i < quantity; i++) {
+                        double unitDiscount = price * discount;
+                        formatted=df.format(unitDiscount);
+                        sb.append(String.format(Locale.US, "%s **discount -%s%n", prod, formatted));
+                        totalDiscount += unitDiscount;
+                    }
+                }else {
+                    if (prod instanceof CustomizableProduct) {
+                        sb.append(String.format(Locale.US, "%s%n", prod).repeat(quantity));
+                    }
+                    else{
+                        sb.append(String.format(Locale.US, "%s%n", prod));
+                        if (prod instanceof ProductMeeting){ProductMeeting pM=(ProductMeeting) prod; quantity=((ProductMeeting) pM).getCurrentParticipants();}
+                            else{
+                            ProductCampusFood pM=(ProductCampusFood) prod; quantity=((ProductCampusFood) pM).getCurrentParticipants();
+                            }
+                    }
                 }
             }
 
@@ -136,9 +164,12 @@ public class Ticket {
         }
 
         double finalPrice = totalPrice - totalDiscount;
-        sb.append(String.format(Locale.US, "  Total price: %.1f%n", totalPrice));
-        sb.append(String.format(Locale.US, "  Total discount: %.1f%n", totalDiscount));
-        sb.append(String.format(Locale.US, "  Final Price: %.1f", finalPrice));
+        formatted=df.format(totalPrice);
+        sb.append(String.format(Locale.US, "  Total price: %s%n", formatted));
+        formatted=df.format(totalDiscount);
+        sb.append(String.format(Locale.US, "  Total discount: %s%n", formatted));
+        formatted=df.format(finalPrice);
+        sb.append(String.format(Locale.US, "  Final Price: %s", formatted));
 
         return sb.toString();
     }

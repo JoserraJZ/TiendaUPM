@@ -220,10 +220,26 @@ public class Tienda {
             //COMPROBAR ADD Y REMOVE
             case TICKET_ADD -> {
                 if (catalog.getById(Integer.parseInt(commandParameters[2])) != null) {
-                    getTicketById(commandParameters[0]).addProducts(
-                            catalog.getById(Integer.parseInt(commandParameters[2])),
-                            Integer.parseInt(commandParameters[3])
-                    );
+
+                    if (commandParameters.length>4){
+                        CustomizableProduct pPersonalizado= (CustomizableProduct) catalog.getById(Integer.parseInt(commandParameters[2]));
+                        for (int i = 4; i < commandParameters.length; i++) {
+                            pPersonalizado.addPersonalizedText(commandParameters[i]);
+                        }
+                        getTicketById(commandParameters[0]).addProducts(pPersonalizado, Integer.parseInt(commandParameters[3]));
+                    }else {
+                        Product pNew= catalog.getById(Integer.parseInt(commandParameters[2]));
+                        if (pNew instanceof ProductMeeting){
+                            ProductMeeting pMNew= (ProductMeeting) pNew;
+                            pMNew.addParticipants(Integer.parseInt(commandParameters[3]));
+                            getTicketById(commandParameters[0]).addProducts(pMNew,1);
+                        }else {
+                            getTicketById(commandParameters[0]).addProducts(
+                                    catalog.getById(Integer.parseInt(commandParameters[2])),
+                                    Integer.parseInt(commandParameters[3])
+                            );
+                        }
+                    }
                 } else {
                     System.out.println("Producto no encontrado en catálogo");
                 }

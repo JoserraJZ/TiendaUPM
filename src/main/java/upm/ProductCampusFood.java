@@ -11,6 +11,8 @@ public class ProductCampusFood extends Product {
     private LocalDateTime expirationDate;
     private int maxParticipants;
     private LocalDateTime creationDate;
+    private int currentParticipants;
+
 
     public ProductCampusFood(String stringId, String productName, double pricePerPerson, LocalDateTime expirationDate, int maxParticipants) {
         super(stringId, productName, null, pricePerPerson);
@@ -27,7 +29,19 @@ public class ProductCampusFood extends Product {
             System.out.println("Error: " + e.getMessage());
         }
     }
-    
+    public int getCurrentParticipants() {
+        return currentParticipants;
+    }
+
+    public boolean addParticipants(int participantsAdded){
+
+        if (participantsAdded>maxParticipants){
+            return false;
+        }else {
+            currentParticipants+=participantsAdded;
+            return  true;
+        }
+    }
     public double calculateTotalPrice() {
         return getPrice() * maxParticipants;
     }
@@ -41,9 +55,17 @@ public class ProductCampusFood extends Product {
 
     @Override
     public String toString() {
-        return String.format(Locale.US,
-                "{class:%s, id:%d, name:'%s', price:%.1f, date of Event:%s, max people allowed:%d}",
-                "Food", super.getId(), super.getName(), super.getPrice(), expirationDate.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), maxParticipants);
+
+        if (currentParticipants>0){
+            return String.format(Locale.US,
+                    "{class:%s, id:%d, name:'%s', price:%.1f, date of Event:%s, max people allowed:%d, actual people in event:%d}",
+                    "Meeting", super.getId(), super.getName(), super.getPrice()*currentParticipants, expirationDate.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), maxParticipants, currentParticipants);
+        }else{
+            return String.format(Locale.US,
+                    "{class:%s, id:%d, name:'%s', price:%.1f, date of Event:%s, max people allowed:%d}",
+                    "Food", super.getId(), super.getName(), super.getPrice(), expirationDate.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), maxParticipants);
+        }
+
     }
 }
 
