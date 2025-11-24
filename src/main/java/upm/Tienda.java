@@ -255,12 +255,13 @@ public class Tienda {
             case TICKET_PRINT -> getTicketById(commandParameters[0]).printTicket();
             case TICKET_LIST -> {
                 System.out.println("Ticket List:");
-                for (Ticket t : tickets) {
-                    if (t.getCurrentState()!=TicketState.CLOSE) {
-                        System.out.println(t.getId() + " - " + t.getCurrentState());
-                    } else {
-                        System.out.println(t.getId() + " - " + t.getCurrentState());
-                    }
+
+                List<Ticket> list = new ArrayList<>(tickets);
+                list.sort(Comparator.comparing(Ticket::getCashId).
+                        thenComparing(Ticket::getCurrentState));
+
+                for (Ticket t : list) {
+                    System.out.println(t.getId() + " - " + t.getCurrentState());
                 }
             }
             //GENERAL COMMANDS

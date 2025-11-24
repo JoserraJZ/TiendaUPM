@@ -14,7 +14,7 @@ public class Ticket {
     private String timestampID;
     private TicketState currentState;
 
-    private String chasId;
+    private String cashId;
     private String userId;
 
     public Ticket(String id) {
@@ -23,12 +23,12 @@ public class Ticket {
         this.currentState = TicketState.EMPTY;
     }
 
-    public Ticket(String id, String chasId, String userId) {
+    public Ticket(String id, String cashId, String userId) {
         this.id = (id == null) ? RandomGenerator.generateTicketId() : id;
         this.items = new LinkedHashMap<>();
         //this.timestampID = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm"));
         this.currentState = TicketState.EMPTY;
-        this.chasId = chasId;
+        this.cashId = cashId;
         this.userId = userId;
     }
 
@@ -85,12 +85,12 @@ public class Ticket {
         return currentState;
     }
 
-    public String getChasId() {
-        return chasId;
+    public String getCashId() {
+        return cashId;
     }
 
-    public void setChasId(String chasId) {
-        this.chasId = chasId;
+    public void setCashId(String cashId) {
+        this.cashId = cashId;
     }
 
     public String getUserId() {

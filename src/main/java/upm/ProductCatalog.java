@@ -1,7 +1,6 @@
 package upm;
 
-import java.util.HashMap;
-import java.util.Locale;
+import java.util.*;
 
 public class ProductCatalog {
     private final HashMap<Integer, Product> products = new HashMap<>();
@@ -45,9 +44,12 @@ public class ProductCatalog {
 
     public void list() {
         System.out.println("Catalog:");
-        for (Product prod : products.values()) {
-            System.out.println(prod);
 
+        List<Product> list = new ArrayList<>(products.values());
+        list.sort(Comparator.comparing(Product::getId));
+
+        for (Product prod : list) {
+            System.out.println(prod);
         }
     }
 
