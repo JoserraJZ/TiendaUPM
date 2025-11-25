@@ -1,6 +1,7 @@
 // java
 package main.java.upm;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDateTime;
@@ -119,10 +120,12 @@ public class Ticket {
 
 
         //sorted.sort((a, b) -> Integer.compare(b.getProduct().getId(), a.getProduct().getId()));
-
+        Map<Integer, ArrayList<Product>> ordenadoDesc = new TreeMap<>(Comparator.reverseOrder());
+        ordenadoDesc.putAll(items);
+        List<ArrayList<Product>> sorted = new ArrayList<>(ordenadoDesc.values());
         double totalPrice = 0.0;
         double totalDiscount = 0.0;
-        List<ArrayList<Product>> sorted = new ArrayList<>(items.values());
+
 
         String formatted = null;
         StringBuilder sb = new StringBuilder("Ticket : ");
@@ -140,8 +143,9 @@ public class Ticket {
         for (ArrayList<Product> prodAgrupados: sorted) {
 
             //ArrayList<Product> productosAgrupados = items.get(id);
+            ArrayList<Product> groupedProductsPrice= ordenarPorPrecio(prodAgrupados);
             int quantity = prodAgrupados.size();
-            for (Product prod : prodAgrupados) {
+            for (Product prod : groupedProductsPrice) {
 
                 double price = prod.getPrice();
 
@@ -185,10 +189,13 @@ public class Ticket {
         return sb.toString();
     }
     public static String formatDouble(double d) {
-        String s = Double.toString(d);
+        BigDecimal bd = BigDecimal.valueOf(d).stripTrailingZeros();
+        String s = bd.toPlainString();
+        // Si es un entero puro, añadimos ".0"
         if (!s.contains(".")) {
             s += ".0";
         }
         return s;
     }
+
 }
