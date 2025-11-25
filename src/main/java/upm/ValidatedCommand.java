@@ -1,4 +1,4 @@
-package upm;
+package main.java.upm;
 
 public class ValidatedCommand {
     public final Command command;

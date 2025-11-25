@@ -1,5 +1,5 @@
 // java
-package upm;
+package main.java.upm;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -9,7 +9,7 @@ import java.time.format.DateTimeFormatter;
 
 public class Ticket {
 
-    private final Map<Integer, TicketItem> items ;
+    private final Map<Integer, ArrayList<Product>> items ;
     private String id;
     private String timestampID;
     private TicketState currentState;
@@ -36,19 +36,26 @@ public class Ticket {
     //TODO: HACER ESTO CON UN ITEMS.MERGE
     public void addProducts(Product product, int amount) {
         if (currentState != TicketState.CLOSE){
-            int id = product.getId();
 
-            if (items.containsKey(id)) {
-                TicketItem item = items.get(id);
 
+            if (items.containsKey(product.getId())) {
+                ArrayList<Product> existingList = items.get(product.getId());
                 if (product instanceof ProductMeeting || product instanceof ProductCampusFood){
-                    items.put(id, new TicketItem(product, 1));
+                    existingList.removeFirst();
+                    existingList.add(product);
+                    items.put(product.getId(), existingList);
                 }else {
-                    items.put(id, new TicketItem(product, item.getQuantity() + amount));
+                    for (int i = 0; i < amount; i++) {
+                        existingList.add(product);
+                    }
+                    items.put(product.getId(), existingList);
                 }
-
             } else {
-                items.put(id, new TicketItem(product, amount));
+                ArrayList<Product> newList= new ArrayList<>();
+                for (int i = 0; i < amount; i++) {
+                    newList.add(product);
+                }
+                items.put(product.getId(), newList);
             }
             this.currentState = TicketState.OPEN;
         }
@@ -101,22 +108,26 @@ public class Ticket {
         this.userId = userId;
     }
 
-
+    public ArrayList<Product> ordenarPorPrecio(ArrayList<Product> arrayArticulosmismoId){
+        ArrayList<Product> sorted = new ArrayList<>(arrayArticulosmismoId);
+        Collections.sort(sorted, Comparator.comparingDouble(Product::getPrice));
+        return sorted;
+    }
 
     @Override
     public String toString() {
-        List<TicketItem> sorted = new ArrayList<>(items.values());
-        sorted.sort((a, b) -> Integer.compare(b.getProduct().getId(), a.getProduct().getId()));
+
+
+        //sorted.sort((a, b) -> Integer.compare(b.getProduct().getId(), a.getProduct().getId()));
 
         double totalPrice = 0.0;
         double totalDiscount = 0.0;
+        List<ArrayList<Product>> sorted = new ArrayList<>(items.values());
 
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
-        symbols.setDecimalSeparator('.');
-        DecimalFormat df = new DecimalFormat("0.0#######", symbols); // hasta 2 decimales, sin ceros innecesarios
         String formatted = null;
         StringBuilder sb = new StringBuilder("Ticket : ");
-        sb.append(id).append("\n");;
+        sb.append(id).append("\n");
+        ;
 
         /*
         if (this.currentState == TicketState.CLOSE) {
@@ -126,51 +137,58 @@ public class Ticket {
         }
 
          */
+        for (ArrayList<Product> prodAgrupados: sorted) {
 
-        for (TicketItem ticketItem : sorted) {
-            Product prod = ticketItem.getProduct();
-            int quantity = ticketItem.getQuantity();
-            double price = prod.getPrice();
+            //ArrayList<Product> productosAgrupados = items.get(id);
+            int quantity = prodAgrupados.size();
+            for (Product prod : prodAgrupados) {
+
+                double price = prod.getPrice();
 
 
-
-
-            if (quantity < 2) {
-                sb.append(prod).append("\n");
-            } else {
-                if (prod.getCategory()!=null) {
-                    double discount = (double) prod.getCategory().getDiscountPercent() / 100;
-                    for (int i = 0; i < quantity; i++) {
+                if (quantity < 2) {
+                    sb.append(prod).append("\n");
+                } else {
+                    if (prod.getCategory() != null) {
+                        double discount = (double) prod.getCategory().getDiscountPercent() / 100;
                         double unitDiscount = price * discount;
-                        formatted=df.format(unitDiscount);
+                        formatted = formatDouble(unitDiscount);
                         sb.append(String.format(Locale.US, "%s **discount -%s%n", prod, formatted));
                         totalDiscount += unitDiscount;
-                    }
-                }else {
-                    if (prod instanceof CustomizableProduct) {
-                        sb.append(String.format(Locale.US, "%s%n", prod).repeat(quantity));
-                    }
-                    else{
-                        sb.append(String.format(Locale.US, "%s%n", prod));
-                        if (prod instanceof ProductMeeting){ProductMeeting pM=(ProductMeeting) prod; quantity=((ProductMeeting) pM).getCurrentParticipants();}
-                            else{
-                            ProductCampusFood pM=(ProductCampusFood) prod; quantity=((ProductCampusFood) pM).getCurrentParticipants();
-                            }
+                    } else {
+                        if (prod instanceof CustomizableProduct) {
+                            sb.append(String.format(Locale.US, "%s%n", prod).repeat(quantity));
+                        } else {
+                            sb.append(String.format(Locale.US, "%s%n", prod));
+
+                        }
                     }
                 }
+                if (prod instanceof ProductMeeting) {
+                    totalPrice += ((ProductMeeting) prod).calculateCurrentPrice();
+                } else if (prod instanceof ProductCampusFood) {
+                    totalPrice += ((ProductCampusFood) prod).calculateCurrentPrice();
+                } else {
+                    totalPrice += price ;
+                }
+
             }
 
-            totalPrice += price * quantity;
         }
-
         double finalPrice = totalPrice - totalDiscount;
-        formatted=df.format(totalPrice);
+        formatted = formatDouble(totalPrice);
         sb.append(String.format(Locale.US, "  Total price: %s%n", formatted));
-        formatted=df.format(totalDiscount);
+        formatted = formatDouble(totalDiscount);
         sb.append(String.format(Locale.US, "  Total discount: %s%n", formatted));
-        formatted=df.format(finalPrice);
+        formatted = formatDouble(finalPrice);
         sb.append(String.format(Locale.US, "  Final Price: %s", formatted));
-
         return sb.toString();
+    }
+    public static String formatDouble(double d) {
+        String s = Double.toString(d);
+        if (!s.contains(".")) {
+            s += ".0";
+        }
+        return s;
     }
 }

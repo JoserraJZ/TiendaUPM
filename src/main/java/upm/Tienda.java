@@ -1,4 +1,4 @@
-package upm;
+package main.java.upm;
 import javax.security.auth.callback.CallbackHandler;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -222,18 +222,21 @@ public class Tienda {
                 if (catalog.getById(Integer.parseInt(commandParameters[2])) != null) {
 
                     if (commandParameters.length>4){
-                        CustomizableProduct pPersonalizado= (CustomizableProduct) catalog.getById(Integer.parseInt(commandParameters[2]));
+                        CustomizableProduct pPersonalizado= ((CustomizableProduct) catalog.getById(Integer.parseInt(commandParameters[2]))).clone();
                         for (int i = 4; i < commandParameters.length; i++) {
                             pPersonalizado.addPersonalizedText(commandParameters[i]);
                         }
                         getTicketById(commandParameters[0]).addProducts(pPersonalizado, Integer.parseInt(commandParameters[3]));
                     }else {
-                        Product pNew= catalog.getById(Integer.parseInt(commandParameters[2]));
-                        if (pNew instanceof ProductMeeting){
-                            ProductMeeting pMNew= (ProductMeeting) pNew;
+                        Product pNew = catalog.getById(Integer.parseInt(commandParameters[2]));
+                        if (pNew instanceof ProductMeeting) {
+                            ProductMeeting pMNew = (ProductMeeting) pNew;
                             pMNew.addParticipants(Integer.parseInt(commandParameters[3]));
-                            getTicketById(commandParameters[0]).addProducts(pMNew,1);
-                        }else {
+                            getTicketById(commandParameters[0]).addProducts(pMNew, 1);
+                        } else if (pNew instanceof CustomizableProduct) {
+                            CustomizableProduct pPersonalizado = ((CustomizableProduct) catalog.getById(Integer.parseInt(commandParameters[2]))).clone();
+                            getTicketById(commandParameters[0]).addProducts(pPersonalizado, Integer.parseInt(commandParameters[3]));
+                        } else {
                             getTicketById(commandParameters[0]).addProducts(
                                     catalog.getById(Integer.parseInt(commandParameters[2])),
                                     Integer.parseInt(commandParameters[3])

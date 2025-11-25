@@ -1,4 +1,4 @@
-package upm;
+package main.java.upm;
 
 
 import java.util.ArrayList;
@@ -42,6 +42,25 @@ public class CustomizableProduct extends Product {
     }
 
     @Override
+    public CustomizableProduct clone() {
+        // Crear un nuevo objeto con los mismos atributos básicos
+        CustomizableProduct copy = new CustomizableProduct(
+        String.valueOf(super.getId()),
+                super.getName(),
+                super.getCategory(),
+                super.getPrice(),
+                this.maxTexts
+        );
+
+        for (String text : this.personalizedTexts) {
+            copy.addPersonalizedText(text);
+        }
+
+        return copy;
+    }
+
+
+    @Override
     public String toString() {
         if (!personalizedTexts.isEmpty()){
             return String.format(Locale.US,
@@ -53,5 +72,6 @@ public class CustomizableProduct extends Product {
                 "ProductPersonalized", super.getId(), super.getName(), super.getCategory(), getPrice(), getMaxTexts());
         }
     }
+
 
 }

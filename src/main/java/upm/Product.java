@@ -1,4 +1,4 @@
-package upm;
+package main.java.upm;
 
 import java.util.Locale;
 
@@ -58,4 +58,5 @@ public class Product {
                 "{class:%s, id:%d, name:'%s', category:%s, price:%.1f}",
                 "Product", id, name, category, price);
     }
+
 }

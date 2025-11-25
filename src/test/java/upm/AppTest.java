@@ -1,4 +1,4 @@
-package upm;
+package test.java.upm;
 
 import org.junit.jupiter.api.Test;
 
@@ -577,7 +577,7 @@ exit
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         // ----- 4. Run the application -----
-        upm.Tienda.main(new String[0]);
+        main.java.upm.Tienda.main(new String[0]);
 
 
         // ----- 6. Compare actual vs expected ----

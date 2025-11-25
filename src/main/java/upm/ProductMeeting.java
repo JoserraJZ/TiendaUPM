@@ -1,4 +1,4 @@
-package upm;
+package main.java.upm;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -42,8 +42,8 @@ public class ProductMeeting extends Product {
         }
     }
 
-    public double calculateTotalPrice() {
-        return getPrice() * maxParticipants;
+    public double calculateCurrentPrice() {
+        return getPrice() * currentParticipants;
     }
 
     @Override

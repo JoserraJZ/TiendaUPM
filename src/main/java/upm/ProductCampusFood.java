@@ -1,4 +1,4 @@
-package upm;
+package main.java.upm;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -42,8 +42,8 @@ public class ProductCampusFood extends Product {
             return  true;
         }
     }
-    public double calculateTotalPrice() {
-        return getPrice() * maxParticipants;
+    public double calculateCurrentPrice() {
+        return getPrice() * currentParticipants;
     }
 
     // Getters y setters si los necesitas
