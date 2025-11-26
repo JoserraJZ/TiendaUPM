@@ -1,16 +1,13 @@
-package main.java.upm;
+package upm;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 
 public class ProductCampusFood extends Product {
     private LocalDateTime expirationDate;
     private int maxParticipants;
-    private LocalDateTime creationDate;
     private int currentParticipants;
 
 
@@ -24,15 +21,10 @@ public class ProductCampusFood extends Product {
 
             this.expirationDate = expirationDate;
             this.maxParticipants = Math.min(maxParticipants, 100);
-            this.creationDate = fechaCreacion;
         } catch (IllegalArgumentException e) {
             System.out.println("Error: " + e.getMessage());
         }
     }
-    public int getCurrentParticipants() {
-        return currentParticipants;
-    }
-
     public boolean addParticipants(int participantsAdded){
 
         if (participantsAdded>maxParticipants){

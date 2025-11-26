@@ -1,4 +1,4 @@
-package main.java.upm;
+package upm;
 
 
 import java.util.ArrayList;
@@ -14,8 +14,6 @@ public class CustomizableProduct extends Product {
         super(stringId, productName, category, basePrice);
         this.maxTexts = maxTexts;
         this.personalizedTexts = new ArrayList<>();
-
-        /// ////////VALIDAR texto maximo positivo en el bucle de tienda
     }
 
     public boolean addPersonalizedText(String text) {
@@ -24,10 +22,6 @@ public class CustomizableProduct extends Product {
         }
         personalizedTexts.add(text);
         return true;
-    }
-
-    public List<String> getPersonalizedTexts() {
-        return new ArrayList<>(personalizedTexts); // copia defensiva
     }
 
     public int getMaxTexts() {
@@ -41,11 +35,11 @@ public class CustomizableProduct extends Product {
         return basePrice + surcharge;
     }
 
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     @Override
     public CustomizableProduct clone() {
-        // Crear un nuevo objeto con los mismos atributos básicos
         CustomizableProduct copy = new CustomizableProduct(
-        String.valueOf(super.getId()),
+                String.valueOf(super.getId()),
                 super.getName(),
                 super.getCategory(),
                 super.getPrice(),

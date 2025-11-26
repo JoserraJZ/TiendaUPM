@@ -1,12 +1,12 @@
-package main.java.upm;
+package upm;
 
 import java.util.Objects;
 
 public class Client {
-    private String name;
-    private String id;
-    private String email;
-    private Cashier cashier;
+    private final String name;
+    private final String id;
+    private final String email;
+    private final Cashier cashier;
 
     public Client(String name, String DNI, String email, Cashier cashier){
         this.name=name;

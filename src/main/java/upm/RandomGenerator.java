@@ -1,8 +1,6 @@
-package main.java.upm;
+package upm;
 
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Random;
 import java.util.Set;
 import java.time.LocalDateTime;

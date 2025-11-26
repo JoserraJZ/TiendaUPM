@@ -1,4 +1,4 @@
-package main.java.upm;
+package upm;
 
 public enum ProductCategory {
     MERCH(0),

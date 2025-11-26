@@ -1,4 +1,4 @@
-package main.java.upm;
+package upm;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -8,7 +8,6 @@ import java.util.Locale;
 public class ProductMeeting extends Product {
     private LocalDateTime expirationDateTime;
     private int maxParticipants;
-    private LocalDateTime creationDateTime;
     private int currentParticipants;
 
     public ProductMeeting(String stringId, String productName, double pricePerPerson, LocalDateTime expirationDateTime, int maxParticipants, LocalDateTime creationDateTime) {
@@ -20,16 +19,11 @@ public class ProductMeeting extends Product {
 
             this.expirationDateTime = expirationDateTime;
             this.maxParticipants = Math.min(maxParticipants, 100);
-            this.creationDateTime = LocalDateTime.now();
             this.currentParticipants=0;
         } catch (IllegalArgumentException e) {
             System.out.println("Error: " + e.getMessage());
         }
 
-    }
-
-    public int getCurrentParticipants() {
-        return currentParticipants;
     }
 
     public boolean addParticipants(int participantsAdded){

@@ -1,9 +1,4 @@
-package main.java.upm;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+package upm;
 
 public enum Command {
     //TODO: HE CAMBIADO ID POR CASHID PARA QUE FUNCIONE EN CIERTOS CASOS
@@ -17,7 +12,6 @@ public enum Command {
     CASH_TICKETS("cash tickets", new String[]{"<cashId>"}, 3, 3),
 
     TICKET_NEW("ticket new", new String[]{"[<id>]", "<cashId>", "<userId>"}, 4, 5),
-    // TODO: HACER QUE TICKET ADD FUNCIONE CORRECTAMENTE CON EL --P
     TICKET_ADD("ticket add", new String[]{"<ticketId>", "<cashId>", "<prodId>", "<amount>", "[--p<txt> --p<txt>]"}, 6, 0),
     TICKET_REMOVE("ticket remove", new String[]{"<ticketId>", "<cashId>", "<prodId>"}, 5, 5),
     TICKET_PRINT("ticket print", new String[]{"<ticketId>", "<cashId>"}, 4, 4),
@@ -35,7 +29,7 @@ public enum Command {
     EXIT("exit", new String[]{}, 1, 1);
 
     public final String commandText;
-    private String[] parameters;
+    private final String[] parameters;
     private final int minLength;
     private final int maxLength;
 
@@ -50,25 +44,20 @@ public enum Command {
         return this.commandText;
     }
 
-
-    public String[] getParameters() {
-        return this.parameters;
-    }
-
     public String getHelp() {
         String params = String.join(" ", this.parameters);
         return this.getCommandText() + (params.isEmpty() ? "": " ") + params;
     }
 
     public boolean matchesLength(int length) {
-        if (maxLength == 0) return length >= minLength; // si max=0, comprueba si min>= que la longitud
+        if (maxLength == 0) return length >= minLength;
         return length >= minLength && length <= maxLength;
     }
 
     private static boolean matchesFormat(String[] commandExpected, String[] commandGiven, int offsetAmount, String[] returnParams){
         String errorCode = "";
         for (int i = 0; i < commandExpected.length; i++) {
-            if ((i + offsetAmount) >= commandGiven.length) return true;//TODO ERROR
+            if ((i + offsetAmount) >= commandGiven.length) return true;
 
             boolean isOptional = commandExpected[i].startsWith("[") && commandExpected[i].endsWith("]");
             boolean matches = true;
@@ -96,7 +85,7 @@ public enum Command {
                 }
                 case "<DNI>", "<userId>" -> {
                     if (!commandGiven[i + offsetAmount].matches("[A-Za-z0-9]{9}")){//"\\d{8}[A-Za-z]")) {
-                        System.out.printf("El parámetro %d ('%s') debería ser un DNI válido%n", i + 1, commandGiven[i + offsetAmount]);
+                        errorCode = String.format("El parámetro %d ('%s') debería ser un DNI válido%n", i + 1, commandGiven[i + offsetAmount]);
                         matches = false;
                     }
                 }
@@ -133,24 +122,25 @@ public enum Command {
         return true;
     }
 
-    public static ValidatedCommand validateCommand(String[] command){
-        if (command.length<1) return null;
+    public static ValidatedCommand validateCommand(String command){
+        String[] splitted = Utils.splitText(command);
+        if (splitted.length<1) return null;
         for (Command cmd : Command.values()) {
-            if (cmd.commandText.equals(command[0]) ||
-            (command.length>1 && cmd.commandText.equals(command[0] + " " + command[1]))){
+            if (cmd.commandText.equals(splitted[0]) ||
+            (splitted.length>1 && cmd.commandText.equals(splitted[0] + " " + splitted[1]))){
 
-                int wordCount = cmd.commandText.trim().split("\\s+").length;//trim quita los espacios de inicio y final, split separa por espacios (\s) del tamaño que sea (+)
+                int wordCount = cmd.commandText.trim().split("\\s+").length;
 
-                if(cmd.matchesLength(command.length)){
-                    String[] returnParams = new String[Math.max(cmd.maxLength, command.length-wordCount)];
-                    if (matchesFormat(cmd.parameters, command, wordCount, returnParams)) {
+                if(cmd.matchesLength(splitted.length)){
+                    String[] returnParams = new String[Math.max(cmd.maxLength, splitted.length-wordCount)];
+                    if (matchesFormat(cmd.parameters, splitted, wordCount, returnParams)) {
 
                         return new ValidatedCommand(cmd, returnParams);
                     }
                     else return null;
 
                 }else{
-                    System.out.printf("Número de parámetros incorrecto (esperados: %d, recibidos: %d)%n", cmd.minLength-wordCount, command.length-wordCount);
+                    System.out.printf("Número de parámetros incorrecto (esperados: %d, recibidos: %d)%n", cmd.minLength-wordCount, splitted.length-wordCount);
 
                     return null;
                 }
@@ -158,12 +148,5 @@ public enum Command {
         }
         System.out.println("Comando desconocido");
         return null;
-    }
-
-    public static String[] splitCommand(String command) {
-        List<String> parts = new ArrayList<>();
-        Matcher m = Pattern.compile("\"([^\"]*)\"|(\\S+)").matcher(command);
-        while (m.find()) parts.add(m.group(1) != null ? m.group(1) : m.group(2));
-        return parts.toArray(new String[0]);
     }
 }

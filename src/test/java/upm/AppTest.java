@@ -1,5 +1,6 @@
-package test.java.upm;
+package upm;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -7,12 +8,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 class AppTest {
 
     @Test
-    void testFunc() throws Exception {
+    void testFunc() {
         // ----- 1. Input commands -----
         String input =
                 """
@@ -571,18 +570,15 @@ exit
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(baos);
-        PrintStream oldOut = System.out;
         System.setOut(ps);
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
         // ----- 4. Run the application -----
-        main.java.upm.Tienda.main(new String[0]);
+        upm.Tienda.main(new String[0]);
 
 
         // ----- 6. Compare actual vs expected ----
         String actualOutput = baos.toString();
-        assertEquals(
+        Assertions.assertEquals(
                 normalize(expected),
                 normalize(actualOutput)
         );

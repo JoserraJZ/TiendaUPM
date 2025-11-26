@@ -1,5 +1,4 @@
-package main.java.upm;
-import javax.security.auth.callback.CallbackHandler;
+package upm;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -7,11 +6,12 @@ import java.util.*;
 
 public class Tienda {
 
-    //private Ticket currentTicket;        ////?
-    private final ProductCatalog catalog; /////?
+    private final ProductCatalog catalog;
     private final Set<Cashier> cashiers;
     private final Set<Client> clients;
-    private final Set<Ticket> tickets;
+
+    private boolean exit = false;
+    private boolean errorOcurred = false;
 
     public static void main(String[] args) {
         System.out.println("Welcome to the ticket module App.\n" +
@@ -22,6 +22,7 @@ public class Tienda {
 
         while (true) {
             try {
+                store.errorOcurred=false;
                 if (store.executeCommand(scanner)) {
                     break; // exit loop if executeCommand returns true
                 }
@@ -34,261 +35,235 @@ public class Tienda {
 
     public Tienda() {
         this.catalog = new ProductCatalog();
-        this.cashiers = new HashSet<>();
+        this.cashiers = new TreeSet<>();
         this.clients = new HashSet<>();
-        this.tickets = new HashSet<>();
 
         RandomGenerator.Init(catalog, cashiers, clients);
     }
 
     private boolean executeCommand(Scanner scanner) {
         System.out.print("\ntUPM> ");
-        String inputCommand = scanner.nextLine();
+        String rawInput = scanner.nextLine();
 
-        boolean exit = false;
 
-        ValidatedCommand commandAndParams = Command.validateCommand(Command.splitCommand(inputCommand));
-        if(commandAndParams==null)return false;
+        ValidatedCommand validatedCommand = Command.validateCommand(rawInput);
+        if(validatedCommand==null)return false;
 
-        Command command = commandAndParams.command;
-        String[] commandParameters = commandAndParams.parameters;
-
-        boolean correcto = true;
+        Command command = validatedCommand.command;
+        String[] params = validatedCommand.parameters;
 
         switch (command){
-            //CASHIER COMMANDS
             case CASH_ADD -> {
-                if(!cashiers.add(new Cashier(commandParameters[0], commandParameters[1], commandParameters[2]))){
-                    System.out.println("El id introducido ya existe");
-                }
+                if(!cashiers.add(new Cashier(params[0], params[1], params[2])))
+                    printError("El id introducido ya existe");
+
             }
             case CASH_LIST -> {
                 List<Cashier> cashierList = new ArrayList<>(cashiers);
-                cashierList.sort(Comparator.comparing(Cashier::getName));//cashierlist.sort((c1, c2) -> c1.getName().compareTo(c2.getName()));
+                cashierList.sort(Comparator.comparing(Cashier::getName));
 
                 System.out.println("Cash:");
                 cashierList.forEach(System.out::println);
             }
             case CASH_REMOVE -> {
-                if (!cashiers.removeIf(c -> commandParameters[0].equals(c.getId()))){
-                    System.out.println("No se ha encontrado ningún cajero con el identificador introducido");
-                }
+                if (!cashiers.remove(getCashierById(params[0])))
+                    printError("No se ha encontrado ningún cajero con el identificador introducido");
             }
             case CASH_TICKETS -> {
-                Cashier cash = findCashierById(commandParameters[0]);
+                Cashier cash = getCashierById(params[0]);
                 if (cash != null) {
-                    // Obtener colección de tickets desde el cajero
                     List<Ticket> tickets = new ArrayList<>(cash.getTickets());
-                    // Ordenar por Id (asumiendo Id entero)
-                    // tickets.sort(Comparator.comparingInt(Ticket::getId));
+                    tickets.sort(Comparator.comparing(Ticket::getId));
+
                     System.out.println("Tickets: ");
                     tickets.forEach(t -> System.out.println(t.getId() + " ->" + t.getCurrentState()));
-                } else {
-                    System.out.println("El identificador de cajero introducido no existe");
                 }
+                else printError("El identificador de cajero introducido no existe");
             }
-            //CLIENT COMMANDS
+
             case CLIENT_ADD -> {
-                Cashier cash = findCashierById(commandParameters[3]);
+                Cashier cash = getCashierById(params[3]);
                 if (cash != null){
-                    if (!clients.add(new Client(commandParameters[0],
-                            commandParameters[1],
-                            commandParameters[2],
-                            cash))){
-                        System.out.println("El identificador de usuario introducido ya existe");
-                    }
-                }else{
-                    System.out.println("El identificador de cajero introducido no existe");
+                    if (!clients.add(new Client(params[0], params[1], params[2], cash)))
+                        printError("El identificador de usuario introducido ya existe");
                 }
+
+                else printError("El identificador de cajero introducido no existe");
             }
             case CLIENT_LIST -> {
                 List<Client> clientList = new ArrayList<>(clients);
-                clientList.sort(Comparator.comparing(Client::getName)); //clientList.sort((c1, c2) -> c1.getName().compareTo(c2.getName()));
-
+                clientList.sort(Comparator.comparing(Client::getName));
 
                 System.out.println("Client:");
                 clientList.forEach(System.out::println);
             }
             case CLIENT_REMOVE -> {
-                if (!clients.removeIf(c -> commandParameters[0].equals(c.getId()))){
-                    System.out.println("No se ha encontrado ningún cliente con el identificador introducido");
-                }
-            }
-            //PRODUCT COMMANDS
-            case PROD_ADD -> {
-                //TODO: TEMPORAL, CAMBIAR Y AÑADIR MAXPERS
+                if (!clients.removeIf(c -> params[0].equals(c.getId())))
+                    printError("No se ha encontrado ningún cliente con el identificador introducido");
 
+            }
+
+            case PROD_ADD -> {
                 Product prod;
-                if (commandParameters[4] != null){
-                    //PRODUCTO PERSONALIZADO (creo que esta bien pero no lo se seguro)
+                if (params[4] != null && Integer.parseInt(params[4])>0){
                     prod = catalog.add(new CustomizableProduct(
-                            commandParameters[0],
-                            commandParameters[1],
-                            ProductCategory.valueOf(commandParameters[2]),
-                            Integer.parseInt(commandParameters[3]),
-                            Integer.parseInt(commandParameters[4])
+                            params[0],
+                            params[1],
+                            ProductCategory.valueOf(params[2]),
+                            Integer.parseInt(params[3]),
+                            Integer.parseInt(params[4])
                     ));
                 } else {
                     prod = catalog.add(new Product(
-                            commandParameters[0],
-                            commandParameters[1],
-                            ProductCategory.valueOf(commandParameters[2]),
-                            Integer.parseInt(commandParameters[3])
+                            params[0],
+                            params[1],
+                            ProductCategory.valueOf(params[2]),
+                            Integer.parseInt(params[3])
                     ));
                 }
-                if (prod == null) {
-                    System.out.println("No se pueden añadir más de 200 productos");
-                } else {
-                    System.out.println(prod);
-                }
+                if (prod == null) printError("No se pueden añadir más de 200 productos");
+                else System.out.println(prod);
             }
             case PROD_UPDATE -> {
-                boolean done = catalog.update(Integer.parseInt(commandParameters[0]), commandParameters[1], commandParameters[2]);
-                if (!done){
-                    System.out.println("Atributo de producto desconocido");
-                }
+                boolean done = catalog.update(Integer.parseInt(params[0]), params[1], params[2]);
+                if (!done) printError("Atributo de producto desconocido");
             }
-            // Pongo los de addfood y addmeeting como creo que serán
+
             case PROD_ADDFOOD -> {
                 Product prod = null;
-                if (Integer.parseInt(commandParameters[4]) <= 100) {
+                if (Integer.parseInt(params[4]) <= 100) {
                     prod = catalog.add(new ProductCampusFood(
-                            commandParameters[0],
-                            commandParameters[1],
-                            Double.parseDouble(commandParameters[2]),
-                            LocalDate.parse(commandParameters[3], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay(),
-                            Integer.parseInt(commandParameters[4])
+                            params[0],
+                            params[1],
+                            Double.parseDouble(params[2]),
+                            LocalDate.parse(params[3], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay(),
+                            Integer.parseInt(params[4])
                     ));
-                } else {
-                    System.out.println("Error processing ->prod addFood ->Error adding product");
-                    correcto = false;
                 }
-                if (prod == null) {
-                    //System.out.println("No se pueden añadir más de 200 productos");
-                } else {
-                    System.out.println(prod);
-                }
+
+                if (prod == null)
+                    printError("Error processing ->prod addFood ->Error adding product");
+                else System.out.println(prod);
             }
             case PROD_ADDMEETING -> {
                 Product prod = null;
-                if (Integer.parseInt(commandParameters[4]) <= 100) {
+                if (Integer.parseInt(params[4]) <= 100) {
                     prod = catalog.add(new ProductMeeting(
-                            commandParameters[0],
-                            commandParameters[1],
-                            Double.parseDouble(commandParameters[2]),
-                            LocalDate.parse(commandParameters[3], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay(),
-                            Integer.parseInt(commandParameters[4]),
+                            params[0],
+                            params[1],
+                            Double.parseDouble(params[2]),
+                            LocalDate.parse(params[3], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay(),
+                            Integer.parseInt(params[4]),
                             LocalDateTime.now()
                     ));
-                } else {
-                    System.out.println("Error processing ->prod addMeeting ->Error adding meeting");
-                    correcto = false;
                 }
-                if (prod == null) {
-                    //System.out.println("No se pueden añadir más de 200 productos");
-                } else {
-                    System.out.println(prod);
-                }
+                if (prod == null)
+                    printError("Error processing ->prod addMeeting ->Error adding meeting");
+                else System.out.println(prod);
             }
             case PROD_LIST -> catalog.list();
             case PROD_REMOVE -> {
-                Product prod = catalog.remove(Integer.parseInt(commandParameters[0]));
-                if (prod != null) {
-                    System.out.println(prod);
-                } else {
-                    System.out.println("Producto no encontrado");
-                }
-            }
-            //TICKET COMMANDS
-            case TICKET_NEW -> {
-                String id = commandParameters[0];      // puede ser null si no se pasa
-                String cashId = commandParameters[1];
-                String userId = commandParameters[2];
-                Ticket nuevo = new Ticket(id, cashId, userId);
+                Product prod = catalog.remove(Integer.parseInt(params[0]));
 
-                Cashier cajero = null;
-                for (Cashier c : cashiers) {
-                    if (c.getId().equals(commandParameters[1])) {
-                        cajero = c;
-                    }
-                }
-                this.tickets.add(nuevo);
-                cajero.addTicket(nuevo);
-                //this.tickets.add(nuevo);
+                if (prod != null) System.out.println(prod);
+                else printError("Producto no encontrado");
+            }
+            case TICKET_NEW -> {
+                Ticket nuevo = new Ticket(params[0]);
+                getCashierById(params[1]).addTicket(nuevo);
+
                 System.out.println(nuevo);
             }
-            //COMPROBAR ADD Y REMOVE
             case TICKET_ADD -> {
-                if (catalog.getById(Integer.parseInt(commandParameters[2])) != null) {
+                int productId = Integer.parseInt(params[2]);
+                Product prod = catalog.getById(productId);
 
-                    if (commandParameters.length>4){
-                        CustomizableProduct pPersonalizado= ((CustomizableProduct) catalog.getById(Integer.parseInt(commandParameters[2]))).clone();
-                        for (int i = 4; i < commandParameters.length; i++) {
-                            pPersonalizado.addPersonalizedText(commandParameters[i]);
+                if (prod != null) {
+                    int amount = Integer.parseInt(params[3]);
+                    Ticket ticket = getTicketById(params[1], params[0]);
+
+                    if (params.length>4){
+                        CustomizableProduct pPersonalizado= ((CustomizableProduct) prod).clone();
+                        for (int i = 4; i < params.length; i++) {
+                            pPersonalizado.addPersonalizedText(params[i]);
                         }
-                        getTicketById(commandParameters[0]).addProducts(pPersonalizado, Integer.parseInt(commandParameters[3]));
-                    }else {
-                        Product pNew = catalog.getById(Integer.parseInt(commandParameters[2]));
-                        if (pNew instanceof ProductMeeting) {
-                            ProductMeeting pMNew = (ProductMeeting) pNew;
-                            pMNew.addParticipants(Integer.parseInt(commandParameters[3]));
-                            getTicketById(commandParameters[0]).addProducts(pMNew, 1);
-                        } else if (pNew instanceof CustomizableProduct) {
-                            CustomizableProduct pPersonalizado = ((CustomizableProduct) catalog.getById(Integer.parseInt(commandParameters[2]))).clone();
-                            getTicketById(commandParameters[0]).addProducts(pPersonalizado, Integer.parseInt(commandParameters[3]));
-                        } else {
-                            getTicketById(commandParameters[0]).addProducts(
-                                    catalog.getById(Integer.parseInt(commandParameters[2])),
-                                    Integer.parseInt(commandParameters[3])
-                            );
-                        }
+                        ticket.addProducts(pPersonalizado, amount);
                     }
-                } else {
-                    System.out.println("Producto no encontrado en catálogo");
+                    else {
+                        if (prod instanceof ProductMeeting prodM) {
+                            prodM.addParticipants(amount);
+                            amount = 1;
+                        } else if (prod instanceof ProductCampusFood prodCF) {
+                            prodCF.addParticipants(amount);
+                            amount=1;
+                        }
+                        ticket.addProducts(prod, amount);
+                    }
+                    System.out.println(ticket);
                 }
-                getTicketById(commandParameters[0]).printTicketNoClose();
+                else printError("Producto no encontrado en catálogo");
             }
 
             case TICKET_REMOVE -> {
-                boolean removed = getTicketById(commandParameters[0]).removeProduct(Integer.parseInt(commandParameters[2]));
-                if (removed) {
-                    getTicketById(commandParameters[0]).printTicketNoClose();
-                }
+                Ticket ticket = getTicketById(params[1], params[0]);
+
+                if (ticket.removeProduct(Integer.parseInt(params[2])))
+                    System.out.println(ticket);
+                else printError("Error eliminando el ticket");
             }
-            case TICKET_PRINT -> getTicketById(commandParameters[0]).printTicket();
+            case TICKET_PRINT -> getTicketById(params[1], params[0]).closeAndPrint();
             case TICKET_LIST -> {
                 System.out.println("Ticket List:");
 
-                List<Ticket> list = new ArrayList<>(tickets);
-                list.sort(Comparator.comparing(Ticket::getCashId).
-                        thenComparing(Ticket::getCurrentState));
+                for (Cashier c : cashiers) {
+                    List<Ticket> list = new ArrayList<>(c.getTickets());
 
-                for (Ticket t : list) {
-                    System.out.println(t.getId() + " - " + t.getCurrentState());
+                    list.sort(Comparator.comparing(Ticket::getCurrentState)
+                            .thenComparing(Ticket::getId));
+
+                    for (Ticket t : list) {
+                        System.out.println(t.getId() + " - " + t.getCurrentState());
+                    }
                 }
+
             }
-            //GENERAL COMMANDS
+
             case HELP -> this.help();
-            case ECHO -> System.out.println(inputCommand.substring(5));
+            case ECHO -> System.out.println(rawInput.substring(5));
             case EXIT -> exit = true;
 
         }
-        if ((command.commandText.contains("prod") || command.commandText.contains("ticket") ||
-                command.commandText.contains("cash") || command.commandText.contains("client"))&& correcto) {
+        if (!errorOcurred && (command.commandText.contains("prod") || command.commandText.contains("ticket") ||
+                command.commandText.contains("cash") || command.commandText.contains("client"))) {
             System.out.println(command.commandText + ": ok");
         }
-
         return exit;
     }
 
-    public Ticket getTicketById(String id) {
-        if (id == null) return null;
-        for (Ticket t : tickets) {
+    public Ticket getTicketById(String cashId, String id) {
+        for (Ticket t : getCashierById(cashId).getTickets()) {
             if (id.equals(t.getId())) {
                 return t;
             }
         }
+        printError("No se ha encontrado ningún ticket con el identificador introducido");
         return null;
+    }
+
+
+    public Cashier getCashierById(String id) {
+        for (Cashier c : cashiers) {
+            if (id.equals(c.getId())) {
+                return c;
+            }
+        }
+        printError("No se ha encontrado ningún cajero con el identificador introducido");
+        return null;
+    }
+
+    public void printError(String message){
+        System.out.println(message);
+        this.errorOcurred =true;
     }
 
     private void help() {
@@ -297,17 +272,9 @@ public class Tienda {
             System.out.println(" " + command.getHelp());
         }
 
-        System.out.println("\nCategories: MERCH, STATIONERY, CLOTHES, BOOK, ELECTRONICS\n" +
-                "Discounts if there are ≥2 units in the category: MERCH 0%, STATIONERY 5%, CLOTHES 7%, BOOK 10%, ELECTRONICS 3%.");
-    }
-    public Cashier findCashierById(String id) {
-        if (id == null) return null;
-
-        for (Cashier c : cashiers) {
-            if (id.equals(c.getId())) {
-                return c;
-            }
-        }
-        return null;
+        System.out.println("""
+                
+                Categories: MERCH, STATIONERY, CLOTHES, BOOK, ELECTRONICS
+                Discounts if there are ≥2 units in the category: MERCH 0%, STATIONERY 5%, CLOTHES 7%, BOOK 10%, ELECTRONICS 3%.""");
     }
 }

@@ -1,10 +1,10 @@
-package main.java.upm;
+package upm;
 
 import java.util.Locale;
 
 public class Product {
 
-    private int id;
+    private final int id;
     private String name;
     private ProductCategory category;
     private double price;

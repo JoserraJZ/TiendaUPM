@@ -1,4 +1,4 @@
-package main.java.upm;
+package upm;
 
 import java.util.*;
 
@@ -19,7 +19,7 @@ public class ProductCatalog {
         if (prod == null) return false;
         switch (campo) {
             case "NAME":
-                prod.setName((String) valor);
+                prod.setName(valor);
                 break;
             case "CATEGORY":
                 prod.setCategory(ProductCategory.valueOf(valor));
@@ -30,9 +30,7 @@ public class ProductCatalog {
             default:
                 return false;
         }
-
         System.out.println(prod);
-
         return true;
     }
 
