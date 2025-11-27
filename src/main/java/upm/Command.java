@@ -1,7 +1,6 @@
 package upm;
 
 public enum Command {
-    //TODO: HE CAMBIADO ID POR CASHID PARA QUE FUNCIONE EN CIERTOS CASOS
     CLIENT_ADD("client add", new String[]{"\"<nombre>\"", "<DNI>", "<email>", "<cashId>"}, 6, 6),
     CLIENT_REMOVE("client remove", new String[]{"<DNI>"}, 3, 3),
     CLIENT_LIST("client list", new String[]{}, 2, 2),
@@ -134,11 +133,9 @@ public enum Command {
                 if(cmd.matchesLength(splitted.length)){
                     String[] returnParams = new String[Math.max(cmd.maxLength, splitted.length-wordCount)];
                     if (matchesFormat(cmd.parameters, splitted, wordCount, returnParams)) {
-
                         return new ValidatedCommand(cmd, returnParams);
                     }
                     else return null;
-
                 }else{
                     System.out.printf("Número de parámetros incorrecto (esperados: %d, recibidos: %d)%n", cmd.minLength-wordCount, splitted.length-wordCount);
 

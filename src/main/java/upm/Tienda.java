@@ -14,9 +14,7 @@ public class Tienda {
     private boolean errorOcurred = false;
 
     public static void main(String[] args) {
-        System.out.println("Welcome to the ticket module App.\n" +
-                "Ticket module. Type 'help' to see commands.");
-
+        System.out.println("Welcome to the ticket module App.\n" + "Ticket module. Type 'help' to see commands.");
         Tienda store = new Tienda();
         Scanner scanner = new Scanner(System.in);
 
@@ -45,7 +43,6 @@ public class Tienda {
         System.out.print("\ntUPM> ");
         String rawInput = scanner.nextLine();
 
-
         ValidatedCommand validatedCommand = Command.validateCommand(rawInput);
         if(validatedCommand==null)return false;
 
@@ -56,7 +53,6 @@ public class Tienda {
             case CASH_ADD -> {
                 if(!cashiers.add(new Cashier(params[0], params[1], params[2])))
                     printError("El id introducido ya existe");
-
             }
             case CASH_LIST -> {
                 List<Cashier> cashierList = new ArrayList<>(cashiers);
@@ -87,7 +83,6 @@ public class Tienda {
                     if (!clients.add(new Client(params[0], params[1], params[2], cash)))
                         printError("El identificador de usuario introducido ya existe");
                 }
-
                 else printError("El identificador de cajero introducido no existe");
             }
             case CLIENT_LIST -> {
@@ -100,7 +95,6 @@ public class Tienda {
             case CLIENT_REMOVE -> {
                 if (!clients.removeIf(c -> params[0].equals(c.getId())))
                     printError("No se ha encontrado ningún cliente con el identificador introducido");
-
             }
 
             case PROD_ADD -> {
@@ -128,7 +122,6 @@ public class Tienda {
                 boolean done = catalog.update(Integer.parseInt(params[0]), params[1], params[2]);
                 if (!done) printError("Atributo de producto desconocido");
             }
-
             case PROD_ADDFOOD -> {
                 Product prod = null;
                 if (Integer.parseInt(params[4]) <= 100) {
@@ -140,7 +133,6 @@ public class Tienda {
                             Integer.parseInt(params[4])
                     ));
                 }
-
                 if (prod == null)
                     printError("Error processing ->prod addFood ->Error adding product");
                 else System.out.println(prod);
@@ -168,6 +160,7 @@ public class Tienda {
                 if (prod != null) System.out.println(prod);
                 else printError("Producto no encontrado");
             }
+
             case TICKET_NEW -> {
                 Ticket nuevo = new Ticket(params[0]);
                 getCashierById(params[1]).addTicket(nuevo);
@@ -218,14 +211,12 @@ public class Tienda {
                 for (Cashier c : cashiers) {
                     List<Ticket> list = new ArrayList<>(c.getTickets());
 
-                    list.sort(Comparator.comparing(Ticket::getCurrentState)
-                            .thenComparing(Ticket::getId));
+                    list.sort(Comparator.comparing(Ticket::getCurrentState).thenComparing(Ticket::getId));
 
                     for (Ticket t : list) {
                         System.out.println(t.getId() + " - " + t.getCurrentState());
                     }
                 }
-
             }
 
             case HELP -> this.help();

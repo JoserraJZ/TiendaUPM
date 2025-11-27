@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class Utils {
+
     public static String formatDouble(double d) {
         BigDecimal bd = BigDecimal.valueOf(d)
                 .setScale(5, RoundingMode.HALF_UP)

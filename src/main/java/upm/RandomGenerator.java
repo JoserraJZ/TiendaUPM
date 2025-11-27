@@ -1,6 +1,5 @@
 package upm;
 
-
 import java.util.Random;
 import java.util.Set;
 import java.time.LocalDateTime;
@@ -8,7 +7,6 @@ import java.time.format.DateTimeFormatter;
 
 public class RandomGenerator {
     private static final Random random = new Random();
-
     private static ProductCatalog catalog;
     private static Set<Cashier> cashiers;
     private static Set<Client> clients;
@@ -37,8 +35,7 @@ public class RandomGenerator {
     }
     public static String generateDNI(){
         for (int i = 0; i < 1000; i++) { // si en 1000 casos no funciona dar un error
-            String possibleId =  String.format("%08d%c", random.nextInt(100_000_000),
-                                               (char)('A' + random.nextInt(26)));
+            String possibleId =  String.format("%08d%c", random.nextInt(100_000_000), (char)('A' + random.nextInt(26)));
 
             boolean exists = false;
             for (Client c : clients) {
@@ -72,5 +69,4 @@ public class RandomGenerator {
         String randPart = String.format("%05d", rand);
         return datePart + "-" + randPart;
     }
-
 }

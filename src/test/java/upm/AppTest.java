@@ -67,7 +67,7 @@ echo "Trabajamos con productos de personas"
 prod addMeeting 23456 "Reunion Rotonda" 12 2025-11-30 100
 prod addMeeting 23457 "Graduacion ETSISI" 40 2025-11-30 30
 prod addFood 23458 "Cafeteria ETSISI" 5 2025-11-30 300
-prod addFood 23459 "Restaurante Asador" 50 2025-11-30 40
+prod addFood 23459 "Restaurante Asador" 50 2025-12-10 40
 prod list
 ticket new 212127 UW1234567 98948334B
 ticket add 212127 UW1234567 23456 20
@@ -455,7 +455,7 @@ exit
                 
                 tUPM> Error processing ->prod addFood ->Error adding product
                 
-                tUPM> {class:Food, id:23459, name:'Restaurante Asador', price:50.0, date of Event:2025-11-30, max people allowed:40}
+                tUPM> {class:Food, id:23459, name:'Restaurante Asador', price:50.0, date of Event:2025-12-10, max people allowed:40}
                 prod addFood: ok
                 
                 tUPM> Catalog:
@@ -463,7 +463,7 @@ exit
                   {class:Product, id:2, name:'Camiseta talla:M UPM', category:CLOTHES, price:15.0}
                   {class:Meeting, id:23456, name:'Reunion Rotonda', price:12.0, date of Event:2025-11-30, max people allowed:100}
                   {class:Meeting, id:23457, name:'Graduacion ETSISI', price:40.0, date of Event:2025-11-30, max people allowed:30}
-                  {class:Food, id:23459, name:'Restaurante Asador', price:50.0, date of Event:2025-11-30, max people allowed:40}
+                  {class:Food, id:23459, name:'Restaurante Asador', price:50.0, date of Event:2025-12-10, max people allowed:40}
                 prod list: ok
                 
                 tUPM> Ticket : 212127

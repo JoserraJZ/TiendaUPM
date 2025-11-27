@@ -27,7 +27,6 @@ public class ProductMeeting extends Product {
     }
 
     public boolean addParticipants(int participantsAdded){
-
         if (participantsAdded>maxParticipants){
             return false;
         }else {
@@ -51,7 +50,5 @@ public class ProductMeeting extends Product {
                     "{class:%s, id:%d, name:'%s', price:%.1f, date of Event:%s, max people allowed:%d}",
                     "Meeting", super.getId(), super.getName(), super.getPrice(), expirationDateTime.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), maxParticipants);
         }
-
     }
-    // Getters y setters si los necesitas
 }

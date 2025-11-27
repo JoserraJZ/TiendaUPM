@@ -38,8 +38,6 @@ public class ProductCampusFood extends Product {
         return getPrice() * currentParticipants;
     }
 
-    // Getters y setters si los necesitas
-
     @Override
     public double getPrice() {
         return super.getPrice();
@@ -47,7 +45,6 @@ public class ProductCampusFood extends Product {
 
     @Override
     public String toString() {
-
         if (currentParticipants>0){
             return String.format(Locale.US,
                     "{class:%s, id:%d, name:'%s', price:%.1f, date of Event:%s, max people allowed:%d, actual people in event:%d}",
@@ -57,7 +54,6 @@ public class ProductCampusFood extends Product {
                     "{class:%s, id:%d, name:'%s', price:%.1f, date of Event:%s, max people allowed:%d}",
                     "Food", super.getId(), super.getName(), super.getPrice(), expirationDate.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), maxParticipants);
         }
-
     }
 }
 

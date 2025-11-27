@@ -19,9 +19,7 @@ public class Ticket {
 
     public void addProducts(Product product, int amount) {
         if (currentState == TicketState.CLOSE) return;
-
         this.currentState = TicketState.OPEN;
-
         ArrayList<Product> productList = items.getOrDefault(product.getId(), new ArrayList<>());
 
         if (product instanceof ProductMeeting || product instanceof ProductCampusFood){
@@ -70,11 +68,9 @@ public class Ticket {
                 )
                 .toList();
 
-
         Map<Integer, Long> counts =
                 sorted.stream()
                         .collect(Collectors.groupingBy(Product::getId, Collectors.counting()));
-
 
         double totalPrice = 0.0;
         double totalDiscount = 0.0;
