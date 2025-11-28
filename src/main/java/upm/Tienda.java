@@ -1,4 +1,5 @@
 package upm;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -19,6 +20,11 @@ public class Tienda {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
+            store.errorOcurred=false;
+            if (store.executeCommand(scanner)) {
+                break; // exit loop if executeCommand returns true
+            }
+            /*
             try {
                 store.errorOcurred=false;
                 if (store.executeCommand(scanner)) {
@@ -27,6 +33,8 @@ public class Tienda {
             } catch (Exception e) {
                 System.err.println("Se ha dado el error: " + e.getMessage());
             }
+
+             */
         }
         System.out.println("Closing application.\nGoodbye!");
     }
@@ -124,12 +132,14 @@ public class Tienda {
             }
             case PROD_ADDFOOD -> {
                 Product prod = null;
-                if (Integer.parseInt(params[4]) <= 100) {
+                LocalDateTime now = LocalDateTime.now();
+                LocalDateTime expiration =LocalDate.parse(params[3], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
+                if (Integer.parseInt(params[4]) <= 100 && !(Duration.between(now, expiration).toDays() < 3)) {
                     prod = catalog.add(new ProductCampusFood(
                             params[0],
                             params[1],
                             Double.parseDouble(params[2]),
-                            LocalDate.parse(params[3], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay(),
+                            expiration,
                             Integer.parseInt(params[4])
                     ));
                 }
@@ -139,14 +149,16 @@ public class Tienda {
             }
             case PROD_ADDMEETING -> {
                 Product prod = null;
-                if (Integer.parseInt(params[4]) <= 100) {
+                LocalDateTime now = LocalDateTime.now();
+                LocalDateTime expiration =LocalDate.parse(params[3], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
+                if (Integer.parseInt(params[4]) <= 100 && !(Duration.between(now, expiration).toHours() < 12)) {
                     prod = catalog.add(new ProductMeeting(
                             params[0],
                             params[1],
                             Double.parseDouble(params[2]),
-                            LocalDate.parse(params[3], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay(),
+                            expiration,
                             Integer.parseInt(params[4]),
-                            LocalDateTime.now()
+                            now
                     ));
                 }
                 if (prod == null)

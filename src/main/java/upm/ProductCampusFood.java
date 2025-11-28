@@ -14,16 +14,8 @@ public class ProductCampusFood extends Product {
     public ProductCampusFood(String stringId, String productName, double pricePerPerson, LocalDateTime expirationDate, int maxParticipants) {
         super(stringId, productName, null, pricePerPerson);
         LocalDateTime fechaCreacion= LocalDateTime.now();
-        try {
-            if (Duration.between(fechaCreacion, expirationDate).toDays() < 3) {
-                throw new IllegalArgumentException("Las comidas requieren al menos 3 dias de planificación.");
-            }
-
-            this.expirationDate = expirationDate;
-            this.maxParticipants = Math.min(maxParticipants, 100);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Error: " + e.getMessage());
-        }
+        this.expirationDate = expirationDate;
+        this.maxParticipants = Math.min(maxParticipants, 100);
     }
     public boolean addParticipants(int participantsAdded){
 

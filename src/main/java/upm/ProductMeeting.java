@@ -12,17 +12,9 @@ public class ProductMeeting extends Product {
 
     public ProductMeeting(String stringId, String productName, double pricePerPerson, LocalDateTime expirationDateTime, int maxParticipants, LocalDateTime creationDateTime) {
         super(stringId, productName, null, pricePerPerson);
-        try {
-            if (Duration.between(creationDateTime, expirationDateTime).toHours() < 12) {
-                throw new IllegalArgumentException("Las reuniones requieren al menos 12 horas de planificación.");
-            }
-
-            this.expirationDateTime = expirationDateTime;
-            this.maxParticipants = Math.min(maxParticipants, 100);
-            this.currentParticipants=0;
-        } catch (IllegalArgumentException e) {
-            System.out.println("Error: " + e.getMessage());
-        }
+        this.expirationDateTime = expirationDateTime;
+        this.maxParticipants = Math.min(maxParticipants, 100);
+        this.currentParticipants=0;
 
     }
 
