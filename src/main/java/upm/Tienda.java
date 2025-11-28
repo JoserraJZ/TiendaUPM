@@ -134,7 +134,8 @@ public class Tienda {
                 Product prod = null;
                 LocalDateTime now = LocalDateTime.now();
                 LocalDateTime expiration =LocalDate.parse(params[3], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
-                if (Integer.parseInt(params[4]) <= 100 && !(Duration.between(now, expiration).toDays() < 3)) {
+                if (Integer.parseInt(params[4]) <= 100 && Integer.parseInt(params[4]) >= 0 &&
+                        !(Duration.between(now, expiration).toDays() < 3) && Integer.parseInt(params[2])>=0) {
                     prod = catalog.add(new ProductCampusFood(
                             params[0],
                             params[1],
@@ -151,7 +152,8 @@ public class Tienda {
                 Product prod = null;
                 LocalDateTime now = LocalDateTime.now();
                 LocalDateTime expiration =LocalDate.parse(params[3], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
-                if (Integer.parseInt(params[4]) <= 100 && !(Duration.between(now, expiration).toHours() < 12)) {
+                if (Integer.parseInt(params[4]) <= 100 && Integer.parseInt(params[4]) >= 0 &&
+                        !(Duration.between(now, expiration).toHours() < 12) && Integer.parseInt(params[2])>0) {
                     prod = catalog.add(new ProductMeeting(
                             params[0],
                             params[1],

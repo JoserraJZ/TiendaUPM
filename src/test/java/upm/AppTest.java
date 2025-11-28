@@ -483,7 +483,7 @@ exit
                   {class:Product, id:2, name:'Camiseta talla:M UPM', category:CLOTHES, price:15.0} **discount -1.05
                   {class:Product, id:2, name:'Camiseta talla:M UPM', category:CLOTHES, price:15.0} **discount -1.05
                   {class:Product, id:2, name:'Camiseta talla:M UPM', category:CLOTHES, price:15.0} **discount -1.05
-                  {class:Meeting, id:23456, name:'Reunion Rotonda', price:240.0, date of Event:2025-11-30, max people allowed:100, actual people in event:20}
+                  {class:Meeting, id:23456, name:'Reunion Rotonda', price:240.0, date of Event:2025-12-30, max people allowed:100, actual people in event:20}
                   Total price: 285.0
                   Total discount: 3.1499999
                   Final Price: 281.85
