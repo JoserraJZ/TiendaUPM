@@ -1,5 +1,9 @@
 package upm;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
 public enum Command {
     CLIENT_ADD("client add", new String[]{"\"<nombre>\"", "<DNI>", "<email>", "<cashId>"}, 6, 6),
     CLIENT_REMOVE("client remove", new String[]{"<DNI>"}, 3, 3),
@@ -94,6 +98,23 @@ public enum Command {
                         matches = false;
                     }
                 }
+                case "<amount>", "<maxPers>", "<max_people>" ->{
+                    if (!commandGiven[i + offsetAmount].matches("^[1-9]\\d*$")) {
+                        errorCode = String.format("El parámetro %d ('%s') debería ser un numero positivo válido%n", i + 1, commandGiven[i + offsetAmount]);
+                        matches = false;
+                    }
+                }
+                case "<expiration: yyyy-MM-dd>" ->{
+                    DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    try {
+                        LocalDate.parse(commandGiven[i + offsetAmount], fmt);  // validates both format and actual date correctness
+                    } catch (DateTimeParseException e) {
+                        errorCode = String.format(
+                                "El parámetro %d ('%s') debería ser una fecha con formato yyyy-MM-dd%n", i + 1, commandGiven[i + offsetAmount]);
+                        matches = false;
+                    }
+                }
+
                 case "--p<txt> --p<txt>" ->{
                     for (int j = i + offsetAmount; j < commandGiven.length; j++) {
                         if (!commandGiven[j].matches("^--p\\S+$")) {
