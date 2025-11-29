@@ -51,6 +51,9 @@ public class Tienda {
         Command command = validatedCommand.command;
         String[] params = validatedCommand.parameters;
 
+        if ("true".equals(System.getProperty("isfromfile")))
+            System.out.println(rawInput);
+
         switch (command){
             case CASH_ADD -> {
                 if(!cashiers.add(new Cashier(params[0], params[1], params[2])))
