@@ -17,14 +17,43 @@ public class Tienda {
     public static void main(String[] args) {
         System.out.println("Welcome to the ticket module App.\n" + "Ticket module. Type 'help' to see commands.");
         Tienda store = new Tienda();
+
+        // Si se pasa un fichero como argumento, procesamos sus líneas como comandos
+        if (args.length > 0) {
+            java.io.File inputFile = new java.io.File(args[0]);
+            if (inputFile.exists() && inputFile.isFile()) {
+                System.setProperty("isfromfile", "true");
+                try (Scanner fileScanner = new Scanner(inputFile)) {
+                    while (fileScanner.hasNextLine()) {
+                        try {
+                            store.errorOcurred = false;
+                            // executeCommand leerá la siguiente línea del scanner
+                            if (store.executeCommand(fileScanner)) {
+                                break; // comando EXIT o similar terminó la ejecuciónS
+                            }
+                        } catch (Exception e) {
+                            System.err.println("Se ha dado el error: " + e.getMessage());
+                        }
+                    }
+                } catch (java.io.FileNotFoundException e) {
+                    System.err.println("Error abriendo el fichero: " + e.getMessage());
+                } finally {
+                    System.clearProperty("isfromfile");
+                }
+                System.out.println("Closing application.\nGoodbye!");
+                return;
+            } else {
+                System.err.println("Fichero no encontrado: " + args[0] + ". Ejecutando modo interactivo.");
+            }
+        }
+
+        // Modo interactivo por defecto
         Scanner scanner = new Scanner(System.in);
-
         while (true) {
-
             try {
-                store.errorOcurred=false;
+                store.errorOcurred = false;
                 if (store.executeCommand(scanner)) {
-                    break; // exit loop if executeCommand returns true
+                    break; // salir si executeCommand devuelve true
                 }
             } catch (Exception e) {
                 System.err.println("Se ha dado el error: " + e.getMessage());
@@ -32,6 +61,7 @@ public class Tienda {
         }
         System.out.println("Closing application.\nGoodbye!");
     }
+
 
     public Tienda() {
         this.catalog = new ProductCatalog();
