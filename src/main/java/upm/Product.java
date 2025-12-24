@@ -59,4 +59,15 @@ public class Product {
                 "Product", id, name, category, price);
     }
 
+    @Override
+    public Product clone() {
+        Product copy = new Product(
+                String.valueOf(getId()),
+                getName(),
+                getCategory(),
+                getPrice()
+        );
+        return copy;
+    }
+
 }

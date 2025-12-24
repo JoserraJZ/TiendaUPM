@@ -27,6 +27,14 @@ public class ProductMeeting extends Product {
         }
     }
 
+    public LocalDateTime getExpirationDateTime() {
+        return expirationDateTime;
+    }
+
+    public void setExpirationDateTime(LocalDateTime expirationDateTime) {
+        this.expirationDateTime = expirationDateTime;
+    }
+
     public double calculateCurrentPrice() {
         return getPrice() * currentParticipants;
     }

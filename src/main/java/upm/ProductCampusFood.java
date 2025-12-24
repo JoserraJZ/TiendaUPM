@@ -26,6 +26,11 @@ public class ProductCampusFood extends Product {
             return  true;
         }
     }
+
+    public LocalDateTime getExpirationDate() {
+        return expirationDate;
+    }
+
     public double calculateCurrentPrice() {
         return getPrice() * currentParticipants;
     }

@@ -25,6 +25,7 @@ public class Ticket {
         if (product instanceof ProductMeeting || product instanceof ProductCampusFood){
             if (!productList.isEmpty()) productList.removeFirst();
             productList.add(product);
+            //actualizar obtener productMeting igual y solo actualizar precio
         }
         else {
             productList.addAll(Collections.nCopies(amount, product));

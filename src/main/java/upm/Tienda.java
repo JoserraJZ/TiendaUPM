@@ -223,13 +223,28 @@ public class Tienda {
                     }
                     else {
                         if (prod instanceof ProductMeeting prodM) {
-                            prodM.addParticipants(amount);
-                            amount = 1;
+                            if ( prodM.getExpirationDateTime().isAfter(LocalDateTime.now()) ||
+                                    prodM.getExpirationDateTime().isEqual(LocalDateTime.now())){
+                                prodM.addParticipants(amount);
+                                ticket.addProducts(prod, amount);
+                            }else {
+                                printError("La reunion que se está tratando de añadir ha prescrito");
+                            }
+
                         } else if (prod instanceof ProductCampusFood prodCF) {
-                            prodCF.addParticipants(amount);
-                            amount=1;
+                            if ( prodCF.getExpirationDate().isAfter(LocalDateTime.now()) ||
+                                    prodCF.getExpirationDate().isEqual(LocalDateTime.now())){
+                                prodCF.addParticipants(amount);
+                                ticket.addProducts(prod, amount);
+                            }else {
+                                printError("La comida que se está tratando de añadir ha prescrito");
+                            }
+
+                        } else {
+                            prod = prod.clone();
+                            ticket.addProducts(prod, amount);
                         }
-                        ticket.addProducts(prod, amount);
+
                     }
                     System.out.println(ticket);
                 }
