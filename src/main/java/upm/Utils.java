@@ -28,4 +28,9 @@ public final class Utils {
         while (m.find()) parts.add(m.group(1) != null ? m.group(1) : m.group(2));
         return parts.toArray(new String[0]);
     }
+
+    //TODO: COMPROBAR SI ESTO ES NIF
+    public static boolean isNIF(String str){
+        return str.matches("[A-Z]\\d{7,8}");
+    }
 }

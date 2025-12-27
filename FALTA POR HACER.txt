@@ -1,11 +1,13 @@
 Imanol:
 * modificar el .copy
-* Método de guardar sistema en archivos para poder recuperar el sistema entre sesiones
+* Metodo de guardar sistema en archivos para poder recuperar el sistema entre sesiones
 * Diagrama UML
 
 Jesús:
 * HECHO: modificar comandos
-* productos servicios(en principio no heredan según lo que veo, si quieres haces extends de product)
+* HECHO: crear productos servicios
+* hacer que productos servicios se añadan
+* comprobar el tipo de ticker para añadir productos servicio
 
 Joserra:
 * clientes empresa y tickets empresa, solo copiar la estructura de los otros y adaptarlo

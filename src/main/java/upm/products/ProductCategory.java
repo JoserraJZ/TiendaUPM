@@ -1,4 +1,4 @@
-package upm;
+package upm.products;
 
 public enum ProductCategory {
     MERCH(0),

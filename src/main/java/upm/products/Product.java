@@ -1,4 +1,6 @@
-package upm;
+package upm.products;
+
+import upm.RandomGenerator;
 
 import java.util.Locale;
 

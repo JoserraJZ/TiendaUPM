@@ -1,5 +1,9 @@
 package upm;
 
+import upm.products.Product;
+import upm.products.ProductCampusFood;
+import upm.products.ProductMeeting;
+
 import java.time.LocalDateTime;
 import java.util.*;
 import java.time.format.DateTimeFormatter;

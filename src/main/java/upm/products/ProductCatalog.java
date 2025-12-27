@@ -1,4 +1,4 @@
-package upm;
+package upm.products;
 
 import java.util.*;
 

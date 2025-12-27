@@ -119,7 +119,7 @@ class AppTest {
                   ticket remove <ticketId> <cashId> <prodId>\s
                   ticket print <ticketId> <cashId>\s
                   ticket list
-                  prod add ([<id>] "<name>" <category> <price> [<maxPers>]) || (<expiration: yyyy-MM-dd> <category>)
+                  prod add ([<id>] "<name>" <category> <price> [<maxPers>]) || (<expiration: yyyy-MM-dd> <serviceCategory>)
                   prod update <id> NAME|CATEGORY|PRICE <value>
                   prod addFood [<id>] "<name>" <price> <expiration: yyyy-MM-dd> <max_people>
                   prod addMeeting [<id>] "<name>" <price> <expiration: yyyy-MM-dd> <max_people>

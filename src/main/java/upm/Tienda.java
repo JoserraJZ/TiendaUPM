@@ -1,4 +1,6 @@
 package upm;
+import upm.products.*;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.Duration;
@@ -10,29 +12,31 @@ import java.util.*;
 //TODO: PORQUE TIENDA ES UNA INSTANCIA???
 public class Tienda {
 
-    private final ProductCatalog catalog;
-    private final Set<Cashier> cashiers;
-    private final Set<Client> clients;
+    private static final ProductCatalog productCatalog = new ProductCatalog();
+    private static final Set<Cashier>  cashiers = new TreeSet<>();
+    private static final Set<Client>    clients = new HashSet<>();
+    private static final Set<Service>  services = new HashSet<>();
 
-    private boolean exit = false;
-    private boolean errorOcurred = false;
+    private static boolean exit = false;
+    private static boolean errorOccurred = false;
 
     public static void main(String[] args) {
         System.out.println("Welcome to the ticket module App.\n" + "Ticket module. Type 'help' to see commands.");
-        Tienda store = new Tienda();
 
-        boolean shouldRunFromFile = args.length > 0 && store.runFromFile(args[0]);
+        RandomGenerator.Init(productCatalog, cashiers, clients);
+
+        boolean shouldRunFromFile = args.length > 0 && runFromFile(args[0]);
 
         if (!shouldRunFromFile) {
             try (Scanner scanner = new Scanner(System.in)) {
-                store.commandLoop(scanner);
+                commandLoop(scanner);
             }
         }
 
         System.out.println("Closing application.\nGoodbye!");
     }
 
-    private boolean runFromFile(String filePath) {
+    private static boolean runFromFile(String filePath) {
         File inputFile = new File(filePath);
 
         if (!inputFile.isFile()){
@@ -54,11 +58,11 @@ public class Tienda {
         }
     }
 
-    private void commandLoop(Scanner scanner){
+    private static void commandLoop(Scanner scanner){
         while (scanner.hasNextLine()) {
             try {
-                this.errorOcurred = false;
-                if (this.executeCommand(scanner.nextLine())) {
+                errorOccurred = false;
+                if (executeCommand(scanner.nextLine())) {
                     break; // salir si executeCommand devuelve true
                 }
             } catch (Exception e) {
@@ -67,15 +71,7 @@ public class Tienda {
         }
     }
 
-    public Tienda() {
-        this.catalog = new ProductCatalog();
-        this.cashiers = new TreeSet<>();
-        this.clients = new HashSet<>();
-
-        RandomGenerator.Init(catalog, cashiers, clients);
-    }
-
-    private boolean executeCommand(String rawInput) {
+    private static boolean executeCommand(String rawInput) {
         System.out.print("\ntUPM> ");
 
         ValidatedCommand validatedCommand = Command.validateCommand(rawInput);
@@ -116,6 +112,8 @@ public class Tienda {
             }
 
             case CLIENT_ADD -> {
+                boolean isCompany = Utils.isNIF(params[1]);
+                System.out.println(isCompany);
                 Cashier cash = getCashierById(params[3]);
                 if (cash != null){
                     if (!clients.add(new Client(params[0], params[1], params[2], cash)))
@@ -138,7 +136,7 @@ public class Tienda {
             case PROD_ADD -> {
                 Product prod;
                 if (params[4] != null && Integer.parseInt(params[4])>0){
-                    prod = catalog.add(new CustomizableProduct(
+                    prod = productCatalog.add(new CustomizableProduct(
                             params[0],
                             params[1],
                             ProductCategory.valueOf(params[2]),
@@ -146,7 +144,7 @@ public class Tienda {
                             Integer.parseInt(params[4])
                     ));
                 } else {
-                    prod = catalog.add(new Product(
+                    prod = productCatalog.add(new Product(
                             params[0],
                             params[1],
                             ProductCategory.valueOf(params[2]),
@@ -157,10 +155,13 @@ public class Tienda {
                 else System.out.println(prod);
             }
             case PROD_ADD_ALT_SERVICE -> {
-                //TODO: COMANDO ALTERNATIVO AÑADIR SERVICIO
+                LocalDateTime date = LocalDate.parse(params[0], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
+                Service service = new Service(RandomGenerator.generateServiceId(), date, params[1]);
+                services.add(service);
+                System.out.println(service);
             }
             case PROD_UPDATE -> {
-                boolean done = catalog.update(Integer.parseInt(params[0]), params[1], params[2]);
+                boolean done = productCatalog.update(Integer.parseInt(params[0]), params[1], params[2]);
                 if (!done) printError("Atributo de producto desconocido");
             }
             case PROD_ADDFOOD -> {
@@ -168,7 +169,7 @@ public class Tienda {
                 LocalDateTime expiration =LocalDate.parse(params[3], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
 
                 if (Integer.parseInt(params[4]) <= 100 && !(Duration.between(LocalDateTime.now(), expiration).toDays() < 3)) {
-                    prod = catalog.add(new ProductCampusFood(
+                    prod = productCatalog.add(new ProductCampusFood(
                             params[0],
                             params[1],
                             Double.parseDouble(params[2]),
@@ -185,7 +186,7 @@ public class Tienda {
                 LocalDateTime expiration =LocalDate.parse(params[3], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
 
                 if (Integer.parseInt(params[4]) <= 100 && !(Duration.between(LocalDateTime.now(), expiration).toHours() < 12)) {
-                    prod = catalog.add(new ProductMeeting(
+                    prod = productCatalog.add(new ProductMeeting(
                             params[0],
                             params[1],
                             Double.parseDouble(params[2]),
@@ -198,9 +199,9 @@ public class Tienda {
                     printError("Error processing ->prod addMeeting ->Error adding meeting");
                 else System.out.println(prod);
             }
-            case PROD_LIST -> catalog.list();
+            case PROD_LIST -> productCatalog.list();
             case PROD_REMOVE -> {
-                Product prod = catalog.remove(Integer.parseInt(params[0]));
+                Product prod = productCatalog.remove(Integer.parseInt(params[0]));
 
                 if (prod != null) System.out.println(prod);
                 else printError("Producto no encontrado");
@@ -214,7 +215,7 @@ public class Tienda {
             }
             case TICKET_ADD -> {
                 int productId = Integer.parseInt(params[2]);
-                Product prod = catalog.getById(productId);
+                Product prod = productCatalog.getById(productId);
 
                 if (prod != null) {
                     int amount = Integer.parseInt(params[3]);
@@ -257,6 +258,9 @@ public class Tienda {
                 else printError("Producto no encontrado en catálogo");
             }
 
+            case TICKER_ADD_ALT_SERVICE -> {
+                int a= 0;
+            }
             case TICKET_REMOVE -> {
                 Ticket ticket = getTicketById(params[1], params[0]);
 
@@ -284,19 +288,19 @@ public class Tienda {
                 }
             }
 
-            case HELP -> this.help();
+            case HELP -> help();
             case ECHO -> System.out.println(rawInput.substring(5));
             case EXIT -> exit = true;
 
         }
-        if (!errorOcurred && (command.commandText.contains("prod") || command.commandText.contains("ticket") ||
+        if (!errorOccurred && (command.commandText.contains("prod") || command.commandText.contains("ticket") ||
                 command.commandText.contains("cash") || command.commandText.contains("client"))) {
             System.out.println(command.commandText + ": ok");
         }
         return exit;
     }
 
-    public Ticket getTicketById(String cashId, String id) {
+    public static Ticket getTicketById(String cashId, String id) {
         for (Ticket t : getCashierById(cashId).getTickets()) {
             if (id.equals(t.getId())) {
                 return t;
@@ -307,7 +311,7 @@ public class Tienda {
     }
 
 
-    public Cashier getCashierById(String id) {
+    public static Cashier getCashierById(String id) {
         for (Cashier c : cashiers) {
             if (id.equals(c.getId())) {
                 return c;
@@ -317,12 +321,12 @@ public class Tienda {
         return null;
     }
 
-    public void printError(String message){
+    public static void printError(String message){
         System.out.println(message);
-        this.errorOcurred =true;
+        errorOccurred =true;
     }
 
-    private void help() {
+    private static void help() {
         System.out.println("Commands:");
 
         System.out.println(Command.getAllCommandsHelp());

@@ -1,5 +1,7 @@
 package upm;
 
+import upm.products.ProductCategory;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -16,12 +18,13 @@ public enum Command {
 
     TICKET_NEW("ticket new", new String[]{"[<id>]", "<cashId>", "<userId>", "-[c|p|s] (default -p option)"}, 4, 6),
     TICKET_ADD("ticket add", new String[]{"<ticketId>", "<cashId>", "<prodId>", "<amount>", "[--p<txt> --p<txt>]"}, 6, 0),
+    TICKER_ADD_ALT_SERVICE("ticket add", new String[]{"<ticketId>", "<cashId>", "<serviceId>", "[--p<txt> --p<txt>]"}, 5, 0),
     TICKET_REMOVE("ticket remove", new String[]{"<ticketId>", "<cashId>", "<prodId>"}, 5, 5),
     TICKET_PRINT("ticket print", new String[]{"<ticketId>", "<cashId>"}, 4, 4),
     TICKET_LIST("ticket list", new String[]{}, 2, 2),
 
     PROD_ADD("prod add", new String[]{"[<id>]", "\"<name>\"", "<category>", "<price>", "[<maxPers>]"}, 5, 7),
-    PROD_ADD_ALT_SERVICE("prod add", new String[]{"<expiration: yyyy-MM-dd>", "<category>"}, 4, 4),
+    PROD_ADD_ALT_SERVICE("prod add", new String[]{"<expiration: yyyy-MM-dd>", "<serviceCategory>"}, 4, 4),
 
     PROD_UPDATE("prod update", new String[]{"<id>", "NAME|CATEGORY|PRICE", "<value>"}, 5, 5),
     PROD_ADDFOOD("prod addFood", new String[]{"[<id>]", "\"<name>\"", "<price>", "<expiration: yyyy-MM-dd>", "<max_people>"}, 6, 7),
@@ -131,6 +134,12 @@ public enum Command {
                         matches = false;
                     }
                 }
+                case "<serviceId>" ->{
+                    if (!commandGiven[i+offsetAmount].matches("\\d+[sS]")){
+                        errorCode = String.format("El parámetro %d ('%s') debería ser un numero válido%n", i + 1, commandGiven[i + offsetAmount]);
+                        matches = false;
+                    }
+                }
                 case "<amount>", "<maxPers>", "<max_people>" ->{
                     if (!commandGiven[i + offsetAmount].matches("^[1-9]\\d*$")) {
                         errorCode = String.format("El parámetro %d ('%s') debería ser un numero positivo válido%n", i + 1, commandGiven[i + offsetAmount]);
@@ -147,7 +156,6 @@ public enum Command {
                         matches = false;
                     }
                 }
-
                 case "--p<txt> --p<txt>" ->{
                     for (int j = i + offsetAmount; j < commandGiven.length; j++) {
                         if (!commandGiven[j].matches("^--p\\S+$")) {
@@ -158,6 +166,7 @@ public enum Command {
                         }
                     }
                 }
+                //TODO: AÑADIR CASE PARA NIE NIF
             }
 
             if (!matches && isOptional){
@@ -178,6 +187,9 @@ public enum Command {
     public static ValidatedCommand validateCommand(String command){
         String[] splitted = Utils.splitText(command);
         if (splitted.length<1) return null;
+
+        String output = "Comando desconocido";
+
         for (Command cmd : Command.values()) {
             if (cmd.commandText.equals(splitted[0]) ||
             (splitted.length>1 && cmd.commandText.equals(splitted[0] + " " + splitted[1]))){
@@ -191,13 +203,12 @@ public enum Command {
                     }
                     else return null;
                 }else{
-                    System.out.printf("Número de parámetros incorrecto (esperados: %d, recibidos: %d)%n", cmd.minLength-wordCount, splitted.length-wordCount);
-
-                    return null;
+                    output = String.format("Número de parámetros incorrecto (esperados: %d, recibidos: %d)%n", cmd.minLength-wordCount, splitted.length-wordCount);
+                    //return null;
                 }
             }
         }
-        System.out.println("Comando desconocido");
+        System.out.println(output);
         return null;
     }
 }

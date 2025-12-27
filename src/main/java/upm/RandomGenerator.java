@@ -1,5 +1,7 @@
 package upm;
 
+import upm.products.ProductCatalog;
+
 import java.util.Random;
 import java.util.Set;
 import java.time.LocalDateTime;
@@ -68,5 +70,12 @@ public class RandomGenerator {
         int rand = random.nextInt(100_000); // 0..99999
         String randPart = String.format("%05d", rand);
         return datePart + "-" + randPart;
+    }
+
+    //TODO: MIRAR COMO HACER ESTO
+    private static int currentServiceId = 0;
+    public static String generateServiceId() {
+        currentServiceId += 1;
+        return Integer.toString(currentServiceId);
     }
 }
