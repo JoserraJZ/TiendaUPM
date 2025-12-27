@@ -258,7 +258,12 @@ public class Tienda {
                     System.out.println(ticket);
                 else printError("Error eliminando el ticket");
             }
-            case TICKET_PRINT -> getTicketById(params[1], params[0]).closeAndPrint();
+            case TICKET_PRINT -> {
+                Ticket ticket = getTicketById(params[1], params[0]);
+                if (ticket != null) {
+                    ticket.closeAndPrint();
+                }
+            }
             case TICKET_LIST -> {
                 System.out.println("Ticket List:");
 
@@ -313,9 +318,8 @@ public class Tienda {
 
     private void help() {
         System.out.println("Commands:");
-        for (Command command : Command.values()) {
-            System.out.println(" " + command.getHelp());
-        }
+
+        System.out.println(Command.getAllCommandsHelp());
 
         System.out.println("""
                 

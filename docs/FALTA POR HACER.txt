@@ -1,0 +1,18 @@
+Imanol:
+* modificar el .copy
+* Método de guardar sistema en archivos para poder recuperar el sistema entre sesiones
+* Diagrama UML
+
+Jesús:
+* HECHO: modificar comandos
+* productos servicios(en principio no heredan según lo que veo, si quieres haces extends de product)
+
+Joserra:
+* clientes empresa y tickets empresa, solo copiar la estructura de los otros y adaptarlo
+* Hacer el archivo .jar
+
+Pdf:
+* documentacion de las librerias
+* gestion de excepciones
+* manejo de la app
+* pantallazos de todo

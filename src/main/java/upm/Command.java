@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 public enum Command {
-    CLIENT_ADD("client add", new String[]{"\"<nombre>\"", "<DNI>", "<email>", "<cashId>"}, 6, 6),
+    CLIENT_ADD("client add", new String[]{"\"<nombre>\"", "(<DNI>|<NIF>)", "<email>", "<cashId>"}, 6, 6),
     CLIENT_REMOVE("client remove", new String[]{"<DNI>"}, 3, 3),
     CLIENT_LIST("client list", new String[]{}, 2, 2),
 
@@ -14,13 +14,15 @@ public enum Command {
     CASH_LIST("cash list", new String[]{}, 2, 2),
     CASH_TICKETS("cash tickets", new String[]{"<cashId>"}, 3, 3),
 
-    TICKET_NEW("ticket new", new String[]{"[<id>]", "<cashId>", "<userId>"}, 4, 5),
+    TICKET_NEW("ticket new", new String[]{"[<id>]", "<cashId>", "<userId>", "-[c|p|s] (default -p option)"}, 4, 6),
     TICKET_ADD("ticket add", new String[]{"<ticketId>", "<cashId>", "<prodId>", "<amount>", "[--p<txt> --p<txt>]"}, 6, 0),
     TICKET_REMOVE("ticket remove", new String[]{"<ticketId>", "<cashId>", "<prodId>"}, 5, 5),
     TICKET_PRINT("ticket print", new String[]{"<ticketId>", "<cashId>"}, 4, 4),
     TICKET_LIST("ticket list", new String[]{}, 2, 2),
 
     PROD_ADD("prod add", new String[]{"[<id>]", "\"<name>\"", "<category>", "<price>", "[<maxPers>]"}, 5, 7),
+    PROD_ADD_SERVICE("prod add", new String[]{"<expiration: yyyy-MM-dd>", "<category>"}, 4, 4),
+
     PROD_UPDATE("prod update", new String[]{"<id>", "NAME|CATEGORY|PRICE", "<value>"}, 5, 5),
     PROD_ADDFOOD("prod addFood", new String[]{"[<id>]", "\"<name>\"", "<price>", "<expiration: yyyy-MM-dd>", "<max_people>"}, 6, 7),
     PROD_ADDMEETING("prod addMeeting", new String[]{"[<id>]", "\"<name>\"", "<price>", "<expiration: yyyy-MM-dd>", "<max_people>"}, 6, 7),
@@ -46,10 +48,41 @@ public enum Command {
     public String getCommandText() {
         return this.commandText;
     }
+    public String getParameters() {
+        return String.join(" ", this.parameters);
+    }
 
     public String getHelp() {
         String params = String.join(" ", this.parameters);
         return this.getCommandText() + (params.isEmpty() ? "": " ") + params;
+    }
+    
+    public static String getAllCommandsHelp() {
+        StringBuilder sb = new StringBuilder();
+        Command previousCommand = null;
+        //boolean hasTwoParams = false;
+
+        for (Command command : Command.values()) {
+            String commandText = command.getCommandText();
+            boolean sameCommand = false;
+
+            if (previousCommand != null) {
+                if (previousCommand.getCommandText().equals(commandText)) {
+                    sb.append(commandText).append(" (").append(previousCommand.getParameters()).append(") || (").append(command.getParameters()).append(")\n");
+                    sameCommand=true;
+                } else {
+                    sb.append(previousCommand.getHelp()).append("\n");
+                }
+            }
+            if (!sameCommand)
+                previousCommand = command;
+            else
+                previousCommand = null;
+        }
+        if (previousCommand!= null){
+            sb.append(previousCommand.getHelp()).append("\n");
+        }
+        return sb.toString();
     }
 
     public boolean matchesLength(int length) {
