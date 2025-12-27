@@ -1,10 +1,13 @@
 package upm;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+//TODO: PORQUE TIENDA ES UNA INSTANCIA???
 public class Tienda {
 
     private final ProductCatalog catalog;
@@ -18,50 +21,51 @@ public class Tienda {
         System.out.println("Welcome to the ticket module App.\n" + "Ticket module. Type 'help' to see commands.");
         Tienda store = new Tienda();
 
-        // Si se pasa un fichero como argumento, procesamos sus líneas como comandos
-        if (args.length > 0) {
-            java.io.File inputFile = new java.io.File(args[0]);
-            if (inputFile.exists() && inputFile.isFile()) {
-                System.setProperty("isfromfile", "true");
-                try (Scanner fileScanner = new Scanner(inputFile)) {
-                    while (fileScanner.hasNextLine()) {
-                        try {
-                            store.errorOcurred = false;
-                            // executeCommand leerá la siguiente línea del scanner
-                            if (store.executeCommand(fileScanner)) {
-                                break; // comando EXIT o similar terminó la ejecuciónS
-                            }
-                        } catch (Exception e) {
-                            System.err.println("Se ha dado el error: " + e.getMessage());
-                        }
-                    }
-                } catch (java.io.FileNotFoundException e) {
-                    System.err.println("Error abriendo el fichero: " + e.getMessage());
-                } finally {
-                    System.clearProperty("isfromfile");
-                }
-                System.out.println("Closing application.\nGoodbye!");
-                return;
-            } else {
-                System.err.println("Fichero no encontrado: " + args[0] + ". Ejecutando modo interactivo.");
+        boolean shouldRunFromFile = args.length > 0 && store.runFromFile(args[0]);
+
+        if (!shouldRunFromFile) {
+            try (Scanner scanner = new Scanner(System.in)) {
+                store.commandLoop(scanner);
             }
         }
 
-        // Modo interactivo por defecto
-        Scanner scanner = new Scanner(System.in);
-        while (true) {
+        System.out.println("Closing application.\nGoodbye!");
+    }
+
+    private boolean runFromFile(String filePath) {
+        File inputFile = new File(filePath);
+
+        if (!inputFile.isFile()){
+            System.err.println("Fichero no encontrado: " + filePath + ". Ejecutando modo interactivo.");
+            return false;
+        }
+
+        System.setProperty("isfromfile", "true");
+
+
+        try (Scanner fileScanner = new Scanner(inputFile)) {
+            commandLoop(fileScanner);
+            return true;
+        } catch (FileNotFoundException e) {
+            System.err.println("Error abriendo el fichero: " + e.getMessage());
+            return false;
+        } finally {
+            System.clearProperty("isfromfile");
+        }
+    }
+
+    private void commandLoop(Scanner scanner){
+        while (scanner.hasNextLine()) {
             try {
-                store.errorOcurred = false;
-                if (store.executeCommand(scanner)) {
+                this.errorOcurred = false;
+                if (this.executeCommand(scanner.nextLine())) {
                     break; // salir si executeCommand devuelve true
                 }
             } catch (Exception e) {
                 System.err.println("Se ha dado el error: " + e.getMessage());
             }
         }
-        System.out.println("Closing application.\nGoodbye!");
     }
-
 
     public Tienda() {
         this.catalog = new ProductCatalog();
@@ -71,9 +75,8 @@ public class Tienda {
         RandomGenerator.Init(catalog, cashiers, clients);
     }
 
-    private boolean executeCommand(Scanner scanner) {
+    private boolean executeCommand(String rawInput) {
         System.out.print("\ntUPM> ");
-        String rawInput = scanner.nextLine();
 
         ValidatedCommand validatedCommand = Command.validateCommand(rawInput);
         if(validatedCommand==null)return false;
@@ -325,7 +328,6 @@ public class Tienda {
         System.out.println(Command.getAllCommandsHelp());
 
         System.out.println("""
-                
                 Categories: MERCH, STATIONERY, CLOTHES, BOOK, ELECTRONICS
                 Discounts if there are ≥2 units in the category: MERCH 0%, STATIONERY 5%, CLOTHES 7%, BOOK 10%, ELECTRONICS 3%.""");
     }

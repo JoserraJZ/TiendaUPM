@@ -26,7 +26,7 @@ public class Client {
     @Override
     public String toString() {
         return String.format(
-                "Client{identifier='%s', name='%s', email='%s', cash=%s}",
+                "USER{identifier='%s', name='%s', email='%s', cash=%s}",
                 id, name, email, cashier.getId()
         );
     }
