@@ -21,7 +21,7 @@ public enum Command {
     TICKET_LIST("ticket list", new String[]{}, 2, 2),
 
     PROD_ADD("prod add", new String[]{"[<id>]", "\"<name>\"", "<category>", "<price>", "[<maxPers>]"}, 5, 7),
-    PROD_ADD_SERVICE("prod add", new String[]{"<expiration: yyyy-MM-dd>", "<category>"}, 4, 4),
+    PROD_ADD_ALT_SERVICE("prod add", new String[]{"<expiration: yyyy-MM-dd>", "<category>"}, 4, 4),
 
     PROD_UPDATE("prod update", new String[]{"<id>", "NAME|CATEGORY|PRICE", "<value>"}, 5, 5),
     PROD_ADDFOOD("prod addFood", new String[]{"[<id>]", "\"<name>\"", "<price>", "<expiration: yyyy-MM-dd>", "<max_people>"}, 6, 7),

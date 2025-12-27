@@ -153,6 +153,9 @@ public class Tienda {
                 if (prod == null) printError("No se pueden añadir más de 200 productos");
                 else System.out.println(prod);
             }
+            case PROD_ADD_ALT_SERVICE -> {
+                //TODO: COMANDO ALTERNATIVO AÑADIR SERVICIO
+            }
             case PROD_UPDATE -> {
                 boolean done = catalog.update(Integer.parseInt(params[0]), params[1], params[2]);
                 if (!done) printError("Atributo de producto desconocido");
