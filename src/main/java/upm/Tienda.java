@@ -110,10 +110,10 @@ public class Tienda {
                 }
                 else printError("El identificador de cajero introducido no existe");
             }
-
+            /*
             case CLIENT_ADD -> {
                 boolean isCompany = Utils.isNIF(params[1]);
-                System.out.println(isCompany);
+                //System.out.println(isCompany);
                 Cashier cash = getCashierById(params[3]);
                 if (cash != null){
                     if (!clients.add(new Client(params[0], params[1], params[2], cash)))
@@ -121,6 +121,32 @@ public class Tienda {
                 }
                 else printError("El identificador de cajero introducido no existe");
             }
+
+             */
+
+            case CLIENT_ADD -> {
+                String id = params[1];
+                boolean isDNI = id.matches("\\d{8}[A-Za-z]");
+                boolean isNIE = id.matches("[XY]\\d{7}[A-Za-z]");
+                boolean isNIF = id.matches("[A-Za-z]\\d{8}");
+                Cashier cash = getCashierById(params[3]);
+
+                if (cash != null) {
+                    if (!(isDNI || isNIE || isNIF)) {
+                        printError("Identificador de usuario no válido");
+                    } else {
+                        Client newClient;
+                        if (isNIF) {
+                            newClient = new ClientCompany(params[0], params[1], params[2], cash);
+                        } else {
+                            newClient = new Client(params[0], params[1], params[2], cash);
+                        }
+                        if (!clients.add(newClient))
+                            printError("El identificador de usuario introducido ya existe");
+                    }
+                } else printError("El identificador de cajero introducido no existe");
+            }
+
             case CLIENT_LIST -> {
                 List<Client> clientList = new ArrayList<>(clients);
                 clientList.sort(Comparator.comparing(Client::getName));
@@ -165,10 +191,17 @@ public class Tienda {
                 if (!done) printError("Atributo de producto desconocido");
             }
             case PROD_ADDFOOD -> {
+                //CAMBIAR FECHA, DE FIXEDDATETIME A NOW()
+
                 Product prod = null;
                 LocalDateTime expiration =LocalDate.parse(params[3], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
 
-                if (Integer.parseInt(params[4]) <= 100 && !(Duration.between(LocalDateTime.now(), expiration).toDays() < 3)) {
+                ////////////////////////////////////////////////////////////////////////////////////
+                DateTimeFormatter fixedFmt = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
+                LocalDateTime fixedDateTime = LocalDateTime.parse("25-12-07-22:32", fixedFmt);
+                ///////////////////////////////////////////////////////////////////////////////////
+
+                if (Integer.parseInt(params[4]) <= 100 && !(Duration.between(fixedDateTime, expiration).toDays() < 3)) {
                     prod = productCatalog.add(new ProductCampusFood(
                             params[0],
                             params[1],
@@ -182,17 +215,24 @@ public class Tienda {
                 else System.out.println(prod);
             }
             case PROD_ADDMEETING -> {
+                //CAMBIAR FECHA, DE FIXEDDATETIME A NOW()
+
                 Product prod = null;
                 LocalDateTime expiration =LocalDate.parse(params[3], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
 
-                if (Integer.parseInt(params[4]) <= 100 && !(Duration.between(LocalDateTime.now(), expiration).toHours() < 12)) {
+                ///////////////////////////////////////////////////////////////////////////////////
+                DateTimeFormatter fixedFmt = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
+                LocalDateTime fixedDateTime = LocalDateTime.parse("25-12-07-22:32", fixedFmt);
+                ///////////////////////////////////////////////////////////////////////////////////
+
+                if (Integer.parseInt(params[4]) <= 100 && !(Duration.between(fixedDateTime, expiration).toHours() < 12)) {
                     prod = productCatalog.add(new ProductMeeting(
                             params[0],
                             params[1],
                             Double.parseDouble(params[2]),
                             expiration,
                             Integer.parseInt(params[4]),
-                            LocalDateTime.now()
+                            fixedDateTime
                     ));
                 }
                 if (prod == null)
@@ -208,12 +248,33 @@ public class Tienda {
             }
 
             case TICKET_NEW -> {
-                Ticket nuevo = new Ticket(params[0]);
-                getCashierById(params[1]).addTicket(nuevo);
 
+                //comprobar si el tipo de ticket que se quiere se puede para el tipo de cliente
+
+                TicketType tipoTicket = TicketType.PRODUCT; // default
+                if (params.length > 2 && params[2] != null) {
+                    String t = params[2].toLowerCase();
+                    tipoTicket = switch (t) {
+                        case "c", "-c", "compound" -> TicketType.COMPOUND;
+                        case "p", "-p", "product" -> TicketType.PRODUCT;
+                        case "s", "-s", "service" -> TicketType.SERVICE;
+                        default -> TicketType.PRODUCT;
+                    };
+                }
+                Ticket nuevo = new Ticket(params[0], tipoTicket);
+                getCashierById(params[1]).addTicket(nuevo);
                 System.out.println(nuevo);
             }
             case TICKET_ADD -> {
+                //CAMBIAR FECHA, DE FIXEDDATETIME A NOW()
+
+                // COMPROBAR SI EL TICKET ES DE PRODUCTO, SERVICIO O MIXTO
+
+                ///////////////////////////////////////////////////////////////////////////////////
+                DateTimeFormatter fixedFmt = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
+                LocalDateTime fixedDateTime = LocalDateTime.parse("25-12-07-22:32", fixedFmt);
+                ///////////////////////////////////////////////////////////////////////////////////
+
                 int productId = Integer.parseInt(params[2]);
                 Product prod = productCatalog.getById(productId);
 
@@ -230,8 +291,8 @@ public class Tienda {
                     }
                     else {
                         if (prod instanceof ProductMeeting prodM) {
-                            if ( prodM.getExpirationDateTime().isAfter(LocalDateTime.now()) ||
-                                    prodM.getExpirationDateTime().isEqual(LocalDateTime.now())){
+                            if ( prodM.getExpirationDateTime().isAfter(fixedDateTime) ||
+                                    prodM.getExpirationDateTime().isEqual(fixedDateTime)){
                                 prodM.addParticipants(amount);
                                 ticket.addProducts(prod, amount);
                             }else {
@@ -239,8 +300,8 @@ public class Tienda {
                             }
 
                         } else if (prod instanceof ProductCampusFood prodCF) {
-                            if ( prodCF.getExpirationDate().isAfter(LocalDateTime.now()) ||
-                                    prodCF.getExpirationDate().isEqual(LocalDateTime.now())){
+                            if ( prodCF.getExpirationDate().isAfter(fixedDateTime) ||
+                                    prodCF.getExpirationDate().isEqual(fixedDateTime)){
                                 prodCF.addParticipants(amount);
                                 ticket.addProducts(prod, amount);
                             }else {
@@ -269,9 +330,20 @@ public class Tienda {
                 else printError("Error eliminando el ticket");
             }
             case TICKET_PRINT -> {
+                //modificar toString de Ticket para cada tipo de ticket
                 Ticket ticket = getTicketById(params[1], params[0]);
                 if (ticket != null) {
-                    ticket.closeAndPrint();
+                    if (ticket.getTicketType() == TicketType.COMPOUND) {
+                        if ((!ticket.getItems().isEmpty()) && (!ticket.getServices().isEmpty())) {
+                            ticket.closeAndPrint();
+                        } else {
+                            printError("Un ticket mixto debe contener al menos un producto y un servicio");
+                        }
+                    } else if (ticket.getTicketType() == TicketType.PRODUCT) {
+                        ticket.closeAndPrint();
+                    } else if (ticket.getTicketType() == TicketType.SERVICE) {
+                        ticket.closeAndPrint();
+                    }
                 }
             }
             case TICKET_LIST -> {

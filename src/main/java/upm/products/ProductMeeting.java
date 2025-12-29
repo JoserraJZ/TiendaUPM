@@ -6,6 +6,7 @@ import java.util.Locale;
 
 public class ProductMeeting extends Product {
     private LocalDateTime expirationDateTime;
+    private LocalDateTime creationDateTime;
     private int maxParticipants;
     private int currentParticipants;
 
@@ -14,7 +15,7 @@ public class ProductMeeting extends Product {
         this.expirationDateTime = expirationDateTime;
         this.maxParticipants = Math.min(maxParticipants, 100);
         this.currentParticipants=0;
-
+        this.creationDateTime = creationDateTime;
     }
 
     public boolean addParticipants(int participantsAdded){

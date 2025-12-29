@@ -6,6 +6,7 @@ public class ClientCompany extends Client{
         super(name, NIF, email, cashier);
     }
 
+    //Comprobar NIF antes de llegar aquí
     //Ver como aceptar Servicios o Productos+Servicios
     //No mostrar precio de Servicios
     //Identificar por NIF

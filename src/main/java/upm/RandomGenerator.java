@@ -64,9 +64,16 @@ public class RandomGenerator {
     }
 
     public static String generateTicketId() {
+
+        ///////////////////////////////////////////////////////////////////////////////////
+        DateTimeFormatter fixedFmt = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
+        LocalDateTime fixedDateTime = LocalDateTime.parse("25-12-07-22:32", fixedFmt);
+        ///////////////////////////////////////////////////////////////////////////////////
+
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
-        String datePart = now.format(fmt);
+        //Modificar aqui
+        String datePart = fixedDateTime.format(fmt);
         int rand = random.nextInt(100_000); // 0..99999
         String randPart = String.format("%05d", rand);
         return datePart + "-" + randPart;

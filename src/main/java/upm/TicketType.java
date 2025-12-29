@@ -1,5 +1,5 @@
 package upm;
 
 public enum TicketType{
-    COMMON, BUSSINESS
+    COMPOUND, PRODUCT, SERVICE
 }

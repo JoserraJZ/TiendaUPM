@@ -12,14 +12,19 @@ import java.util.stream.Collectors;
 public class Ticket {
 
     private final Map<Integer, ArrayList<Product>> items ;
+    private final Map<Integer, ArrayList<Service>> services;
     private String id;
     private TicketState currentState;
+    private TicketType ticketType;
 
-    public Ticket(String id) {
+    public Ticket(String id, TicketType type) {
         this.id = (id == null) ? RandomGenerator.generateTicketId() : id;
         this.items = new LinkedHashMap<>();
+        this.services = new LinkedHashMap<>();
         this.currentState = TicketState.EMPTY;
+        this.ticketType = type;
     }
+
 
     public void addProducts(Product product, int amount) {
         if (currentState == TicketState.CLOSE) return;
@@ -51,7 +56,15 @@ public class Ticket {
 
     public void closeAndPrint() {
         this.currentState = TicketState.CLOSE;
-        id = id + "-"+LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm"));
+
+        ////////////////////////////////////////////////////////////////////////////////////
+        DateTimeFormatter fixedFmt = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
+        LocalDateTime fixedDateTime = LocalDateTime.parse("25-12-07-22:32", fixedFmt);
+
+        id = id + "-"+fixedDateTime.format(DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm"));
+        ////////////////////////////////////////////////////////////////////////////////////
+
+        //id = id + "-"+LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm"));
         System.out.println(this);
     }
 
@@ -62,6 +75,14 @@ public class Ticket {
     TicketState getCurrentState() {
         return currentState;
     }
+
+    TicketType getTicketType() {return ticketType;}
+
+    Map getItems() {return items;}
+
+    Map getServices() {return services;}
+
+
 
     @Override
     public String toString() {
