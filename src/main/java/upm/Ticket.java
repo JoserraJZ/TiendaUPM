@@ -1,5 +1,6 @@
 package upm;
 
+import jakarta.persistence.*;
 import upm.products.Product;
 import upm.products.ProductCampusFood;
 import upm.products.ProductMeeting;
@@ -9,11 +10,17 @@ import java.util.*;
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
-public class Ticket {
+@Entity
+@Table(name = "ticket")
+public class  Ticket {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private String id;
+    
     private final Map<Integer, ArrayList<Product>> items ;
     private final Map<Integer, ArrayList<Service>> services;
-    private String id;
+
     private TicketState currentState;
     private TicketType ticketType;
 
