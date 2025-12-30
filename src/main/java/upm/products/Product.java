@@ -1,12 +1,18 @@
 package upm.products;
 
+import jakarta.persistence.*;
 import upm.RandomGenerator;
 
 import java.util.Locale;
 
+@Entity
+@Table(name = "productsCatalog")
 public class Product {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private final int id;
+
     private String name;
     private ProductCategory category;
     private double price;

@@ -1,10 +1,18 @@
 package upm;
 
+import jakarta.persistence.*;
+
 import java.util.Objects;
 
+@Entity
+@Table(name = "client")
 public class Client {
-    private final String name;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private final String id;
+
+    private final String name;
     private final String email;
     private final Cashier cashier;
     private final ClientType clientType;

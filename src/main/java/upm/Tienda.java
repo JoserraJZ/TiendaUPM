@@ -285,7 +285,6 @@ public class Tienda {
                 if (prod != null) {
                     int amount = Integer.parseInt(params[3]);
                     Ticket ticket = getTicketById(params[1], params[0]);
-
                     if (params.length>4){
                         CustomizableProduct pPersonalizado= ((CustomizableProduct) prod).clone();
                         for (int i = 4; i < params.length; i++) {
@@ -297,8 +296,9 @@ public class Tienda {
                         if (prod instanceof ProductMeeting prodM) {
                             if ( prodM.getExpirationDateTime().isAfter(fixedDateTime) ||
                                     prodM.getExpirationDateTime().isEqual(fixedDateTime)){
-                                prodM.addParticipants(amount);
-                                ticket.addProducts(prod, amount);
+                                ProductMeeting meetingToAdd=prodM.clone();
+                                meetingToAdd.addParticipants(amount);
+                                ticket.addProducts(meetingToAdd, amount);
                             }else {
                                 printError("La reunion que se está tratando de añadir ha prescrito");
                             }
@@ -306,15 +306,15 @@ public class Tienda {
                         } else if (prod instanceof ProductCampusFood prodCF) {
                             if ( prodCF.getExpirationDate().isAfter(fixedDateTime) ||
                                     prodCF.getExpirationDate().isEqual(fixedDateTime)){
-                                prodCF.addParticipants(amount);
-                                ticket.addProducts(prod, amount);
+                                ProductCampusFood campusFoodToAdd=prodCF.clone();
+                                campusFoodToAdd.addParticipants(amount);
+                                ticket.addProducts(campusFoodToAdd, amount);
                             }else {
                                 printError("La comida que se está tratando de añadir ha prescrito");
                             }
 
                         } else {
-                            prod = prod.clone();
-                            ticket.addProducts(prod, amount);
+                            ticket.addProducts(prod.clone(), amount);
                         }
 
                     }

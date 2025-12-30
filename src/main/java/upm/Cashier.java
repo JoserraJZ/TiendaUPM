@@ -1,15 +1,24 @@
 package upm;
 
+import jakarta.persistence.*;
+
 import java.util.Objects;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Collections;
 
+@Entity
+@Table(name = "cashier")
 public class Cashier implements Comparable<Cashier>{
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private final String id;
+
     private final String name;
     private final String businessEmail;
+
+    @OneToMany
     private final Set<Ticket> tickets = new HashSet<>();
 
     public Cashier(String id, String newName, String newBusinessEmail){

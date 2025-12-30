@@ -26,6 +26,10 @@ public class ProductCampusFood extends Product {
         }
     }
 
+    public int getMaxParticipants() {
+        return maxParticipants;
+    }
+
     public LocalDateTime getExpirationDate() {
         return expirationDate;
     }
@@ -40,6 +44,18 @@ public class ProductCampusFood extends Product {
     }
 
     @Override
+    public ProductCampusFood clone() {
+        ProductCampusFood copy = new ProductCampusFood(
+                String.valueOf(getId()),
+                getName(),
+                super.getPrice(),
+                getExpirationDate(),
+                getMaxParticipants()
+        );
+        return copy;
+    }
+
+    @Override
     public String toString() {
         if (currentParticipants>0){
             return String.format(Locale.US,
@@ -51,5 +67,7 @@ public class ProductCampusFood extends Product {
                     "Food", super.getId(), super.getName(), super.getPrice(), expirationDate.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), maxParticipants);
         }
     }
+
+
 }
 

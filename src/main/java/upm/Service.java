@@ -1,5 +1,6 @@
 package upm;
 
+import jakarta.persistence.*;
 import upm.products.ProductCategory;
 
 import java.time.LocalDateTime;
@@ -8,9 +9,15 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
+@Entity
+@Table(name = "service")
 public class Service {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private final int id;
+
+
     private String category;
     private ZonedDateTime expirationDate;
 

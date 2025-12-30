@@ -31,12 +31,33 @@ public class ProductMeeting extends Product {
         return expirationDateTime;
     }
 
+    public LocalDateTime getCreationDateTime() {
+        return creationDateTime;
+    }
+
+    public int getMaxParticipants() {
+        return maxParticipants;
+    }
+
     public void setExpirationDateTime(LocalDateTime expirationDateTime) {
         this.expirationDateTime = expirationDateTime;
     }
 
     public double calculateCurrentPrice() {
         return getPrice() * currentParticipants;
+    }
+
+    @Override
+    public ProductMeeting clone() {
+        ProductMeeting copy = new ProductMeeting(
+                String.valueOf(getId()),
+                getName(),
+                super.getPrice(),
+                getExpirationDateTime(),
+                getMaxParticipants(),
+                getCreationDateTime()
+        );
+        return copy;
     }
 
     @Override
