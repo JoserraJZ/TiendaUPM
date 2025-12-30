@@ -10,21 +10,36 @@ import java.util.Locale;
 
 public class Service {
 
-    private final String id;
+    private final int id;
     private String category;
     private ZonedDateTime expirationDate;
 
-    public Service(String stringId, LocalDateTime maxDate, String category) {
-        this.id = stringId; //EMPIEZA POR 1 ACABA POR S
+    public Service(int id, LocalDateTime maxDate, String category) {
+        this.id = id; // ahora es un entero secuencial
         this.category = category;
-        this.expirationDate = maxDate.atZone(ZoneId.of("CET"));;
+        this.expirationDate = maxDate.atZone(ZoneId.of("CET"));
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public ZonedDateTime getExpirationDate() {
+        return expirationDate;
+    }
+
     @Override
     public String toString() {
-        String formattedDate = expirationDate.format(DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss z yyyy").withLocale(java.util.Locale.ENGLISH));
+        String formattedDate = expirationDate.format(
+                DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss z yyyy").withLocale(Locale.ENGLISH)
+        );
 
         return String.format(Locale.US,
-                "{class:%s, id:%s, category:%s, expiration:%s}",
+                "{class:%s, id:%d, category:%s, expiration:%s}",
                 "ProductService", id, category, formattedDate);
     }
 }

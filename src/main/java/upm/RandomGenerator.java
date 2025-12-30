@@ -2,6 +2,7 @@ package upm;
 
 import upm.products.ProductCatalog;
 
+import java.util.LinkedHashSet;
 import java.util.Random;
 import java.util.Set;
 import java.time.LocalDateTime;
@@ -52,6 +53,7 @@ public class RandomGenerator {
         }
         throw new RuntimeException("No se pudo generar un ID único en 1000 intentos");
     }
+    /*
     public static int generateProductId(){
         for (int i = 0; i < 1000; i++) { // si en 1000 casos no funciona dar un error
             int possibleId = new Random().nextInt(Integer.MAX_VALUE);
@@ -62,6 +64,20 @@ public class RandomGenerator {
         }
         throw new RuntimeException("No se pudo generar un ID único en 1000 intentos");
     }
+     */
+
+    public static int generateProductId() {
+        int id = 0;
+        while (id < Integer.MAX_VALUE) {
+            if (!catalog.doesIdExist(id)) {
+                return id;
+            }
+            id++;
+        }
+        throw new RuntimeException("No se pudo generar un ID único: se alcanzó Integer.MAX_VALUE");
+    }
+
+
 
     public static String generateTicketId() {
 
@@ -80,9 +96,26 @@ public class RandomGenerator {
     }
 
     //TODO: MIRAR COMO HACER ESTO
-    private static int currentServiceId = 0;
-    public static String generateServiceId() {
-        currentServiceId += 1;
-        return Integer.toString(currentServiceId);
+    // java
+// Inserta/actualiza estas líneas dentro de `RandomGenerator.java`
+
+    private static final Set<Integer> usedServiceIds = new LinkedHashSet<>();
+
+    public static synchronized int generateServiceId() {
+        int id = 1;
+        while (usedServiceIds.contains(id)) {
+            id++;
+            if (id == Integer.MAX_VALUE) {
+                throw new RuntimeException("No se pudo generar un ID de servicio único: se alcanzó Integer.MAX_VALUE");
+            }
+        }
+        usedServiceIds.add(id);
+        return id;
     }
+
+    // opcional: método para liberar ids si se quiere permitir reutilización
+    public static synchronized void releaseServiceId(int id) {
+        usedServiceIds.remove(id);
+    }
+
 }

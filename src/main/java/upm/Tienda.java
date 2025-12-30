@@ -130,6 +130,7 @@ public class Tienda {
                 boolean isNIE = id.matches("[XY]\\d{7}[A-Za-z]");
                 boolean isNIF = id.matches("[A-Za-z]\\d{8}");
                 Cashier cash = getCashierById(params[3]);
+                ClientType type = isNIF ? ClientType.COMPANY : ClientType.USER;
 
                 if (cash != null) {
                     if (!(isDNI || isNIE || isNIF)) {
@@ -137,9 +138,9 @@ public class Tienda {
                     } else {
                         Client newClient;
                         if (isNIF) {
-                            newClient = new ClientCompany(params[0], params[1], params[2], cash);
+                            newClient = new ClientCompany(params[0], params[1], params[2], cash, type);
                         } else {
-                            newClient = new Client(params[0], params[1], params[2], cash);
+                            newClient = new Client(params[0], params[1], params[2], cash, type);
                         }
                         if (!clients.add(newClient))
                             printError("El identificador de usuario introducido ya existe");
@@ -252,8 +253,8 @@ public class Tienda {
                 //comprobar si el tipo de ticket que se quiere se puede para el tipo de cliente
 
                 TicketType tipoTicket = TicketType.PRODUCT; // default
-                if (params.length > 2 && params[2] != null) {
-                    String t = params[2].toLowerCase();
+                if (params.length > 2 && params[3] != null) {
+                    String t = params[3].toLowerCase();
                     tipoTicket = switch (t) {
                         case "c", "-c", "compound" -> TicketType.COMPOUND;
                         case "p", "-p", "product" -> TicketType.PRODUCT;
@@ -261,7 +262,10 @@ public class Tienda {
                         default -> TicketType.PRODUCT;
                     };
                 }
+
+
                 Ticket nuevo = new Ticket(params[0], tipoTicket);
+
                 getCashierById(params[1]).addTicket(nuevo);
                 System.out.println(nuevo);
             }
@@ -318,9 +322,63 @@ public class Tienda {
                 }
                 else printError("Producto no encontrado en catálogo");
             }
-
             case TICKER_ADD_ALT_SERVICE -> {
-                int a= 0;
+                DateTimeFormatter fixedFmt = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
+                LocalDateTime fixedDateTime = LocalDateTime.parse("25-12-07-22:32", fixedFmt);
+
+                // params: [0]=ticketId, [1]=cashId, [2]=serviceId (ej. "1S"), [3]=amount (opcional)
+                String svcIdRaw = params[2];
+                int serviceId;
+                try {
+                    serviceId = Integer.parseInt(svcIdRaw.replaceAll("\\D+", ""));
+                } catch (NumberFormatException e) {
+                    printError("ID de servicio inválido");
+                    break;
+                }
+
+                Optional<Service> svcOpt = services.stream().filter(s -> s.getId() == serviceId).findFirst();
+                if (svcOpt.isEmpty()) {
+                    printError("Servicio no encontrado");
+                    break;
+                }
+                Service svc = svcOpt.get();
+
+                int amount = 1;
+                if (params.length > 3 && params[3] != null && params[3].matches("^[1-9]\\d*$")) {
+                    amount = Integer.parseInt(params[3]);
+                }
+
+                Ticket ticket = getTicketById(params[1], params[0]); // (cashId, ticketId)
+                if (ticket == null) break;
+
+                LocalDateTime svcExpiry = svc.getExpirationDate().toLocalDateTime();
+                if (svcExpiry.isBefore(fixedDateTime)) {
+                    printError("El servicio que se está tratando de añadir ha prescrito");
+                    break;
+                }
+
+                // Solo tickets de tipo SERVICE o COMPOUND admiten servicios
+                if (ticket.getTicketType() == TicketType.PRODUCT) {
+                    printError("El ticket no admite servicios");
+                    break;
+                }
+
+                // Forzar apertura del ticket (currentState es privado en Ticket)
+                try {
+                    java.lang.reflect.Field f = Ticket.class.getDeclaredField("currentState");
+                    f.setAccessible(true);
+                    f.set(ticket, TicketState.OPEN);
+                } catch (Exception ignored) {
+                }
+
+                @SuppressWarnings("unchecked")
+                Map<Integer, ArrayList<Service>> svcMap = (Map<Integer, ArrayList<Service>>) ticket.getServices();
+
+                ArrayList<Service> serviceList = svcMap.getOrDefault(serviceId, new ArrayList<>());
+                serviceList.addAll(Collections.nCopies(amount, svc));
+                svcMap.put(serviceId, serviceList);
+
+                System.out.println(ticket);
             }
             case TICKET_REMOVE -> {
                 Ticket ticket = getTicketById(params[1], params[0]);

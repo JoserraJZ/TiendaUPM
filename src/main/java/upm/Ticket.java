@@ -86,6 +86,22 @@ public class Ticket {
 
     @Override
     public String toString() {
+        // Servicios ordenados y a listar sólo si existen
+        List<Service> sortedServices = services.values().stream()
+                .flatMap(List::stream)
+                .sorted(Comparator.comparingInt(Service::getId))
+                .collect(Collectors.toList());
+
+        StringBuilder sb = new StringBuilder("Ticket : ").append(id);
+
+        if (!sortedServices.isEmpty()) {
+            sb.append("\nServices Included:");
+            for (Service svc : sortedServices) {
+                sb.append("\n").append(String.format(Locale.US, "%s", svc));
+            }
+        }
+
+        // Productos (si es COMPOUND mostramos el encabezado antes)
         List<Product> sorted = items.values().stream()
                 .flatMap(List::stream)
                 .sorted(
@@ -101,8 +117,9 @@ public class Ticket {
         double totalPrice = 0.0;
         double totalDiscount = 0.0;
 
-        String formatted;
-        StringBuilder sb = new StringBuilder("Ticket : ").append(id).append("\n");
+        if (ticketType == TicketType.COMPOUND && !items.isEmpty()) {
+            sb.append("\nProduct Included:");
+        }
 
         // 2. PROCESS EACH PRODUCT
         for (Product prod : sorted) {
@@ -114,14 +131,14 @@ public class Ticket {
             if (occurrences >= 2 && prod.getCategory() != null) {
                 double discount = prod.getCategory().getDiscountPercent() / 100.0;
                 double unitDiscount = price * discount;
-                formatted = Utils.formatDouble(unitDiscount);
+                String formatted = Utils.formatDouble(unitDiscount);
 
-                sb.append(String.format(Locale.US, "%s **discount -%s%n", prod, formatted));
+                sb.append(String.format(Locale.US, "%n%s **discount -%s", prod, formatted));
                 totalDiscount += unitDiscount;
 
             } else {
                 // NO DISCOUNT APPLIED
-                sb.append(String.format(Locale.US, "%s%n", prod));
+                sb.append(String.format(Locale.US, "%n%s", prod));
             }
 
             // Price calculation by product type
@@ -135,16 +152,18 @@ public class Ticket {
         }
 
         // 3. FINAL SUMMARY
-        double finalPrice = totalPrice - totalDiscount;
+        if (ticketType == TicketType.PRODUCT || (ticketType == TicketType.COMPOUND && !items.isEmpty())) {
+            double finalPrice = totalPrice - totalDiscount;
 
-        formatted = Utils.formatDouble(totalPrice);
-        sb.append(String.format(Locale.US, "  Total price: %s%n", formatted));
+            String formatted = Utils.formatDouble(totalPrice);
+            sb.append("\n").append(String.format(Locale.US, "  Total price: %s%n", formatted));
 
-        formatted = Utils.formatDouble(totalDiscount);
-        sb.append(String.format(Locale.US, "  Total discount: %s%n", formatted));
+            formatted = Utils.formatDouble(totalDiscount);
+            sb.append(String.format(Locale.US, "  Total discount: %s%n", formatted));
 
-        formatted = Utils.formatDouble(finalPrice);
-        sb.append(String.format(Locale.US, "  Final Price: %s", formatted));
+            formatted = Utils.formatDouble(finalPrice);
+            sb.append(String.format(Locale.US, "  Final Price: %s", formatted));
+        }
 
         return sb.toString();
     }

@@ -7,12 +7,14 @@ public class Client {
     private final String id;
     private final String email;
     private final Cashier cashier;
+    private final ClientType clientType;
 
-    public Client(String name, String DNI, String email, Cashier cashier){
+    public Client(String name, String DNI, String email, Cashier cashier, ClientType type){
         this.name=name;
         this.id = (DNI == null) ? RandomGenerator.generateDNI() : DNI;
         this.email=email;
         this.cashier=cashier;
+        this.clientType=type;
 
         System.out.println(this);
     }
