@@ -125,7 +125,7 @@ public class  Ticket {
         double totalDiscount = 0.0;
 
         if (ticketType == TicketType.COMPOUND && !items.isEmpty()) {
-            sb.append("\nProduct Included:");
+            sb.append("\nProduct Included");
         }
 
         // 2. PROCESS EACH PRODUCT
