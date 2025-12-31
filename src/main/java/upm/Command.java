@@ -17,8 +17,8 @@ public enum Command {
     CASH_TICKETS("cash tickets", new String[]{"<cashId>"}, 3, 3),
 
     TICKET_NEW("ticket new", new String[]{"[<id>]", "<cashId>", "<userId>", "-[c|p|s] (default -p option)"}, 4, 6),
-    TICKET_ADD("ticket add", new String[]{"<ticketId>", "<cashId>", "<prodId>", "<amount>", "[--p<txt> --p<txt>]"}, 6, 0),
-    TICKER_ADD_ALT_SERVICE("ticket add", new String[]{"<ticketId>", "<cashId>", "<serviceId>", "[--p<txt> --p<txt>]"}, 5, 0),
+    TICKET_ADD("ticket add", new String[]{"<ticketId>", "<cashId>", "<prodId>", "[<amount>]", "[--p<txt> --p<txt>]"}, 5, 0),
+    //TICKER_ADD_ALT_SERVICE("ticket add", new String[]{"<ticketId>", "<cashId>", "<serviceId>", "[--p<txt> --p<txt>]"}, 5, 0),
     TICKET_REMOVE("ticket remove", new String[]{"<ticketId>", "<cashId>", "<prodId>"}, 5, 5),
     TICKET_PRINT("ticket print", new String[]{"<ticketId>", "<cashId>"}, 4, 4),
     TICKET_LIST("ticket list", new String[]{}, 2, 2),

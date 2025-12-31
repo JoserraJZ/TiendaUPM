@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-//TODO: PORQUE TIENDA ES UNA INSTANCIA???
 public class Tienda {
 
     private static final ProductCatalog productCatalog = new ProductCatalog();
@@ -270,115 +269,116 @@ public class Tienda {
                 System.out.println(nuevo);
             }
             case TICKET_ADD -> {
-                //CAMBIAR FECHA, DE FIXEDDATETIME A NOW()
+                if (!params[2].toLowerCase().endsWith("s")) {
+                    //CAMBIAR FECHA, DE FIXEDDATETIME A NOW()
 
-                // COMPROBAR SI EL TICKET ES DE PRODUCTO, SERVICIO O MIXTO
+                    // COMPROBAR SI EL TICKET ES DE PRODUCTO, SERVICIO O MIXTO
 
-                ///////////////////////////////////////////////////////////////////////////////////
-                DateTimeFormatter fixedFmt = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
-                LocalDateTime fixedDateTime = LocalDateTime.parse("25-12-07-22:32", fixedFmt);
-                ///////////////////////////////////////////////////////////////////////////////////
+                    ///////////////////////////////////////////////////////////////////////////////////
+                    DateTimeFormatter fixedFmt = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
+                    LocalDateTime fixedDateTime = LocalDateTime.parse("25-12-07-22:32", fixedFmt);
+                    ///////////////////////////////////////////////////////////////////////////////////
 
-                int productId = Integer.parseInt(params[2]);
-                Product prod = productCatalog.getById(productId);
+                    int productId = Integer.parseInt(params[2]);
+                    Product prod = productCatalog.getById(productId);
 
-                if (prod != null) {
-                    int amount = Integer.parseInt(params[3]);
-                    Ticket ticket = getTicketById(params[1], params[0]);
-                    if (params.length>4){
-                        CustomizableProduct pPersonalizado= ((CustomizableProduct) prod).clone();
-                        for (int i = 4; i < params.length; i++) {
-                            pPersonalizado.addPersonalizedText(params[i]);
-                        }
-                        ticket.addProducts(pPersonalizado, amount);
-                    }
-                    else {
-                        if (prod instanceof ProductMeeting prodM) {
-                            if ( prodM.getExpirationDateTime().isAfter(fixedDateTime) ||
-                                    prodM.getExpirationDateTime().isEqual(fixedDateTime)){
-                                ProductMeeting meetingToAdd=prodM.clone();
-                                meetingToAdd.addParticipants(amount);
-                                ticket.addProducts(meetingToAdd, amount);
-                            }else {
-                                printError("La reunion que se está tratando de añadir ha prescrito");
+                    if (prod != null) {
+                        int amount = Integer.parseInt(params[3]);
+                        Ticket ticket = getTicketById(params[1], params[0]);
+                        if (params.length > 4) {
+                            CustomizableProduct pPersonalizado = ((CustomizableProduct) prod).clone();
+                            for (int i = 4; i < params.length; i++) {
+                                pPersonalizado.addPersonalizedText(params[i]);
                             }
-
-                        } else if (prod instanceof ProductCampusFood prodCF) {
-                            if ( prodCF.getExpirationDate().isAfter(fixedDateTime) ||
-                                    prodCF.getExpirationDate().isEqual(fixedDateTime)){
-                                ProductCampusFood campusFoodToAdd=prodCF.clone();
-                                campusFoodToAdd.addParticipants(amount);
-                                ticket.addProducts(campusFoodToAdd, amount);
-                            }else {
-                                printError("La comida que se está tratando de añadir ha prescrito");
-                            }
-
+                            ticket.addProducts(pPersonalizado, amount);
                         } else {
-                            ticket.addProducts(prod.clone(), amount);
-                        }
+                            if (prod instanceof ProductMeeting prodM) {
+                                if (prodM.getExpirationDateTime().isAfter(fixedDateTime) ||
+                                        prodM.getExpirationDateTime().isEqual(fixedDateTime)) {
+                                    ProductMeeting meetingToAdd = prodM.clone();
+                                    meetingToAdd.addParticipants(amount);
+                                    ticket.addProducts(meetingToAdd, amount);
+                                } else {
+                                    printError("La reunion que se está tratando de añadir ha prescrito");
+                                }
 
+                            } else if (prod instanceof ProductCampusFood prodCF) {
+                                if (prodCF.getExpirationDate().isAfter(fixedDateTime) ||
+                                        prodCF.getExpirationDate().isEqual(fixedDateTime)) {
+                                    ProductCampusFood campusFoodToAdd = prodCF.clone();
+                                    campusFoodToAdd.addParticipants(amount);
+                                    ticket.addProducts(campusFoodToAdd, amount);
+                                } else {
+                                    printError("La comida que se está tratando de añadir ha prescrito");
+                                }
+
+                            } else {
+                                ticket.addProducts(prod.clone(), amount);
+                            }
+
+                        }
+                        System.out.println(ticket);
+                    } else printError("Producto no encontrado en catálogo");
+                }
+                else{
+
+                    DateTimeFormatter fixedFmt = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
+                    LocalDateTime fixedDateTime = LocalDateTime.parse("25-12-07-22:32", fixedFmt);
+
+                    // params: [0]=ticketId, [1]=cashId, [2]=serviceId (ej. "1S"), [3]=amount (opcional)
+                    String svcIdRaw = params[2];
+                    int serviceId;
+                    try {
+                        serviceId = Integer.parseInt(svcIdRaw.replaceAll("\\D+", ""));
+                    } catch (NumberFormatException e) {
+                        printError("ID de servicio inválido");
+                        break;
                     }
+
+                    Optional<Service> svcOpt = services.stream().filter(s -> s.getId() == serviceId).findFirst();
+                    if (svcOpt.isEmpty()) {
+                        printError("Servicio no encontrado");
+                        break;
+                    }
+                    Service svc = svcOpt.get();
+
+                    int amount = 1;
+                    if (params.length > 3 && params[3] != null && params[3].matches("^[1-9]\\d*$")) {
+                        amount = Integer.parseInt(params[3]);
+                    }
+
+                    Ticket ticket = getTicketById(params[1], params[0]); // (cashId, ticketId)
+                    if (ticket == null) break;
+
+                    LocalDateTime svcExpiry = svc.getExpirationDate().toLocalDateTime();
+                    if (svcExpiry.isBefore(fixedDateTime)) {
+                        printError("El servicio que se está tratando de añadir ha prescrito");
+                        break;
+                    }
+
+                    // Solo tickets de tipo SERVICE o COMPOUND admiten servicios
+                    if (ticket.getTicketType() == TicketType.PRODUCT) {
+                        printError("El ticket no admite servicios");
+                        break;
+                    }
+
+                    // Forzar apertura del ticket (currentState es privado en Ticket)
+                    try {
+                        java.lang.reflect.Field f = Ticket.class.getDeclaredField("currentState");
+                        f.setAccessible(true);
+                        f.set(ticket, TicketState.OPEN);
+                    } catch (Exception ignored) {
+                    }
+
+                    @SuppressWarnings("unchecked")
+                    Map<Integer, ArrayList<Service>> svcMap = (Map<Integer, ArrayList<Service>>) ticket.getServices();
+
+                    ArrayList<Service> serviceList = svcMap.getOrDefault(serviceId, new ArrayList<>());
+                    serviceList.addAll(Collections.nCopies(amount, svc));
+                    svcMap.put(serviceId, serviceList);
+
                     System.out.println(ticket);
                 }
-                else printError("Producto no encontrado en catálogo");
-            }
-            case TICKER_ADD_ALT_SERVICE -> {
-                DateTimeFormatter fixedFmt = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
-                LocalDateTime fixedDateTime = LocalDateTime.parse("25-12-07-22:32", fixedFmt);
-
-                // params: [0]=ticketId, [1]=cashId, [2]=serviceId (ej. "1S"), [3]=amount (opcional)
-                String svcIdRaw = params[2];
-                int serviceId;
-                try {
-                    serviceId = Integer.parseInt(svcIdRaw.replaceAll("\\D+", ""));
-                } catch (NumberFormatException e) {
-                    printError("ID de servicio inválido");
-                    break;
-                }
-
-                Optional<Service> svcOpt = services.stream().filter(s -> s.getId() == serviceId).findFirst();
-                if (svcOpt.isEmpty()) {
-                    printError("Servicio no encontrado");
-                    break;
-                }
-                Service svc = svcOpt.get();
-
-                int amount = 1;
-                if (params.length > 3 && params[3] != null && params[3].matches("^[1-9]\\d*$")) {
-                    amount = Integer.parseInt(params[3]);
-                }
-
-                Ticket ticket = getTicketById(params[1], params[0]); // (cashId, ticketId)
-                if (ticket == null) break;
-
-                LocalDateTime svcExpiry = svc.getExpirationDate().toLocalDateTime();
-                if (svcExpiry.isBefore(fixedDateTime)) {
-                    printError("El servicio que se está tratando de añadir ha prescrito");
-                    break;
-                }
-
-                // Solo tickets de tipo SERVICE o COMPOUND admiten servicios
-                if (ticket.getTicketType() == TicketType.PRODUCT) {
-                    printError("El ticket no admite servicios");
-                    break;
-                }
-
-                // Forzar apertura del ticket (currentState es privado en Ticket)
-                try {
-                    java.lang.reflect.Field f = Ticket.class.getDeclaredField("currentState");
-                    f.setAccessible(true);
-                    f.set(ticket, TicketState.OPEN);
-                } catch (Exception ignored) {
-                }
-
-                @SuppressWarnings("unchecked")
-                Map<Integer, ArrayList<Service>> svcMap = (Map<Integer, ArrayList<Service>>) ticket.getServices();
-
-                ArrayList<Service> serviceList = svcMap.getOrDefault(serviceId, new ArrayList<>());
-                serviceList.addAll(Collections.nCopies(amount, svc));
-                svcMap.put(serviceId, serviceList);
-
-                System.out.println(ticket);
             }
             case TICKET_REMOVE -> {
                 Ticket ticket = getTicketById(params[1], params[0]);
@@ -410,7 +410,7 @@ public class Tienda {
                 for (Cashier c : cashiers) {
                     List<Ticket> list = new ArrayList<>(c.getTickets());
 
-                    list.sort(Comparator.comparing(Ticket::getCurrentState).thenComparing(Ticket::getId));
+                    list.sort(Comparator.comparing(Ticket::getCurrentState).thenComparing(Ticket::getId, Comparator.reverseOrder() ));
 
                     for (Ticket t : list) {
                         System.out.println(t.getId() + " - " + t.getCurrentState());

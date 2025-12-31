@@ -1,5 +1,3 @@
-
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -115,7 +113,7 @@ class AppTest {
                   cash list
                   cash tickets <cashId>
                   ticket new [<id>] <cashId> <userId> -[c|p|s] (default -p option)
-                  ticket add <ticketId> <cashId> <prodId> <amount> [--p<txt> --p<txt>]\s
+                  ticket add <ticketId> <cashId> <prodId> [<amount>] [--p<txt> --p<txt>]\s
                   ticket remove <ticketId> <cashId> <prodId>\s
                   ticket print <ticketId> <cashId>\s
                   ticket list
@@ -563,7 +561,7 @@ class AppTest {
                   {class:Product, id:2, name:'Camiseta talla:M UPM', category:CLOTHES, price:15.0} **discount -1.05
                   {class:Meeting, id:23456, name:'Reunion Rotonda', price:240.0, date of Event:2025-12-21, max people allowed:100, actual people in event:20}
                   Total price: 285.0
-                  Total discount: 3.1499999
+                  Total discount: 3.15
                   Final Price: 281.85
                 ticket add: ok
                 
@@ -574,7 +572,7 @@ class AppTest {
                   {class:Product, id:2, name:'Camiseta talla:M UPM', category:CLOTHES, price:15.0} **discount -1.05
                   {class:Meeting, id:23456, name:'Reunion Rotonda', price:240.0, date of Event:2025-12-21, max people allowed:100, actual people in event:20}
                   Total price: 285.0
-                  Total discount: 3.1499999
+                  Total discount: 3.15
                   Final Price: 281.85
                 ticket print: ok
                 
@@ -633,7 +631,7 @@ class AppTest {
                   {class:ProductPersonalized, id:5, name:'Camiseta talla:M UPM', category:CLOTHES, price:19.5, maxPersonal:3, personalizationList:[red, blue, green]} **discount -1.365
                   {class:ProductPersonalized, id:5, name:'Camiseta talla:M UPM', category:CLOTHES, price:19.5, maxPersonal:3, personalizationList:[red, blue, green]} **discount -1.365
                   Total price: 145.5
-                  Total discount: 10.184999
+                  Total discount: 10.185
                   Final Price: 135.315
                 ticket add: ok
                 
@@ -647,7 +645,7 @@ class AppTest {
                   {class:ProductPersonalized, id:5, name:'Camiseta talla:M UPM', category:CLOTHES, price:19.5, maxPersonal:3, personalizationList:[red, blue, green]} **discount -1.365
                   {class:ProductPersonalized, id:5, name:'Camiseta talla:M UPM', category:CLOTHES, price:19.5, maxPersonal:3, personalizationList:[red, blue, green]} **discount -1.365
                   Total price: 145.5
-                  Total discount: 10.184999
+                  Total discount: 10.185
                   Final Price: 135.315
                 ticket print: ok
                 
