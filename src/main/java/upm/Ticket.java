@@ -10,6 +10,8 @@ import java.util.*;
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
+import static java.lang.Math.max;
+
 @Entity
 @Table(name = "ticket")
 public class  Ticket {
@@ -97,13 +99,16 @@ public class  Ticket {
         List<Service> sortedServices = services.values().stream()
                 .flatMap(List::stream)
                 .sorted(Comparator.comparingInt(Service::getId))
-                .collect(Collectors.toList());
+                .toList();
 
         StringBuilder sb = new StringBuilder("Ticket : ").append(id);
+
+        double servicesDiscountPercent = 0;
 
         if (!sortedServices.isEmpty()) {
             sb.append("\nServices Included:");
             for (Service svc : sortedServices) {
+                servicesDiscountPercent+=15;
                 sb.append("\n").append(String.format(Locale.US, "%s", svc));
             }
         }
@@ -122,7 +127,7 @@ public class  Ticket {
                         .collect(Collectors.groupingBy(Product::getId, Collectors.counting()));
 
         double totalPrice = 0.0;
-        double totalDiscount = 0.0;
+        double productDiscount = 0.0;
 
         if (ticketType == TicketType.COMPOUND && !items.isEmpty()) {
             sb.append("\nProduct Included");
@@ -141,7 +146,7 @@ public class  Ticket {
                 String formatted = Utils.formatDouble(unitDiscount);
 
                 sb.append(String.format(Locale.US, "%n%s **discount -%s", prod, formatted));
-                totalDiscount += unitDiscount;
+                productDiscount += unitDiscount;
 
             } else {
                 // NO DISCOUNT APPLIED
@@ -157,15 +162,21 @@ public class  Ticket {
                 totalPrice += price;
             }
         }
+        double servicesDiscount = totalPrice * servicesDiscountPercent/100f;
 
         // 3. FINAL SUMMARY
         if (ticketType == TicketType.PRODUCT || (ticketType == TicketType.COMPOUND && !items.isEmpty())) {
-            double finalPrice = totalPrice - totalDiscount;
+            double finalPrice = max(totalPrice - productDiscount - servicesDiscount, 0);
 
             String formatted = Utils.formatDouble(totalPrice);
             sb.append("\n").append(String.format(Locale.US, "  Total price: %s%n", formatted));
 
-            formatted = Utils.formatDouble(totalDiscount);
+            if (servicesDiscountPercent != 0){
+                formatted = Utils.formatDouble(servicesDiscount);
+                sb.append(String.format(Locale.US, "Extra Discount from services:%s **discount -%s%n", formatted, formatted));
+            }
+
+            formatted = Utils.formatDouble(productDiscount+servicesDiscount);
             sb.append(String.format(Locale.US, "  Total discount: %s%n", formatted));
 
             formatted = Utils.formatDouble(finalPrice);
