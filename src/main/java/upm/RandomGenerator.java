@@ -1,6 +1,6 @@
 package upm;
 
-import upm.products.ProductCatalog;
+import upm.products.Product;
 
 import java.util.LinkedHashSet;
 import java.util.Random;
@@ -10,12 +10,12 @@ import java.time.format.DateTimeFormatter;
 
 public class RandomGenerator {
     private static final Random random = new Random();
-    private static ProductCatalog catalog;
+    private static Catalog<Product> catalog;
     private static Set<Cashier> cashiers;
     private static Set<Client> clients;
 
-    public static void Init(ProductCatalog catalog, Set<Cashier> cashiers, Set<Client> clients) {
-        RandomGenerator.catalog = catalog;
+    public static void Init(Catalog<Product> productCatalog, Set<Cashier> cashiers, Set<Client> clients) {
+        RandomGenerator.catalog = productCatalog;
         RandomGenerator.cashiers = cashiers;
         RandomGenerator.clients = clients;
     }

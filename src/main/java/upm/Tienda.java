@@ -11,10 +11,11 @@ import java.util.*;
 
 public class Tienda {
 
-    private static final ProductCatalog productCatalog = new ProductCatalog();
+    private static final Catalog<Product> productCatalog = new Catalog<>(200);
+    private static final Catalog<Service> servicesCatalog = new Catalog<>();
+
     private static final Set<Cashier>  cashiers = new TreeSet<>();
     private static final Set<Client>    clients = new HashSet<>();
-    private static final Set<Service>  services = new HashSet<>();
 
     private static boolean exit = false;
     private static boolean errorOccurred = false;
@@ -169,21 +170,23 @@ public class Tienda {
             case PROD_ADD -> {
                 Product prod;
                 if (params[4] != null && Integer.parseInt(params[4])>0){
-                    prod = productCatalog.add(new CustomizableProduct(
+                    prod =  new CustomizableProduct(
                             params[0],
                             params[1],
                             ProductCategory.valueOf(params[2]),
                             Integer.parseInt(params[3]),
-                            Integer.parseInt(params[4])
-                    ));
+                            Integer.parseInt(params[4]));
+                    productCatalog.add(prod.getId(), prod);
+
                     h.addProductToDb(prod);
                 } else {
-                    prod = productCatalog.add(new Product(
+                    prod = new Product(
                             params[0],
                             params[1],
                             ProductCategory.valueOf(params[2]),
-                            Integer.parseInt(params[3])
-                    ));
+                            Integer.parseInt(params[3]));
+                    productCatalog.add(prod.getId(), prod);
+
                     h.addProductToDb(prod);
                 }
                 if (prod == null) printError("No se pueden añadir más de 200 productos");
@@ -192,13 +195,30 @@ public class Tienda {
             case PROD_ADD_ALT_SERVICE -> {
                 LocalDateTime date = LocalDate.parse(params[0], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
                 Service service = new Service(RandomGenerator.generateServiceId(), date, params[1]);
-                services.add(service);
+                servicesCatalog.add(-1, service);
                 h.addServiceToDb(service);
                 System.out.println(service);
             }
             case PROD_UPDATE -> {
-                boolean done = productCatalog.update(Integer.parseInt(params[0]), params[1], params[2]);
-                if (!done) printError("Atributo de producto desconocido");
+                Product prod = productCatalog.getById(Integer.parseInt(params[0]));
+                if (prod != null) {
+                    switch (params[1]) {
+                        case "NAME":
+                            prod.setName(params[2]);
+                            break;
+                        case "CATEGORY":
+                            prod.setCategory(ProductCategory.valueOf(params[2]));
+                            break;
+                        case "PRICE":
+                            prod.setPrice(Integer.parseInt(params[2]));
+                            break;
+                        default:
+                            return false;
+                    }
+                    System.out.println(prod);
+                } else {
+                    printError("Atributo de producto desconocido");
+                }
             }
             case PROD_ADDFOOD -> {
                 //CAMBIAR FECHA, DE FIXEDDATETIME A NOW()
@@ -212,13 +232,14 @@ public class Tienda {
                 ///////////////////////////////////////////////////////////////////////////////////
 
                 if (Integer.parseInt(params[4]) <= 100 && !(Duration.between(fixedDateTime, expiration).toDays() < 3)) {
-                    prod = productCatalog.add(new ProductCampusFood(
+                    prod = new ProductCampusFood(
                             params[0],
                             params[1],
                             Double.parseDouble(params[2]),
                             expiration,
-                            Integer.parseInt(params[4])
-                    ));
+                            Integer.parseInt(params[4]));
+                    productCatalog.add(prod.getId(), prod);
+
                     h.addProductToDb(prod);
                 }
                 if (prod == null)
@@ -237,14 +258,15 @@ public class Tienda {
                 ///////////////////////////////////////////////////////////////////////////////////
 
                 if (Integer.parseInt(params[4]) <= 100 && !(Duration.between(fixedDateTime, expiration).toHours() < 12)) {
-                    prod = productCatalog.add(new ProductMeeting(
+                    prod = new ProductMeeting(
                             params[0],
                             params[1],
                             Double.parseDouble(params[2]),
                             expiration,
                             Integer.parseInt(params[4]),
-                            fixedDateTime
-                    ));
+                            fixedDateTime);
+                    productCatalog.add(prod.getId(), prod);
+
                     h.addProductToDb(prod);
                 }
                 if (prod == null)
@@ -306,13 +328,13 @@ public class Tienda {
                             for (int i = 4; i < params.length; i++) {
                                 itemToAdd.addPersonalizedText(params[i]);
                             }
-                            ticket.addProducts(pPersonalizado, amount);
+                            //ticket.addProducts(pPersonalizado, amount);
                         } else {
                             if (prod instanceof ProductMeeting prodM) {
                                 if (prodM.getExpirationDateTime().isAfter(fixedDateTime) ||
                                         prodM.getExpirationDateTime().isEqual(fixedDateTime)) {
                                     ProductMeeting meetingToAdd = prodM.clone();
-                                    ticket.addProducts(meetingToAdd, amount);
+                                    //ticket.addProducts(meetingToAdd, amount);
                                 } else {
                                     printError("La reunion que se está tratando de añadir ha prescrito");
                                 }
@@ -321,13 +343,13 @@ public class Tienda {
                                 if (prodCF.getExpirationDate().isAfter(fixedDateTime) ||
                                         prodCF.getExpirationDate().isEqual(fixedDateTime)) {
                                     ProductCampusFood campusFoodToAdd = prodCF.clone();
-                                    ticket.addProducts(campusFoodToAdd, amount);
+                                    //ticket.addProducts(campusFoodToAdd, amount);
                                 } else {
                                     printError("La comida que se está tratando de añadir ha prescrito");
                                 }
 
                             } else {
-                                ticket.addProducts(prod.clone(), amount);
+                                //ticket.addProducts(prod.clone(), amount);
                             }
 
                         }
@@ -349,12 +371,11 @@ public class Tienda {
                         break;
                     }
 
-                    Optional<Service> svcOpt = services.stream().filter(s -> s.getId() == serviceId).findFirst();
-                    if (svcOpt.isEmpty()) {
+                    Service svc = servicesCatalog.getById(serviceId);
+                    if (svc == null) {
                         printError("Servicio no encontrado");
                         break;
                     }
-                    Service svc = svcOpt.get();
                     Service servicetoAdd = svc.cloneService();
 
                     int amount = 1;

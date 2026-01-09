@@ -49,6 +49,8 @@ public class  Ticket {
     }
 
     public void addProducts(TicketItem ti, int amount) {
+        /*
+
         if (currentState == TicketState.CLOSE) return;
         this.currentState = TicketState.OPEN;
         TicketItem tiOnList= getTicketItem(ti);
@@ -58,7 +60,7 @@ public class  Ticket {
         }else {
             ti.updateCuantity(amount);
         }
-
+*/
 
     }
 
@@ -88,9 +90,9 @@ public class  Ticket {
 
         }else {
             for (int i = 0; i < items.size(); i++) {
-                if (items.get(i).getProduct().equals(p)){
-                    itemSelected=items.get(i);
-                }
+                //if (items.get(i).getProduct().equals(p)){
+                //    itemSelected=items.get(i);
+                //}
             }
         }
 
@@ -218,7 +220,7 @@ public class  Ticket {
             if (prod instanceof ProductMeeting) {
                 totalPrice += ((ProductMeeting) prod).calculateCurrentPrice();
             } else if (prod instanceof ProductCampusFood) {
-                totalPrice += ((ProductCampusFood) prod).calculateCurrentPrice();
+                //totalPrice += ((ProductCampusFood) prod).calculateCurrentPrice();
             } else {
                 totalPrice += price*it.getCuantity();
             }
