@@ -328,13 +328,13 @@ public class Tienda {
                             for (int i = 4; i < params.length; i++) {
                                 itemToAdd.addPersonalizedText(params[i]);
                             }
-                            ticket.addProducts(pPersonalizado, amount);
+                            //ticket.addProducts(pPersonalizado, amount);
                         } else {
                             if (prod instanceof ProductMeeting prodM) {
                                 if (prodM.getExpirationDateTime().isAfter(fixedDateTime) ||
                                         prodM.getExpirationDateTime().isEqual(fixedDateTime)) {
                                     ProductMeeting meetingToAdd = prodM.clone();
-                                    ticket.addProducts(meetingToAdd, amount);
+                                    //ticket.addProducts(meetingToAdd, amount);
                                 } else {
                                     printError("La reunion que se está tratando de añadir ha prescrito");
                                 }
@@ -343,13 +343,13 @@ public class Tienda {
                                 if (prodCF.getExpirationDate().isAfter(fixedDateTime) ||
                                         prodCF.getExpirationDate().isEqual(fixedDateTime)) {
                                     ProductCampusFood campusFoodToAdd = prodCF.clone();
-                                    ticket.addProducts(campusFoodToAdd, amount);
+                                    //ticket.addProducts(campusFoodToAdd, amount);
                                 } else {
                                     printError("La comida que se está tratando de añadir ha prescrito");
                                 }
 
                             } else {
-                                ticket.addProducts(prod.clone(), amount);
+                                //ticket.addProducts(prod.clone(), amount);
                             }
 
                         }
@@ -371,12 +371,11 @@ public class Tienda {
                         break;
                     }
 
-                    Optional<Service> svcOpt = services.stream().filter(s -> s.getId() == serviceId).findFirst();
-                    if (svcOpt.isEmpty()) {
+                    Service svc = servicesCatalog.getById(serviceId);
+                    if (svc == null) {
                         printError("Servicio no encontrado");
                         break;
                     }
-                    Service svc = svcOpt.get();
                     Service servicetoAdd = svc.cloneService();
 
                     int amount = 1;
