@@ -18,8 +18,11 @@ public class Tienda {
 
     private static boolean exit = false;
     private static boolean errorOccurred = false;
+    private static HibernateUtils h;
 
     public static void main(String[] args) {
+         h = new HibernateUtils();
+
         System.out.println("Welcome to the ticket module App.\n" + "Ticket module. Type 'help' to see commands.");
 
         RandomGenerator.Init(productCatalog, cashiers, clients);
@@ -33,6 +36,7 @@ public class Tienda {
         }
 
         System.out.println("Closing application.\nGoodbye!");
+       h.endConnection();
     }
 
     private static boolean runFromFile(String filePath) {
@@ -86,6 +90,8 @@ public class Tienda {
             case CASH_ADD -> {
                 if(!cashiers.add(new Cashier(params[0], params[1], params[2])))
                     printError("El id introducido ya existe");
+                else {h.addCashierToDb(getCashierById(params[0]));}
+
             }
             case CASH_LIST -> {
                 List<Cashier> cashierList = new ArrayList<>(cashiers);
@@ -143,6 +149,7 @@ public class Tienda {
                         }
                         if (!clients.add(newClient))
                             printError("El identificador de usuario introducido ya existe");
+                        else {h.addClientToDb(newClient);}
                     }
                 } else printError("El identificador de cajero introducido no existe");
             }
@@ -169,6 +176,7 @@ public class Tienda {
                             Integer.parseInt(params[3]),
                             Integer.parseInt(params[4])
                     ));
+                    h.addProductToDb(prod);
                 } else {
                     prod = productCatalog.add(new Product(
                             params[0],
@@ -176,6 +184,7 @@ public class Tienda {
                             ProductCategory.valueOf(params[2]),
                             Integer.parseInt(params[3])
                     ));
+                    h.addProductToDb(prod);
                 }
                 if (prod == null) printError("No se pueden añadir más de 200 productos");
                 else System.out.println(prod);
@@ -184,6 +193,7 @@ public class Tienda {
                 LocalDateTime date = LocalDate.parse(params[0], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
                 Service service = new Service(RandomGenerator.generateServiceId(), date, params[1]);
                 services.add(service);
+                h.addServiceToDb(service);
                 System.out.println(service);
             }
             case PROD_UPDATE -> {
@@ -209,6 +219,7 @@ public class Tienda {
                             expiration,
                             Integer.parseInt(params[4])
                     ));
+                    h.addProductToDb(prod);
                 }
                 if (prod == null)
                     printError("Error processing ->prod addFood ->Error adding product");
@@ -234,6 +245,7 @@ public class Tienda {
                             Integer.parseInt(params[4]),
                             fixedDateTime
                     ));
+                    h.addProductToDb(prod);
                 }
                 if (prod == null)
                     printError("Error processing ->prod addMeeting ->Error adding meeting");
@@ -266,6 +278,8 @@ public class Tienda {
                 Ticket nuevo = new Ticket(params[0], tipoTicket);
 
                 getCashierById(params[1]).addTicket(nuevo);
+                nuevo.setCashier(getCashierById(params[1]));
+                h.addTicketToDb(nuevo);
                 System.out.println(nuevo);
             }
             case TICKET_ADD -> {
@@ -286,9 +300,11 @@ public class Tienda {
                         int amount = Integer.parseInt(params[3]);
                         Ticket ticket = getTicketById(params[1], params[0]);
                         if (params.length > 4) {
-                            CustomizableProduct pPersonalizado = ((CustomizableProduct) prod).clone();
+                            TicketItem itemToAdd = new TicketItem(prod,amount, ticket.getId());
+
+                            CustomizableProduct pPersonalizado = ((CustomizableProduct) prod);
                             for (int i = 4; i < params.length; i++) {
-                                pPersonalizado.addPersonalizedText(params[i]);
+                                itemToAdd.addPersonalizedText(params[i]);
                             }
                             ticket.addProducts(pPersonalizado, amount);
                         } else {
@@ -296,7 +312,6 @@ public class Tienda {
                                 if (prodM.getExpirationDateTime().isAfter(fixedDateTime) ||
                                         prodM.getExpirationDateTime().isEqual(fixedDateTime)) {
                                     ProductMeeting meetingToAdd = prodM.clone();
-                                    meetingToAdd.addParticipants(amount);
                                     ticket.addProducts(meetingToAdd, amount);
                                 } else {
                                     printError("La reunion que se está tratando de añadir ha prescrito");
@@ -306,7 +321,6 @@ public class Tienda {
                                 if (prodCF.getExpirationDate().isAfter(fixedDateTime) ||
                                         prodCF.getExpirationDate().isEqual(fixedDateTime)) {
                                     ProductCampusFood campusFoodToAdd = prodCF.clone();
-                                    campusFoodToAdd.addParticipants(amount);
                                     ticket.addProducts(campusFoodToAdd, amount);
                                 } else {
                                     printError("La comida que se está tratando de añadir ha prescrito");
@@ -341,6 +355,7 @@ public class Tienda {
                         break;
                     }
                     Service svc = svcOpt.get();
+                    Service servicetoAdd = svc.cloneService();
 
                     int amount = 1;
                     if (params.length > 3 && params[3] != null && params[3].matches("^[1-9]\\d*$")) {
@@ -350,7 +365,7 @@ public class Tienda {
                     Ticket ticket = getTicketById(params[1], params[0]); // (cashId, ticketId)
                     if (ticket == null) break;
 
-                    LocalDateTime svcExpiry = svc.getExpirationDate().toLocalDateTime();
+                    LocalDateTime svcExpiry = servicetoAdd.getExpirationDate().toLocalDateTime();
                     if (svcExpiry.isBefore(fixedDateTime)) {
                         printError("El servicio que se está tratando de añadir ha prescrito");
                         break;
@@ -370,12 +385,8 @@ public class Tienda {
                     } catch (Exception ignored) {
                     }
 
-                    @SuppressWarnings("unchecked")
-                    Map<Integer, ArrayList<Service>> svcMap = (Map<Integer, ArrayList<Service>>) ticket.getServices();
-
-                    ArrayList<Service> serviceList = svcMap.getOrDefault(serviceId, new ArrayList<>());
-                    serviceList.addAll(Collections.nCopies(amount, svc));
-                    svcMap.put(serviceId, serviceList);
+                    //@SuppressWarnings("unchecked")
+                    ticket.addService(servicetoAdd,1);
 
                     System.out.println(ticket);
                 }

@@ -1,12 +1,16 @@
 package upm.products;
 
 import jakarta.persistence.*;
+
 import upm.RandomGenerator;
 
 import java.util.Locale;
 
 @Entity
-@Table(name = "productsCatalog")
+@Table(name = "productCatalog")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "tipo", discriminatorType = DiscriminatorType.STRING)
+
 public class Product {
 
     @Id

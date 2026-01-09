@@ -1,6 +1,7 @@
 package upm;
 
 import jakarta.persistence.*;
+
 import upm.products.ProductCategory;
 
 import java.time.LocalDateTime;
@@ -49,4 +50,14 @@ public class Service {
                 "{class:%s, id:%d, category:%s, expiration:%s}",
                 "ProductService", id, category, formattedDate);
     }
+
+    public Service cloneService() {
+        Service clone = new Service(
+                this.id,                                   // mismo id
+                this.expirationDate.toLocalDateTime(),     // misma fecha
+                this.category                               // misma categoría
+        );
+        return clone;
+    }
+
 }

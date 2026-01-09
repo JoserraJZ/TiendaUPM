@@ -1,5 +1,11 @@
 package upm;
 
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+
+@Entity
+@DiscriminatorValue("ClientCompany")
+
 public class ClientCompany extends Client{
 
     public ClientCompany(String name, String NIF, String email, Cashier cashier, ClientType type) {

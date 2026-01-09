@@ -1,8 +1,15 @@
 package upm.products;
 
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+
+@Entity
+@DiscriminatorValue("ProductMeeting")
+
 
 public class ProductMeeting extends Product {
     private LocalDateTime expirationDateTime;
@@ -22,6 +29,7 @@ public class ProductMeeting extends Product {
         if (participantsAdded>maxParticipants){
             return false;
         }else {
+
             currentParticipants+=participantsAdded;
             return  true;
         }
@@ -60,12 +68,12 @@ public class ProductMeeting extends Product {
         return copy;
     }
 
-    @Override
-    public String toString() {
-        if (currentParticipants>0){
+
+    public String toString(int participants) {
+        if (participants>0){
             return String.format(Locale.US,
                     "{class:%s, id:%d, name:'%s', price:%.1f, date of Event:%s, max people allowed:%d, actual people in event:%d}",
-                    "Meeting", super.getId(), super.getName(), super.getPrice()*currentParticipants, expirationDateTime.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), maxParticipants, currentParticipants);
+                    "Meeting", super.getId(), super.getName(), super.getPrice()*participants, expirationDateTime.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), maxParticipants, participants);
         }else{
             return String.format(Locale.US,
                     "{class:%s, id:%d, name:'%s', price:%.1f, date of Event:%s, max people allowed:%d}",

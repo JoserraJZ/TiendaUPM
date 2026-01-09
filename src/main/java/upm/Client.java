@@ -2,10 +2,13 @@ package upm;
 
 import jakarta.persistence.*;
 
+
 import java.util.Objects;
 
 @Entity
 @Table(name = "client")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "tipo", discriminatorType = DiscriminatorType.STRING)
 public class Client {
 
     @Id
@@ -14,7 +17,11 @@ public class Client {
 
     private final String name;
     private final String email;
+
+    @ManyToOne
+    @JoinColumn(name = "cashier_id")
     private final Cashier cashier;
+
     private final ClientType clientType;
 
     public Client(String name, String DNI, String email, Cashier cashier, ClientType type){

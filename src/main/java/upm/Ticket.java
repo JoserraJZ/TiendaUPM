@@ -1,6 +1,8 @@
 package upm;
 
 import jakarta.persistence.*;
+
+import upm.products.CustomizableProduct;
 import upm.products.Product;
 import upm.products.ProductCampusFood;
 import upm.products.ProductMeeting;
@@ -13,55 +15,127 @@ import java.util.stream.Collectors;
 import static java.lang.Math.max;
 
 @Entity
-@Table(name = "ticket")
+@Table(name = "tickets")
 public class  Ticket {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
-    
-    private final Map<Integer, ArrayList<Product>> items ;
-    private final Map<Integer, ArrayList<Service>> services;
+
+    @Transient
+    private final ArrayList<TicketItem> items ;
+    @Transient
+    private final ArrayList<ServiceItem> services;
 
     private TicketState currentState;
     private TicketType ticketType;
 
+    @ManyToOne
+    @JoinColumn(name = "cashier_id")
+    private Cashier cashier;
+
+
+    public void setCashier(Cashier cashier) {
+        this.cashier = cashier;
+    }
+
     public Ticket(String id, TicketType type) {
         this.id = (id == null) ? RandomGenerator.generateTicketId() : id;
-        this.items = new LinkedHashMap<>();
-        this.services = new LinkedHashMap<>();
+        this.items = new ArrayList<>();
+        this.services = new ArrayList<>();
         this.currentState = TicketState.EMPTY;
         this.ticketType = type;
     }
 
-
-    public void addProducts(Product product, int amount) {
+    public void addProducts(TicketItem ti, int amount) {
         if (currentState == TicketState.CLOSE) return;
         this.currentState = TicketState.OPEN;
-        ArrayList<Product> productList = items.getOrDefault(product.getId(), new ArrayList<>());
+        TicketItem tiOnList= getTicketItem(ti.getProduct());
 
-        if (product instanceof ProductMeeting || product instanceof ProductCampusFood){
-            if (!productList.isEmpty()) productList.removeFirst();
-            productList.add(product);
-            //actualizar obtener productMeting igual y solo actualizar precio
-        }
-        else {
-            productList.addAll(Collections.nCopies(amount, product));
+
+        if (product instanceof ProductMeeting){
+            if (ti!= null) {
+               ti.addParticipantsPM(amount);
+            }else{
+                TicketItem tiNew= new TicketItem(product, 1, id);
+                tiNew.addParticipantsPM(amount);
+                items.add(tiNew);
+            }
+        } else if (product instanceof ProductCampusFood) {
+            if (ti!= null) {
+                ti.addParticipantsCF(amount);
+            }else{
+                TicketItem tiNew= new TicketItem(product, 1, id);
+                tiNew.addParticipantsCF(amount);
+                items.add(tiNew);
+            }
+        } else{
+            if (ti!= null) {
+                ti.updateCuantity(amount);
+            }else{
+                items.add(new TicketItem(product, amount, id));
+            }
+
         }
 
-        items.put(product.getId(), productList);
+
     }
 
+    public void addService(Service svc, int amount) {
+        for (ServiceItem si : services) {
+            if (si.getService().getId() == svc.getId()) {
+                si.updateQuantity(amount);
+                return;
+            }
+        }
+
+        // Si no existe, lo añadimos nuevo
+        services.add(new ServiceItem(svc, amount, this.id));
+    }
+
+
+    public TicketItem getTicketItem(TicketItem it) {
+
+        TicketItem itemSelected= null;
+
+        if (it.getProduct() instanceof CustomizableProduct cp){
+            for (int i = 0; i < items.size(); i++) {
+                if (items.get(i).getProduct().getId()==cp.getId() && items.get(i).compareCustomizableProducts(it)){
+                    itemSelected=items.get(i);
+                }
+            }
+
+        }else {
+            for (int i = 0; i < items.size(); i++) {
+                if (items.get(i).getProduct().equals(p)){
+                    itemSelected=items.get(i);
+                }
+            }
+        }
+
+        return itemSelected;
+    }
+
+
     public boolean removeProduct(int productId) {
-        if (currentState != TicketState.CLOSE){
-            if (items.remove(productId) != null) {
+        if (currentState != TicketState.CLOSE) {
+
+            boolean removed = items.removeIf(
+                    item -> item.getProduct().getId() == productId
+            );
+
+            if (removed) {
                 return true;
             }
+
             System.out.println("El producto con ID " + productId + " no existe en el ticket.");
             return false;
         }
+
         return false;
     }
+
 
     public void closeAndPrint() {
         this.currentState = TicketState.CLOSE;
@@ -87,44 +161,46 @@ public class  Ticket {
 
     TicketType getTicketType() {return ticketType;}
 
-    Map getItems() {return items;}
+    ArrayList<TicketItem> getItems() {return items;}
 
-    Map getServices() {return services;}
+    ArrayList<ServiceItem> getServices() {return services;}
+
 
 
 
     @Override
     public String toString() {
         // Servicios ordenados y a listar sólo si existen
-        List<Service> sortedServices = services.values().stream()
-                .flatMap(List::stream)
-                .sorted(Comparator.comparingInt(Service::getId))
-                .toList();
+        services.sort(Comparator.comparing(ServiceItem::getId));
 
         StringBuilder sb = new StringBuilder("Ticket : ").append(id);
 
         double servicesDiscountPercent = 0;
 
-        if (!sortedServices.isEmpty()) {
+        if (!services.isEmpty()) {
             sb.append("\nServices Included:");
-            for (Service svc : sortedServices) {
+            for (ServiceItem svc : services) {
                 servicesDiscountPercent+=15;
                 sb.append("\n").append(String.format(Locale.US, "%s", svc));
             }
         }
 
         // Productos (si es COMPOUND mostramos el encabezado antes)
-        List<Product> sorted = items.values().stream()
-                .flatMap(List::stream)
-                .sorted(
-                        Comparator.comparing((Product p) -> p.getClass().getSimpleName()).reversed()
-                                .thenComparingInt(Product::getId).reversed()
-                )
-                .toList();
+        items.sort(
+                Comparator.comparing(
+                                (TicketItem item) -> item.getProduct().getCategory(),
+                                Comparator.nullsLast(Comparator.naturalOrder())
+                        )
+                        .thenComparing(
+                                item -> item.getProduct().getId(),
+                                Comparator.nullsLast(Comparator.reverseOrder())
+                        )
+                        .thenComparing(
+                                item -> item.getProduct().getPrice(),
+                                Comparator.nullsLast(Comparator.naturalOrder())
+                        )
+        );
 
-        Map<Integer, Long> counts =
-                sorted.stream()
-                        .collect(Collectors.groupingBy(Product::getId, Collectors.counting()));
 
         double totalPrice = 0.0;
         double productDiscount = 0.0;
@@ -134,23 +210,28 @@ public class  Ticket {
         }
 
         // 2. PROCESS EACH PRODUCT
-        for (Product prod : sorted) {
+        for (TicketItem it : items) {
 
-            double price = prod.getPrice();
+            Product prod = it.getProduct();
+            double price = it.getProduct().getPrice();
 
-            long occurrences = counts.get(prod.getId());
+            int total = items.stream()
+                    .filter(item -> item.getProduct().getId() == it.getProduct().getId())
+                    .mapToInt(TicketItem::getCuantity)
+                    .sum();
 
-            if (occurrences >= 2 && prod.getCategory() != null) {
-                double discount = prod.getCategory().getDiscountPercent() / 100.0;
+
+            if (total >= 2 && it.getCategory() != null) {
+                double discount = it.getCategory().getDiscountPercent() / 100.0;
                 double unitDiscount = price * discount;
                 String formatted = Utils.formatDouble(unitDiscount);
-
-                sb.append(String.format(Locale.US, "%n%s **discount -%s", prod, formatted));
-                productDiscount += unitDiscount;
+                for (int i = 0; i <it.getCuantity(); i++) {
+                    sb.append(String.format(Locale.US, "%n%s **discount -%s", it.getProduct(), formatted));
+                    productDiscount += unitDiscount;
+                }
 
             } else {
-                // NO DISCOUNT APPLIED
-                sb.append(String.format(Locale.US, "%n%s", prod));
+                sb.append(String.format(Locale.US, "%n%s", it.getProduct()));
             }
 
             // Price calculation by product type
@@ -159,7 +240,7 @@ public class  Ticket {
             } else if (prod instanceof ProductCampusFood) {
                 totalPrice += ((ProductCampusFood) prod).calculateCurrentPrice();
             } else {
-                totalPrice += price;
+                totalPrice += price*it.getCuantity();
             }
         }
         double servicesDiscount = totalPrice * servicesDiscountPercent/100f;

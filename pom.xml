@@ -66,9 +66,11 @@
         <!-- Hibernate Core -->
         <dependency>
             <groupId>org.hibernate.orm</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>6.4.4.Final</version>
+            <artifactId>hibernate-community-dialects</artifactId>
+            <version>6.4.4.Final</version> <!-- o la versión que estés usando -->
         </dependency>
+
+
 
         <!-- Driver JDBC (ejemplo con SQLite) -->
         <dependency>
@@ -84,11 +86,6 @@
             <version>2.0.12</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.xerial</groupId>
-            <artifactId>sqlite-jdbc</artifactId>
-            <version>3.45.1.0</version>
-        </dependency>
 
     </dependencies>
 

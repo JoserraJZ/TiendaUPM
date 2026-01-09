@@ -1,5 +1,6 @@
 package upm;
 
+
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -18,7 +19,7 @@ public class Cashier implements Comparable<Cashier>{
     private final String name;
     private final String businessEmail;
 
-    @OneToMany
+    @OneToMany(mappedBy = "cashier")
     private final Set<Ticket> tickets = new HashSet<>();
 
     public Cashier(String id, String newName, String newBusinessEmail){
