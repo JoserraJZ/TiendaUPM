@@ -51,32 +51,12 @@ public class  Ticket {
     public void addProducts(TicketItem ti, int amount) {
         if (currentState == TicketState.CLOSE) return;
         this.currentState = TicketState.OPEN;
-        TicketItem tiOnList= getTicketItem(ti.getProduct());
+        TicketItem tiOnList= getTicketItem(ti);
 
-
-        if (product instanceof ProductMeeting){
-            if (ti!= null) {
-               ti.addParticipantsPM(amount);
-            }else{
-                TicketItem tiNew= new TicketItem(product, 1, id);
-                tiNew.addParticipantsPM(amount);
-                items.add(tiNew);
-            }
-        } else if (product instanceof ProductCampusFood) {
-            if (ti!= null) {
-                ti.addParticipantsCF(amount);
-            }else{
-                TicketItem tiNew= new TicketItem(product, 1, id);
-                tiNew.addParticipantsCF(amount);
-                items.add(tiNew);
-            }
-        } else{
-            if (ti!= null) {
-                ti.updateCuantity(amount);
-            }else{
-                items.add(new TicketItem(product, amount, id));
-            }
-
+        if (tiOnList==null){
+            items.add(ti);
+        }else {
+            ti.updateCuantity(amount);
         }
 
 
