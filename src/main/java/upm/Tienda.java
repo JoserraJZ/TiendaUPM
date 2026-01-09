@@ -91,7 +91,7 @@ public class Tienda {
             case CASH_ADD -> {
                 if(!cashiers.add(new Cashier(params[0], params[1], params[2])))
                     printError("El id introducido ya existe");
-                else {h.addCashierToDb(getCashierById(params[0]));}
+                //else {h.addCashierToDb(getCashierById(params[0]));}
 
             }
             case CASH_LIST -> {
@@ -150,7 +150,7 @@ public class Tienda {
                         }
                         if (!clients.add(newClient))
                             printError("El identificador de usuario introducido ya existe");
-                        else {h.addClientToDb(newClient);}
+                        //else {h.addClientToDb(newClient);}
                     }
                 } else printError("El identificador de cajero introducido no existe");
             }
@@ -178,7 +178,7 @@ public class Tienda {
                             Integer.parseInt(params[4]));
                     productCatalog.add(prod.getId(), prod);
 
-                    h.addProductToDb(prod);
+                    //h.addProductToDb(prod);
                 } else {
                     prod = new Product(
                             params[0],
@@ -187,7 +187,7 @@ public class Tienda {
                             Integer.parseInt(params[3]));
                     productCatalog.add(prod.getId(), prod);
 
-                    h.addProductToDb(prod);
+                    //h.addProductToDb(prod);
                 }
                 if (prod == null) printError("No se pueden añadir más de 200 productos");
                 else System.out.println(prod);
@@ -196,7 +196,7 @@ public class Tienda {
                 LocalDateTime date = LocalDate.parse(params[0], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
                 Service service = new Service(RandomGenerator.generateServiceId(), date, params[1]);
                 servicesCatalog.add(-1, service);
-                h.addServiceToDb(service);
+                //h.addServiceToDb(service);
                 System.out.println(service);
             }
             case PROD_UPDATE -> {
@@ -240,7 +240,7 @@ public class Tienda {
                             Integer.parseInt(params[4]));
                     productCatalog.add(prod.getId(), prod);
 
-                    h.addProductToDb(prod);
+                    //addProductToDb(prod);
                 }
                 if (prod == null)
                     printError("Error processing ->prod addFood ->Error adding product");
@@ -267,7 +267,7 @@ public class Tienda {
                             fixedDateTime);
                     productCatalog.add(prod.getId(), prod);
 
-                    h.addProductToDb(prod);
+                    //h.addProductToDb(prod);
                 }
                 if (prod == null)
                     printError("Error processing ->prod addMeeting ->Error adding meeting");
@@ -301,7 +301,7 @@ public class Tienda {
 
                 getCashierById(params[1]).addTicket(nuevo);
                 nuevo.setCashier(getCashierById(params[1]));
-                h.addTicketToDb(nuevo);
+                //h.addTicketToDb(nuevo);
                 System.out.println(nuevo);
             }
             case TICKET_ADD -> {
@@ -328,13 +328,13 @@ public class Tienda {
                             for (int i = 4; i < params.length; i++) {
                                 itemToAdd.addPersonalizedText(params[i]);
                             }
-                            //ticket.addProducts(pPersonalizado, amount);
+                            ticket.addProducts(itemToAdd, amount);
                         } else {
                             if (prod instanceof ProductMeeting prodM) {
                                 if (prodM.getExpirationDateTime().isAfter(fixedDateTime) ||
                                         prodM.getExpirationDateTime().isEqual(fixedDateTime)) {
-                                    ProductMeeting meetingToAdd = prodM.clone();
-                                    //ticket.addProducts(meetingToAdd, amount);
+                                    TicketItem meetingToAdd = new TicketItem(prodM, amount, ticket.getId());
+                                    ticket.addProducts(meetingToAdd, amount);
                                 } else {
                                     printError("La reunion que se está tratando de añadir ha prescrito");
                                 }
@@ -342,14 +342,14 @@ public class Tienda {
                             } else if (prod instanceof ProductCampusFood prodCF) {
                                 if (prodCF.getExpirationDate().isAfter(fixedDateTime) ||
                                         prodCF.getExpirationDate().isEqual(fixedDateTime)) {
-                                    ProductCampusFood campusFoodToAdd = prodCF.clone();
-                                    //ticket.addProducts(campusFoodToAdd, amount);
+                                    TicketItem foodToAdd = new TicketItem(prodCF, amount, ticket.getId());
+                                    ticket.addProducts(foodToAdd, amount);
                                 } else {
                                     printError("La comida que se está tratando de añadir ha prescrito");
                                 }
 
                             } else {
-                                //ticket.addProducts(prod.clone(), amount);
+                                ticket.addProducts(new TicketItem(prod,amount, ticket.getId()), amount);
                             }
 
                         }

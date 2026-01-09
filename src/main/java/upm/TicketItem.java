@@ -2,13 +2,10 @@ package upm;
 
 import jakarta.persistence.*;
 
-import upm.RandomGenerator;
 import upm.products.*;
 
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 @Entity
 @Table(name = "ticketItems")
@@ -23,7 +20,7 @@ public class TicketItem {
 
     @ManyToOne
     @JoinColumn(name = "product_id")
-    private Product product;
+    private final Product product;
 
     private int cuantity;
 
@@ -31,13 +28,13 @@ public class TicketItem {
 
 
     public TicketItem(Product p, int cuantity, String ticketId){
-        personalizedTexts=null;
+        personalizedTexts=new ArrayList<>();
         this.product=p;
         this.cuantity = cuantity;
         this.ticketId=ticketId;
     }
 
-    public String getId() {
+    public String getTicketId() {
         return ticketId;
     }
 
@@ -91,6 +88,10 @@ public class TicketItem {
 
     public double getPrice() {
        return product.getPrice()*cuantity;
+    }
+
+    public List<String> getPersonalizedTexts() {
+        return personalizedTexts;
     }
 
     @Override

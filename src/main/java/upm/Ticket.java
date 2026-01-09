@@ -4,13 +4,11 @@ import jakarta.persistence.*;
 
 import upm.products.CustomizableProduct;
 import upm.products.Product;
-import upm.products.ProductCampusFood;
-import upm.products.ProductMeeting;
+
 
 import java.time.LocalDateTime;
 import java.util.*;
 import java.time.format.DateTimeFormatter;
-import java.util.stream.Collectors;
 
 import static java.lang.Math.max;
 
@@ -49,7 +47,6 @@ public class  Ticket {
     }
 
     public void addProducts(TicketItem ti, int amount) {
-        /*
 
         if (currentState == TicketState.CLOSE) return;
         this.currentState = TicketState.OPEN;
@@ -60,8 +57,6 @@ public class  Ticket {
         }else {
             ti.updateCuantity(amount);
         }
-*/
-
     }
 
     public void addService(Service svc, int amount) {
@@ -90,9 +85,9 @@ public class  Ticket {
 
         }else {
             for (int i = 0; i < items.size(); i++) {
-                //if (items.get(i).getProduct().equals(p)){
-                //    itemSelected=items.get(i);
-                //}
+                if (items.get(i).getProduct().getId()==it.getProduct().getId()){
+                   itemSelected=items.get(i);
+                }
             }
         }
 
@@ -195,7 +190,13 @@ public class  Ticket {
         for (TicketItem it : items) {
 
             Product prod = it.getProduct();
-            double price = it.getProduct().getPrice();
+            double price;
+            if (prod instanceof CustomizableProduct){
+                 price= it.getPriceCustomizable();
+            }else {
+                price=it.getProduct().getPrice();
+            }
+
 
             int total = items.stream()
                     .filter(item -> item.getProduct().getId() == it.getProduct().getId())
@@ -207,23 +208,23 @@ public class  Ticket {
                 double discount = it.getCategory().getDiscountPercent() / 100.0;
                 double unitDiscount = price * discount;
                 String formatted = Utils.formatDouble(unitDiscount);
-                for (int i = 0; i <it.getCuantity(); i++) {
-                    sb.append(String.format(Locale.US, "%n%s **discount -%s", it.getProduct(), formatted));
-                    productDiscount += unitDiscount;
+                if (prod instanceof CustomizableProduct cp){
+                    for (int i = 0; i <it.getCuantity(); i++) {
+                        sb.append(String.format(Locale.US, "%n%s **discount -%s", cp.toString(it.getPersonalizedTexts(), price), formatted));
+                        productDiscount += unitDiscount;
+                    }
+                }else {
+                    for (int i = 0; i <it.getCuantity(); i++) {
+                        sb.append(String.format(Locale.US, "%n%s **discount -%s", it.getProduct(), formatted));
+                        productDiscount += unitDiscount;
+                    }
                 }
 
             } else {
-                sb.append(String.format(Locale.US, "%n%s", it.getProduct()));
+                sb.append(String.format(Locale.US, "%n%s", it));
             }
 
-            // Price calculation by product type
-            if (prod instanceof ProductMeeting) {
-                totalPrice += ((ProductMeeting) prod).calculateCurrentPrice();
-            } else if (prod instanceof ProductCampusFood) {
-                //totalPrice += ((ProductCampusFood) prod).calculateCurrentPrice();
-            } else {
-                totalPrice += price*it.getCuantity();
-            }
+                totalPrice += it.getPrice();
         }
         double servicesDiscount = totalPrice * servicesDiscountPercent/100f;
 
