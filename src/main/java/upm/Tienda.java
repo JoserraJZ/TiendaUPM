@@ -198,7 +198,7 @@ public class Tienda {
             case PROD_ADD_ALT_SERVICE -> {
                 LocalDateTime date = LocalDate.parse(params[0], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
                 Service service = new Service(RandomGenerator.generateServiceId(), date, params[1]);
-                servicesCatalog.add(-1, service);
+                servicesCatalog.add(service.getId(), service);
                 //h.addServiceToDb(service);
                 System.out.println(service);
             }
