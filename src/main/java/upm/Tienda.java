@@ -25,7 +25,7 @@ public class Tienda {
     private static HibernateUtils h;
 
     public static void main(String[] args) {
-         h = new HibernateUtils();
+        h = new HibernateUtils();
 
         System.out.println("Welcome to the ticket module App.\n" + "Ticket module. Type 'help' to see commands.");
 
@@ -40,7 +40,7 @@ public class Tienda {
         }
 
         System.out.println("Closing application.\nGoodbye!");
-       h.endConnection();
+        h.endConnection();
     }
 
     public static void commandLoop(Scanner scanner){
@@ -116,35 +116,7 @@ public class Tienda {
                 TiendaUtils.addFood(params, productCatalog);
             }
             case PROD_ADDMEETING -> {
-<<<<<<< HEAD
-                //CAMBIAR FECHA, DE FIXEDDATETIME A NOW()
-
-                ProductMeeting prod = null;
-                LocalDateTime expiration =LocalDate.parse(params[3], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
-
-                ///////////////////////////////////////////////////////////////////////////////////
-                DateTimeFormatter fixedFmt = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
-                LocalDateTime fixedDateTime = LocalDateTime.parse("25-12-07-22:32", fixedFmt);
-                ///////////////////////////////////////////////////////////////////////////////////
-
-                if (Integer.parseInt(params[4]) <= 100 && !(Duration.between(fixedDateTime, expiration).toHours() < 12)) {
-                    prod = new ProductMeeting(
-                            params[0],
-                            params[1],
-                            Double.parseDouble(params[2]),
-                            expiration,
-                            Integer.parseInt(params[4]),
-                            fixedDateTime);
-                    productCatalog.add(prod.getId(), prod);
-
-                    //h.addProductToDb(prod);
-                }
-                if (prod == null)
-                    printError("Error processing ->prod addMeeting ->Error adding meeting");
-                else System.out.println(prod);
-=======
                 TiendaUtils.addMeeting(params, productCatalog);
->>>>>>> 2a775b92819f47b5072e24e45b28b1ff3ad4bd1c
             }
             case PROD_LIST -> productCatalog.list();
             case PROD_REMOVE -> {
