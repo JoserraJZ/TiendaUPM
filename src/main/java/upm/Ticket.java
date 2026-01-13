@@ -115,6 +115,10 @@ public class Ticket {
 
     List<TicketItem> getItems() {return items;}
 
+    boolean hasServicesAndProducts(){
+        return (productServiceSeparator != 0) && (productServiceSeparator!=items.size());
+    }
+
 
     @Override
     public String toString() {

@@ -1,5 +1,8 @@
 package upm;
 import upm.products.*;
+import upm.ticketitems.ProductItem;
+import upm.ticketitems.ServiceItem;
+import upm.ticketitems.TicketItem;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -300,7 +303,6 @@ public class Tienda {
                 Ticket nuevo = new Ticket(params[0], tipoTicket);
 
                 getCashierById(params[1]).addTicket(nuevo);
-                nuevo.setCashier(getCashierById(params[1]));
                 //h.addTicketToDb(nuevo);
                 System.out.println(nuevo);
             }
@@ -322,19 +324,19 @@ public class Tienda {
                         int amount = Integer.parseInt(params[3]);
                         Ticket ticket = getTicketById(params[1], params[0]);
                         if (params.length > 4) {
-                            TicketItem itemToAdd = new TicketItem(prod,amount, ticket.getId());
+                            TicketItem itemToAdd = new ProductItem(prod,amount);
 
                             CustomizableProduct pPersonalizado = ((CustomizableProduct) prod);
                             for (int i = 4; i < params.length; i++) {
-                                itemToAdd.addPersonalizedText(params[i]);
+                                //TODO: HACER itemToAdd.addPersonalizedText(params[i]);
                             }
-                            ticket.addProducts(itemToAdd, amount);
+                            ticket.addItem(itemToAdd);
                         } else {
                             if (prod instanceof ProductMeeting prodM) {
                                 if (prodM.getExpirationDateTime().isAfter(fixedDateTime) ||
                                         prodM.getExpirationDateTime().isEqual(fixedDateTime)) {
-                                    TicketItem meetingToAdd = new TicketItem(prodM, amount, ticket.getId());
-                                    ticket.addProducts(meetingToAdd, amount);
+                                    TicketItem meetingToAdd = new ProductItem(prodM, amount);
+                                    ticket.addItem(meetingToAdd);
                                 } else {
                                     printError("La reunion que se está tratando de añadir ha prescrito");
                                 }
@@ -342,14 +344,14 @@ public class Tienda {
                             } else if (prod instanceof ProductCampusFood prodCF) {
                                 if (prodCF.getExpirationDate().isAfter(fixedDateTime) ||
                                         prodCF.getExpirationDate().isEqual(fixedDateTime)) {
-                                    TicketItem foodToAdd = new TicketItem(prodCF, amount, ticket.getId());
-                                    ticket.addProducts(foodToAdd, amount);
+                                    TicketItem foodToAdd = new ProductItem(prodCF, amount);
+                                    ticket.addItem(foodToAdd);
                                 } else {
                                     printError("La comida que se está tratando de añadir ha prescrito");
                                 }
 
                             } else {
-                                ticket.addProducts(new TicketItem(prod,amount, ticket.getId()), amount);
+                                ticket.addItem(new ProductItem(prod,amount));
                             }
 
                         }
@@ -378,11 +380,6 @@ public class Tienda {
                     }
                     Service servicetoAdd = svc.cloneService();
 
-                    int amount = 1;
-                    if (params.length > 3 && params[3] != null && params[3].matches("^[1-9]\\d*$")) {
-                        amount = Integer.parseInt(params[3]);
-                    }
-
                     Ticket ticket = getTicketById(params[1], params[0]); // (cashId, ticketId)
                     if (ticket == null) break;
 
@@ -406,8 +403,8 @@ public class Tienda {
                     } catch (Exception ignored) {
                     }
 
-                    //@SuppressWarnings("unchecked")
-                    ticket.addService(servicetoAdd,1);
+                    TicketItem serviceItem = new ServiceItem(svc);
+                    ticket.addItem(serviceItem);
 
                     System.out.println(ticket);
                 }
