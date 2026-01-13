@@ -16,7 +16,7 @@ public class ProductItem implements TicketItem{
     }
 
     @Override
-    public String getClassStr() { return "Product"; }
+    public String getClassStr() { return prod.getClass().getCanonicalName(); }
 
     @Override
     public String getItemId() {return Integer.toString(prod.getId());}
@@ -27,13 +27,13 @@ public class ProductItem implements TicketItem{
     public int getQuantity() {return quantity;}
 
     @Override
-    public String toString() { return prod.toString(); }
+    public String toString() { return String.format(prod.toParametersString(), getPrice(), ", actual people in event:"+quantity); }
 
     @Override
     public ProductCategory getCategory() { return prod.getCategory(); }
 
     @Override
     public double getPrice() {
-        return prod.getPrice();
+        return prod.getPrice() * quantity;
     }
 }

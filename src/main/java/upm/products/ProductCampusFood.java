@@ -51,7 +51,8 @@ public class ProductCampusFood extends Product {
         return copy;
     }
 
-    public String toString(int participants) {
+    public String toString() {
+        int participants = 0;
         if (participants>0){
             return String.format(Locale.US,
                     "{class:%s, id:%d, name:'%s', price:%.1f, date of Event:%s, max people allowed:%d, actual people in event:%d}",

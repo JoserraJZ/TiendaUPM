@@ -25,8 +25,8 @@ public class Ticket {
     @Transient
     private List<TicketItem> items = new ArrayList<>();
     private static final Comparator<TicketItem> ITEM_ORDER =
-            Comparator.comparing(TicketItem::getClassStr)
-                    .thenComparing(TicketItem::getItemId)
+            Comparator.comparing(TicketItem::getClassStr).reversed()
+                    .thenComparing(TicketItem::getItemId).reversed()
                     .thenComparing(TicketItem::getItemId);
 
     private TicketState currentState;
@@ -48,7 +48,7 @@ public class Ticket {
         this.currentState = TicketState.OPEN;
         TicketItem tiOnList = getTicketItem(ti);
 
-        if (tiOnList==null){
+        if (tiOnList==null || ti.getClassStr().equals(tiOnList.getClassStr())){
             items.add(ti);
             items.sort(ITEM_ORDER);
 
@@ -134,52 +134,51 @@ public class Ticket {
 
         // Productos (si es COMPOUND mostramos el encabezado antes)
 
-        double totalPrice = 0.0;
+        double ticketTotalPrice = 0.0;
         double productDiscount = 0.0;
 
         if (productServiceSeparator != items.size()){
-            sb.append("\nProduct Included");
+
+            if (ticketType==TicketType.COMPOUND)
+                sb.append("\nProduct Included");
+
             for (int i = productServiceSeparator; i < items.size(); i++) {
                 TicketItem it = items.get(i);
-                double price = it.getPrice();
+                double priceOfAll = it.getPrice();
 
-                int total = items.stream()
+                int numberOfItems = items.stream()
                             .filter(item -> item.getItemId().equals(it.getItemId()))
                             .mapToInt(TicketItem::getQuantity)
                             .sum();
 
+                double pricePerItem = priceOfAll/numberOfItems;
 
-                if (total >= 2 && it.getCategory() != null) {
+                if (numberOfItems >= 2 && it.getCategory() != null) {
                     double discount = it.getCategory().getDiscountPercent() / 100.0;
-                    double unitDiscount = price * discount;
+                    double unitDiscount = pricePerItem * discount;
                     String formatted = Utils.formatDouble(unitDiscount);
-                    //if (prod instanceof CustomizableProduct cp){
-                    //    for (int i = 0; i <it.getQuantity(); i++) {
-                    //        //sb.append(String.format(Locale.US, "%n%s **discount -%s", cp.toString(it.getPersonalizedTexts(), price), formatted));
-                    //        productDiscount += unitDiscount;
-                    //    }
-                    //}
+
                     for (int j = 0; j <it.getQuantity(); j++) {
-                        sb.append(it.toString());
+                        sb.append("\n").append(it.toString()).append(String.format(" **discount -%s", formatted));
                         productDiscount += unitDiscount;
                     }
 
 
                 } else {
-                    sb.append(String.format(Locale.US, "%n%s", it));
+                    sb.append("\n").append(String.format(Locale.US, "%s", it));
                 }
 
-                totalPrice += it.getPrice();
+                ticketTotalPrice += priceOfAll;
             }
         }
 
-        double servicesDiscount = totalPrice * servicesDiscountPercent/100f;
+        double servicesDiscount = ticketTotalPrice * servicesDiscountPercent/100f;
 
         // 3. FINAL SUMMARY
         if (ticketType == TicketType.PRODUCT || (ticketType == TicketType.COMPOUND && !items.isEmpty())) {
-            double finalPrice = max(totalPrice - productDiscount - servicesDiscount, 0);
+            double finalPrice = max(ticketTotalPrice - productDiscount - servicesDiscount, 0);
 
-            String formatted = Utils.formatDouble(totalPrice);
+            String formatted = Utils.formatDouble(ticketTotalPrice);
             sb.append("\n").append(String.format(Locale.US, "  Total price: %s%n", formatted));
 
             if (servicesDiscountPercent != 0){
