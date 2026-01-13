@@ -224,7 +224,6 @@ public class Tienda {
                 if (prod == null)
                     printError("Error processing ->prod addMeeting ->Error adding meeting");
                 else System.out.println(prod);
-                //else System.out.println(prod.toNoPeopleString());
             }
             case PROD_LIST -> productCatalog.list();
             case PROD_REMOVE -> {
@@ -260,11 +259,12 @@ public class Tienda {
                         int amount = Integer.parseInt(params[3]);
                         Ticket ticket = getTicketById(params[1], params[0]);
                         if (params.length > 4) {
-                            TicketItem itemToAdd = new ProductItem(prod,amount);
+                            CustomizableProduct pPersonalizado = ((CustomizableProduct) prod.clone());
 
-                            CustomizableProduct pPersonalizado = ((CustomizableProduct) prod);
+                            TicketItem itemToAdd = new ProductItem(pPersonalizado,amount);
+
                             for (int i = 4; i < params.length; i++) {
-                                //pPersonalizado.addText(params[i]);
+                                pPersonalizado.addText(params[i]);
                             }
                             ticket.addItem(itemToAdd);
                         } else {

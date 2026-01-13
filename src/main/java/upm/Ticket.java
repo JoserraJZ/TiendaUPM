@@ -25,7 +25,9 @@ public class Ticket {
     @Transient
     private List<TicketItem> items = new ArrayList<>();
     private static final Comparator<TicketItem> ITEM_ORDER =
-            Comparator.comparing(TicketItem::getClassStr).reversed()
+            Comparator
+                    .comparing((TicketItem t) -> !t.getItemId().endsWith("s"))
+                    .thenComparing(TicketItem::getClassStr).reversed()
                     .thenComparing(TicketItem::getItemId).reversed()
                     .thenComparing(TicketItem::getItemId);
 
@@ -73,9 +75,18 @@ public class Ticket {
         if (currentState != TicketState.CLOSE) {
 
             String id = Integer.toString(productId);
+
+            TicketItem it = items.stream()
+                    .filter(i -> i.getItemId().equals(id))
+                    .findFirst()
+                    .orElse(null);
+
             boolean removed = items.removeIf(
                     item -> item.getItemId().equals(id)
             );
+
+
+            if (it.getClassStr().equals("Service")) productServiceSeparator -=1;
 
             if (removed) {
                 return true;
@@ -126,13 +137,14 @@ public class Ticket {
 
         double servicesDiscountPercent = 0;
         if (productServiceSeparator != 0){
-            for (int i = 0; i < productServiceSeparator; i++) {
+            sb.append("\nServices Included:");
+
+            for (int i = productServiceSeparator-1; i >= 0; i--) {
                 servicesDiscountPercent+=15;
                 sb.append("\n").append(items.get(i).toString());
             }
         }
 
-        // Productos (si es COMPOUND mostramos el encabezado antes)
 
         double ticketTotalPrice = 0.0;
         double productDiscount = 0.0;
@@ -147,13 +159,18 @@ public class Ticket {
                 double priceOfAll = it.getPrice();
 
                 int numberOfItems = items.stream()
-                            .filter(item -> item.getItemId().equals(it.getItemId()))
-                            .mapToInt(TicketItem::getQuantity)
-                            .sum();
+                        .filter(item -> item.getItemId().equals(it.getItemId())).filter(item -> item.toString().equals(it.toString()) )
+                        .mapToInt(TicketItem::getQuantity)
+                        .sum();
+
+
+
+                boolean multipleCustomizable = it.getClassStr().equals("CustomizableProduct") && items.stream()
+                        .filter(item -> item.getItemId().equals(it.getItemId())).count() > 1;
 
                 double pricePerItem = priceOfAll/numberOfItems;
 
-                if (numberOfItems >= 2 && it.getCategory() != null) {
+                if ((numberOfItems >= 2 && it.getCategory() != null) || multipleCustomizable) {
                     double discount = it.getCategory().getDiscountPercent() / 100.0;
                     double unitDiscount = pricePerItem * discount;
                     String formatted = Utils.formatDouble(unitDiscount);
@@ -175,7 +192,7 @@ public class Ticket {
         double servicesDiscount = ticketTotalPrice * servicesDiscountPercent/100f;
 
         // 3. FINAL SUMMARY
-        if (ticketType == TicketType.PRODUCT || (ticketType == TicketType.COMPOUND && !items.isEmpty())) {
+        if (ticketType == TicketType.PRODUCT || (ticketType == TicketType.COMPOUND && productServiceSeparator != items.size())) {
             double finalPrice = max(ticketTotalPrice - productDiscount - servicesDiscount, 0);
 
             String formatted = Utils.formatDouble(ticketTotalPrice);

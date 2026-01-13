@@ -16,7 +16,7 @@ public class ProductItem implements TicketItem{
     }
 
     @Override
-    public String getClassStr() { return prod.getClass().getCanonicalName(); }
+    public String getClassStr() { return prod.getClass().getSimpleName(); }
 
     @Override
     public String getItemId() {return Integer.toString(prod.getId());}
