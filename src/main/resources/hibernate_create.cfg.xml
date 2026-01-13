@@ -20,7 +20,6 @@
         <mapping class="upm.Client"/>
         <mapping class="upm.Service"/>
         <mapping class="upm.Ticket"/>
-        <mapping class="upm.TicketItem"/>
 
     </session-factory>
 </hibernate-configuration>

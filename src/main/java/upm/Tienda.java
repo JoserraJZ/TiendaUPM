@@ -421,7 +421,7 @@ public class Tienda {
                 Ticket ticket = getTicketById(params[1], params[0]);
                 if (ticket != null) {
                     if (ticket.getTicketType() == TicketType.COMPOUND) {
-                        if ((!ticket.getItems().isEmpty()) && (!ticket.getServices().isEmpty())) {
+                        if (ticket.hasServicesAndProducts()) {
                             ticket.closeAndPrint();
                         } else {
                             printError("Un ticket mixto debe contener al menos un producto y un servicio");

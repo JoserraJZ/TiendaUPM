@@ -22,7 +22,7 @@ public class Ticket {
     @Id
     private String id; // PK de negocio, asignada por tu lógica
 
-    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Transient
     private List<TicketItem> items = new ArrayList<>();
     private static final Comparator<TicketItem> ITEM_ORDER =
             Comparator.comparing(TicketItem::getClassStr)

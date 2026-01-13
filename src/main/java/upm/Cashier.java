@@ -19,7 +19,7 @@ public class Cashier implements Comparable<Cashier>{
     private final String name;
     private final String businessEmail;
 
-    @OneToMany(mappedBy = "cashier")
+    @Transient
     private final Set<Ticket> tickets = new HashSet<>();
 
     public Cashier(String id, String newName, String newBusinessEmail){

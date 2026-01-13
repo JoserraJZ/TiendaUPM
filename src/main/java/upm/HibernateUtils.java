@@ -20,7 +20,6 @@ public class HibernateUtils {
                     .addAnnotatedClass(Product.class)
                     .addAnnotatedClass(Service.class)
                     .addAnnotatedClass(Ticket.class)
-                    .addAnnotatedClass(TicketItem.class)
                     .buildSessionFactory();
 
             System.out.println("Base de datos encontrada y cargada correctamente.");
@@ -37,7 +36,6 @@ public class HibernateUtils {
                         .addAnnotatedClass(Product.class)
                         .addAnnotatedClass(Service.class)
                         .addAnnotatedClass(Ticket.class)
-                        .addAnnotatedClass(TicketItem.class)
                         .buildSessionFactory();
 
                 System.out.println("Base de datos creada correctamente.");
