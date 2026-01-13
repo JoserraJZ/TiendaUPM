@@ -86,29 +86,7 @@ public class Tienda {
             }
 
             case CLIENT_ADD -> {
-                String id = params[1];
-                boolean isDNI = id.matches("\\d{8}[A-Za-z]");
-                boolean isNIE = id.matches("[XY]\\d{7}[A-Za-z]");
-                boolean isNIF = id.matches("[A-Za-z]\\d{8}");
-                Cashier cash = getCashierById(params[3]);
-                ClientType type = isNIF ? ClientType.COMPANY : ClientType.USER;
-
-
-                if (cash != null) {
-                    if (!(isDNI || isNIE || isNIF)) {
-                        printError("Identificador de usuario no válido");
-                    } else {
-                        Client newClient;
-                        if (isNIF) {
-                            newClient = new ClientCompany(params[0], params[1], params[2], cash, type);
-                        } else {
-                            newClient = new Client(params[0], params[1], params[2], cash, type);
-                        }
-                        if (!clients.add(newClient))
-                            printError("El identificador de usuario introducido ya existe");
-                        //else {h.addClientToDb(newClient);}
-                    }
-                } else printError("El identificador de cajero introducido no existe");
+                TiendaUtils.clientAdd(params, clients, cashiers);
             }
 
             case CLIENT_LIST -> {
@@ -120,27 +98,7 @@ public class Tienda {
             }
 
             case PROD_ADD -> {
-                Product prod;
-                if (params[4] != null && Integer.parseInt(params[4])>0){
-                    prod =  new CustomizableProduct(
-                            params[0],
-                            params[1],
-                            ProductCategory.valueOf(params[2]),
-                            Integer.parseInt(params[3]),
-                            Integer.parseInt(params[4]));
-                    productCatalog.add(prod.getId(), prod);
-
-                    //h.addProductToDb(prod);
-                } else {
-                    prod = new Product(
-                            params[0],
-                            params[1],
-                            ProductCategory.valueOf(params[2]),
-                            Integer.parseInt(params[3]));
-                    productCatalog.add(prod.getId(), prod);
-
-                    //h.addProductToDb(prod);
-                }
+                Product prod = TiendaUtils.prodAdd(params, productCatalog);
                 if (prod == null) printError("No se pueden añadir más de 200 productos");
                 else System.out.println(prod);
             }
@@ -152,53 +110,13 @@ public class Tienda {
                 System.out.println(service);
             }
             case PROD_UPDATE -> {
-                Product prod = productCatalog.getById(Integer.parseInt(params[0]));
-                if (prod != null) {
-                    switch (params[1]) {
-                        case "NAME":
-                            prod.setName(params[2]);
-                            break;
-                        case "CATEGORY":
-                            prod.setCategory(ProductCategory.valueOf(params[2]));
-                            break;
-                        case "PRICE":
-                            prod.setPrice(Integer.parseInt(params[2]));
-                            break;
-                        default:
-                            return false;
-                    }
-                    System.out.println(prod);
-                } else {
-                    printError("Atributo de producto desconocido");
-                }
+                TiendaUtils.prodUpdate(params, productCatalog);
             }
             case PROD_ADDFOOD -> {
-                //CAMBIAR FECHA, DE FIXEDDATETIME A NOW()
-
-                Product prod = null;
-                LocalDateTime expiration =LocalDate.parse(params[3], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
-
-                ////////////////////////////////////////////////////////////////////////////////////
-                DateTimeFormatter fixedFmt = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
-                LocalDateTime fixedDateTime = LocalDateTime.parse("25-12-07-22:32", fixedFmt);
-                ///////////////////////////////////////////////////////////////////////////////////
-
-                if (Integer.parseInt(params[4]) <= 100 && !(Duration.between(fixedDateTime, expiration).toDays() < 3)) {
-                    prod = new ProductCampusFood(
-                            params[0],
-                            params[1],
-                            Double.parseDouble(params[2]),
-                            expiration,
-                            Integer.parseInt(params[4]));
-                    productCatalog.add(prod.getId(), prod);
-
-                    //addProductToDb(prod);
-                }
-                if (prod == null)
-                    printError("Error processing ->prod addFood ->Error adding product");
-                else System.out.println(prod);
+                TiendaUtils.addFood(params, productCatalog);
             }
             case PROD_ADDMEETING -> {
+<<<<<<< HEAD
                 //CAMBIAR FECHA, DE FIXEDDATETIME A NOW()
 
                 ProductMeeting prod = null;
@@ -224,6 +142,9 @@ public class Tienda {
                 if (prod == null)
                     printError("Error processing ->prod addMeeting ->Error adding meeting");
                 else System.out.println(prod);
+=======
+                TiendaUtils.addMeeting(params, productCatalog);
+>>>>>>> 2a775b92819f47b5072e24e45b28b1ff3ad4bd1c
             }
             case PROD_LIST -> productCatalog.list();
             case PROD_REMOVE -> {
@@ -354,33 +275,10 @@ public class Tienda {
             }
             case TICKET_PRINT -> {
                 //modificar toString de Ticket para cada tipo de ticket
-                Ticket ticket = getTicketById(params[1], params[0]);
-                if (ticket != null) {
-                    if (ticket.getTicketType() == TicketType.COMPOUND) {
-                        if (ticket.hasServicesAndProducts()) {
-                            ticket.closeAndPrint();
-                        } else {
-                            printError("Un ticket mixto debe contener al menos un producto y un servicio");
-                        }
-                    } else if (ticket.getTicketType() == TicketType.PRODUCT) {
-                        ticket.closeAndPrint();
-                    } else if (ticket.getTicketType() == TicketType.SERVICE) {
-                        ticket.closeAndPrint();
-                    }
-                }
+                TiendaUtils.printTicket(getTicketById(params[1], params[0]));
             }
             case TICKET_LIST -> {
-                System.out.println("Ticket List:");
-
-                for (Cashier c : cashiers) {
-                    List<Ticket> list = new ArrayList<>(c.getTickets());
-
-                    list.sort(Comparator.comparing(Ticket::getCurrentState).thenComparing(Ticket::getId, Comparator.reverseOrder() ));
-
-                    for (Ticket t : list) {
-                        System.out.println(t.getId() + " - " + t.getCurrentState());
-                    }
-                }
+                TiendaUtils.ticketList(cashiers);
             }
 
             case HELP -> help();
