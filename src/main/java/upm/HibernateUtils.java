@@ -2,8 +2,15 @@ package upm;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import upm.products.Product;
+import upm.ticketitems.AssignedTickets;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 public class HibernateUtils {
 
@@ -48,6 +55,112 @@ public class HibernateUtils {
 
 
     }
+
+    public void cargarClientes(Set<Client> cliente) {
+
+        Session session = null;
+        Transaction tx = null;
+        List<Client> clients = new ArrayList<>();
+
+        try {
+            session = factory.openSession();   // Abrir sesión
+            tx = session.beginTransaction();          // Iniciar transacción
+
+            clients = session.createQuery("FROM Ticket", Client.class).getResultList();
+            tx.commit();                              // Confirmar transacción
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();            // Revertir si hay error
+            throw e;
+        } finally {
+            if (session != null) session.close();     // Cerrar sesión
+        }
+
+        cliente.addAll(clients);
+    }
+
+    public void loadClients(Set<Client> client) {
+
+        Session session = null;
+        Transaction tx = null;
+        List<Client> clients = new ArrayList<>();
+
+        try {
+            session = factory.openSession();   // Abrir sesión
+            tx = session.beginTransaction();          // Iniciar transacción
+
+            clients = session.createQuery("FROM client", Client.class).getResultList();
+            tx.commit();                              // Confirmar transacción
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();            // Revertir si hay error
+            throw e;
+        } finally {
+            if (session != null) session.close();     // Cerrar sesión
+        }
+
+        client.addAll(clients);
+    }
+
+    public void loadCashiers(Set<Cashier> cashier) {
+
+        Session session = null;
+        Transaction tx = null;
+        List<Cashier> cashiers = new ArrayList<>();
+
+        try {
+            session = factory.openSession();   // Abrir sesión
+            tx = session.beginTransaction();          // Iniciar transacción
+
+            cashiers = session.createQuery("FROM cashier", Cashier.class).getResultList();
+            tx.commit();                              // Confirmar transacción
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();            // Revertir si hay error
+            throw e;
+        } finally {
+            if (session != null) session.close();     // Cerrar sesión
+        }
+
+        cashier.addAll(cashiers);
+    }
+
+    public void loadTickets(Set<Cashier> cashier) {
+
+        Session session = null;
+        Transaction tx = null;
+        List<Ticket> tickets = new ArrayList<>();
+        List<AssignedTickets> assignation = new ArrayList<>();
+
+        try {
+            session = factory.openSession();   // Abrir sesión
+            tx = session.beginTransaction();          // Iniciar transacción
+
+            tickets = session.createQuery("FROM tickets", Ticket.class).getResultList();
+            assignation= session.createQuery("FROM assigned_tickets", AssignedTickets.class).getResultList();
+            tx.commit();                              // Confirmar transacción
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();            // Revertir si hay error
+            throw e;
+        } finally {
+            if (session != null) session.close();     // Cerrar sesión
+        }
+
+        for (AssignedTickets at: assignation){
+            Cashier cashierForAssign = cashier.stream()
+                    .filter(c -> c.getId().equals(at.getIdCajero()))
+                    .findFirst()
+                    .orElse(null);
+
+            Ticket ticketForAssign = tickets.stream()
+                    .filter(c -> c.getId().equals(at.getIdTicket()))
+                    .findFirst()
+                    .orElse(null);
+            cashierForAssign.addTicket(ticketForAssign);
+
+        }
+
+    }
+
+
+
 
     public void addClientToDb(Client c) {
         if (factory != null) {

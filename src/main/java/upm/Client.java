@@ -18,8 +18,7 @@ public class Client {
     private final String name;
     private final String email;
 
-    @ManyToOne
-    @JoinColumn(name = "cashier_id")
+    @Transient
     private final Cashier cashier;
 
     private final ClientType clientType;
