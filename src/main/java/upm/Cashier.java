@@ -3,10 +3,7 @@ package upm;
 
 import jakarta.persistence.*;
 
-import java.util.Objects;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Collections;
+import java.util.*;
 
 @Entity
 @Table(name = "cashier")
@@ -45,6 +42,17 @@ public class Cashier implements Comparable<Cashier>{
     public boolean addTicket(Ticket ticket) {
         if (ticket == null) return false;
         return tickets.add(ticket);
+    }
+
+    public void listTicket() {
+        if (this != null) {
+            List<Ticket> tickets = new ArrayList<>(this.getTickets());
+            tickets.sort(Comparator.comparing(Ticket::getId));
+
+            System.out.println("Tickets: ");
+            tickets.forEach(t -> System.out.println(t.getId() + " ->" + t.getCurrentState()));
+        }
+        else Tienda.printError("El identificador de cajero introducido no existe");
     }
 
     @Override

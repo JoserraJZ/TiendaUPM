@@ -31,7 +31,7 @@ public class Tienda {
 
         RandomGenerator.Init(productCatalog, cashiers, clients);
 
-        boolean shouldRunFromFile = args.length > 0 && runFromFile(args[0]);
+        boolean shouldRunFromFile = args.length > 0 && Utils.runFromFile(args[0]);
 
         if (!shouldRunFromFile) {
             try (Scanner scanner = new Scanner(System.in)) {
@@ -43,29 +43,7 @@ public class Tienda {
        h.endConnection();
     }
 
-    private static boolean runFromFile(String filePath) {
-        File inputFile = new File(filePath);
-
-        if (!inputFile.isFile()){
-            System.err.println("Fichero no encontrado: " + filePath + ". Ejecutando modo interactivo.");
-            return false;
-        }
-
-        System.setProperty("isfromfile", "true");
-
-
-        try (Scanner fileScanner = new Scanner(inputFile)) {
-            commandLoop(fileScanner);
-            return true;
-        } catch (FileNotFoundException e) {
-            System.err.println("Error abriendo el fichero: " + e.getMessage());
-            return false;
-        } finally {
-            System.clearProperty("isfromfile");
-        }
-    }
-
-    private static void commandLoop(Scanner scanner){
+    public static void commandLoop(Scanner scanner){
         while (scanner.hasNextLine()) {
             try {
                 errorOccurred = false;
@@ -94,15 +72,9 @@ public class Tienda {
             case CASH_ADD -> {
                 if(!cashiers.add(new Cashier(params[0], params[1], params[2])))
                     printError("El id introducido ya existe");
-                //else {h.addCashierToDb(getCashierById(params[0]));}
-
             }
             case CASH_LIST -> {
-                List<Cashier> cashierList = new ArrayList<>(cashiers);
-                cashierList.sort(Comparator.comparing(Cashier::getName));
-
-                System.out.println("Cash:");
-                cashierList.forEach(System.out::println);
+                TiendaUtils.productList(cashiers);
             }
             case CASH_REMOVE -> {
                 if (!cashiers.remove(getCashierById(params[0])))
@@ -110,28 +82,8 @@ public class Tienda {
             }
             case CASH_TICKETS -> {
                 Cashier cash = getCashierById(params[0]);
-                if (cash != null) {
-                    List<Ticket> tickets = new ArrayList<>(cash.getTickets());
-                    tickets.sort(Comparator.comparing(Ticket::getId));
-
-                    System.out.println("Tickets: ");
-                    tickets.forEach(t -> System.out.println(t.getId() + " ->" + t.getCurrentState()));
-                }
-                else printError("El identificador de cajero introducido no existe");
+                cash.listTicket();
             }
-            /*
-            case CLIENT_ADD -> {
-                boolean isCompany = Utils.isNIF(params[1]);
-                //System.out.println(isCompany);
-                Cashier cash = getCashierById(params[3]);
-                if (cash != null){
-                    if (!clients.add(new Client(params[0], params[1], params[2], cash)))
-                        printError("El identificador de usuario introducido ya existe");
-                }
-                else printError("El identificador de cajero introducido no existe");
-            }
-
-             */
 
             case CLIENT_ADD -> {
                 String id = params[1];
@@ -140,6 +92,7 @@ public class Tienda {
                 boolean isNIF = id.matches("[A-Za-z]\\d{8}");
                 Cashier cash = getCashierById(params[3]);
                 ClientType type = isNIF ? ClientType.COMPANY : ClientType.USER;
+
 
                 if (cash != null) {
                     if (!(isDNI || isNIE || isNIF)) {
@@ -159,11 +112,7 @@ public class Tienda {
             }
 
             case CLIENT_LIST -> {
-                List<Client> clientList = new ArrayList<>(clients);
-                clientList.sort(Comparator.comparing(Client::getName));
-
-                System.out.println("Client:");
-                clientList.forEach(System.out::println);
+                TiendaUtils.clientList(clients);
             }
             case CLIENT_REMOVE -> {
                 if (!clients.removeIf(c -> params[0].equals(c.getId())))
@@ -252,7 +201,7 @@ public class Tienda {
             case PROD_ADDMEETING -> {
                 //CAMBIAR FECHA, DE FIXEDDATETIME A NOW()
 
-                Product prod = null;
+                ProductMeeting prod = null;
                 LocalDateTime expiration =LocalDate.parse(params[3], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
 
                 ///////////////////////////////////////////////////////////////////////////////////
@@ -275,6 +224,7 @@ public class Tienda {
                 if (prod == null)
                     printError("Error processing ->prod addMeeting ->Error adding meeting");
                 else System.out.println(prod);
+                //else System.out.println(prod.toNoPeopleString());
             }
             case PROD_LIST -> productCatalog.list();
             case PROD_REMOVE -> {
@@ -285,23 +235,9 @@ public class Tienda {
             }
 
             case TICKET_NEW -> {
-
                 //comprobar si el tipo de ticket que se quiere se puede para el tipo de cliente
-
-                TicketType tipoTicket = TicketType.PRODUCT; // default
-                if (params.length > 2 && params[3] != null) {
-                    String t = params[3].toLowerCase();
-                    tipoTicket = switch (t) {
-                        case "c", "-c", "compound" -> TicketType.COMPOUND;
-                        case "p", "-p", "product" -> TicketType.PRODUCT;
-                        case "s", "-s", "service" -> TicketType.SERVICE;
-                        default -> TicketType.PRODUCT;
-                    };
-                }
-
-
-                Ticket nuevo = new Ticket(params[0], tipoTicket);
-
+                TicketType ticketType = TiendaUtils.getTicketTypeFromParams(params);
+                Ticket nuevo = new Ticket(params[0], ticketType);
                 getCashierById(params[1]).addTicket(nuevo);
                 //h.addTicketToDb(nuevo);
                 System.out.println(nuevo);
@@ -328,7 +264,7 @@ public class Tienda {
 
                             CustomizableProduct pPersonalizado = ((CustomizableProduct) prod);
                             for (int i = 4; i < params.length; i++) {
-                                //TODO: HACER itemToAdd.addPersonalizedText(params[i]);
+                                //pPersonalizado.addText(params[i]);
                             }
                             ticket.addItem(itemToAdd);
                         } else {
