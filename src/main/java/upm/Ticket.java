@@ -2,8 +2,11 @@ package upm;
 
 import jakarta.persistence.*;
 
+import org.hibernate.cache.spi.support.AbstractReadWriteAccess;
 import upm.products.CustomizableProduct;
 import upm.products.Product;
+import upm.ticketitems.ServiceItem;
+import upm.ticketitems.TicketItem;
 
 
 import java.time.LocalDateTime;
@@ -21,85 +24,57 @@ public class Ticket {
 
     @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TicketItem> items = new ArrayList<>();
-
-    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ServiceItem> services = new ArrayList<>();
+    private static final Comparator<TicketItem> ITEM_ORDER =
+            Comparator.comparing(TicketItem::getClassStr)
+                    .thenComparing(TicketItem::getItemId)
+                    .thenComparing(TicketItem::getItemId);
 
     private TicketState currentState;
     private TicketType ticketType;
 
-    @ManyToOne
-    @JoinColumn(name = "cashier_id")
-    private Cashier cashier;
-
-
-
-    public void setCashier(Cashier cashier) {
-        this.cashier = cashier;
-    }
+    private int productServiceSeparator = 0;
 
     public Ticket(String id, TicketType type) {
         this.id = (id == null) ? RandomGenerator.generateTicketId() : id;
         this.items = new ArrayList<>();
-        this.services = new ArrayList<>();
         this.currentState = TicketState.EMPTY;
         this.ticketType = type;
     }
 
-    public void addProducts(TicketItem ti, int amount) {
+    public void addItem(TicketItem ti) {
+        //TODO: COMPROBAR EL TIPO DE TICKET
 
         if (currentState == TicketState.CLOSE) return;
         this.currentState = TicketState.OPEN;
-        TicketItem tiOnList= getTicketItem(ti);
+        TicketItem tiOnList = getTicketItem(ti);
 
         if (tiOnList==null){
             items.add(ti);
+            items.sort(ITEM_ORDER);
+
+            if (ti.getClassStr().equals("Service")) productServiceSeparator +=1;
         }else {
-            ti.updateCuantity(amount);
+            ti.addQuantity(ti.getQuantity());
         }
     }
-
-    public void addService(Service svc, int amount) {
-        for (ServiceItem si : services) {
-            if (si.getService().getId() == svc.getId()) {
-                si.updateQuantity(amount);
-                return;
-            }
-        }
-
-        // Si no existe, lo añadimos nuevo
-        services.add(new ServiceItem(svc, amount, this.id));
-    }
-
 
     public TicketItem getTicketItem(TicketItem it) {
-
-        TicketItem itemSelected= null;
-
-        if (it.getProduct() instanceof CustomizableProduct cp){
-            for (int i = 0; i < items.size(); i++) {
-                if (items.get(i).getProduct().getId()==cp.getId() && items.get(i).compareCustomizableProducts(it)){
-                    itemSelected=items.get(i);
-                }
-            }
-
-        }else {
-            for (int i = 0; i < items.size(); i++) {
-                if (items.get(i).getProduct().getId()==it.getProduct().getId()){
-                   itemSelected=items.get(i);
-                }
+        for (TicketItem ticketItem : items) {
+            if (ticketItem.getItemId().equals(it.getItemId())) {
+                return ticketItem;
             }
         }
 
-        return itemSelected;
+        return null;
     }
 
 
     public boolean removeProduct(int productId) {
         if (currentState != TicketState.CLOSE) {
 
+            String id = Integer.toString(productId);
             boolean removed = items.removeIf(
-                    item -> item.getProduct().getId() == productId
+                    item -> item.getItemId().equals(id)
             );
 
             if (removed) {
@@ -138,94 +113,62 @@ public class Ticket {
 
     TicketType getTicketType() {return ticketType;}
 
-    ArrayList<TicketItem> getItems() {return items;}
-
-    ArrayList<ServiceItem> getServices() {return services;}
-
-
+    List<TicketItem> getItems() {return items;}
 
 
     @Override
     public String toString() {
-        // Servicios ordenados y a listar sólo si existen
-        services.sort(Comparator.comparing(ServiceItem::getId));
-
         StringBuilder sb = new StringBuilder("Ticket : ").append(id);
 
         double servicesDiscountPercent = 0;
-
-        if (!services.isEmpty()) {
-            sb.append("\nServices Included:");
-            for (ServiceItem svc : services) {
+        if (productServiceSeparator != 0){
+            for (int i = 0; i < productServiceSeparator; i++) {
                 servicesDiscountPercent+=15;
-                sb.append("\n").append(String.format(Locale.US, "%s", svc));
+                sb.append("\n").append(items.get(i).toString());
             }
         }
 
         // Productos (si es COMPOUND mostramos el encabezado antes)
-        items.sort(
-                Comparator.comparing(
-                                (TicketItem item) -> item.getProduct().getCategory(),
-                                Comparator.nullsLast(Comparator.naturalOrder())
-                        )
-                        .thenComparing(
-                                item -> item.getProduct().getId(),
-                                Comparator.nullsLast(Comparator.reverseOrder())
-                        )
-                        .thenComparing(
-                                item -> item.getProduct().getPrice(),
-                                Comparator.nullsLast(Comparator.naturalOrder())
-                        )
-        );
-
 
         double totalPrice = 0.0;
         double productDiscount = 0.0;
 
-        if (ticketType == TicketType.COMPOUND && !items.isEmpty()) {
+        if (productServiceSeparator != items.size()){
             sb.append("\nProduct Included");
-        }
+            for (int i = productServiceSeparator; i < items.size(); i++) {
+                TicketItem it = items.get(i);
+                double price = it.getPrice();
 
-        // 2. PROCESS EACH PRODUCT
-        for (TicketItem it : items) {
-
-            Product prod = it.getProduct();
-            double price;
-            if (prod instanceof CustomizableProduct){
-                 price= it.getPriceCustomizable();
-            }else {
-                price=it.getProduct().getPrice();
-            }
+                int total = items.stream()
+                            .filter(item -> item.getItemId().equals(it.getItemId()))
+                            .mapToInt(TicketItem::getQuantity)
+                            .sum();
 
 
-            int total = items.stream()
-                    .filter(item -> item.getProduct().getId() == it.getProduct().getId())
-                    .mapToInt(TicketItem::getQuantity)
-                    .sum();
-
-
-            if (total >= 2 && it.getCategory() != null) {
-                double discount = it.getCategory().getDiscountPercent() / 100.0;
-                double unitDiscount = price * discount;
-                String formatted = Utils.formatDouble(unitDiscount);
-                if (prod instanceof CustomizableProduct cp){
-                    for (int i = 0; i <it.getQuantity(); i++) {
-                        sb.append(String.format(Locale.US, "%n%s **discount -%s", cp.toString(it.getPersonalizedTexts(), price), formatted));
+                if (total >= 2 && it.getCategory() != null) {
+                    double discount = it.getCategory().getDiscountPercent() / 100.0;
+                    double unitDiscount = price * discount;
+                    String formatted = Utils.formatDouble(unitDiscount);
+                    //if (prod instanceof CustomizableProduct cp){
+                    //    for (int i = 0; i <it.getQuantity(); i++) {
+                    //        //sb.append(String.format(Locale.US, "%n%s **discount -%s", cp.toString(it.getPersonalizedTexts(), price), formatted));
+                    //        productDiscount += unitDiscount;
+                    //    }
+                    //}
+                    for (int j = 0; j <it.getQuantity(); j++) {
+                        sb.append(it.toString());
                         productDiscount += unitDiscount;
                     }
-                }else {
-                    for (int i = 0; i <it.getQuantity(); i++) {
-                        sb.append(String.format(Locale.US, "%n%s **discount -%s", it.getProduct(), formatted));
-                        productDiscount += unitDiscount;
-                    }
+
+
+                } else {
+                    sb.append(String.format(Locale.US, "%n%s", it));
                 }
 
-            } else {
-                sb.append(String.format(Locale.US, "%n%s", it));
-            }
-
                 totalPrice += it.getPrice();
+            }
         }
+
         double servicesDiscount = totalPrice * servicesDiscountPercent/100f;
 
         // 3. FINAL SUMMARY
