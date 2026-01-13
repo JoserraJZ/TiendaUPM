@@ -14,17 +14,16 @@ import static java.lang.Math.max;
 
 @Entity
 @Table(name = "tickets")
-public class  Ticket {
-
+public class Ticket {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private String id; // PK de negocio, asignada por tu lógica
 
-    @Transient
-    private final ArrayList<TicketItem> items ;
-    @Transient
-    private final ArrayList<ServiceItem> services;
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TicketItem> items = new ArrayList<>();
+
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ServiceItem> services = new ArrayList<>();
 
     private TicketState currentState;
     private TicketType ticketType;
@@ -32,6 +31,7 @@ public class  Ticket {
     @ManyToOne
     @JoinColumn(name = "cashier_id")
     private Cashier cashier;
+
 
 
     public void setCashier(Cashier cashier) {
@@ -200,7 +200,7 @@ public class  Ticket {
 
             int total = items.stream()
                     .filter(item -> item.getProduct().getId() == it.getProduct().getId())
-                    .mapToInt(TicketItem::getCuantity)
+                    .mapToInt(TicketItem::getQuantity)
                     .sum();
 
 
@@ -209,12 +209,12 @@ public class  Ticket {
                 double unitDiscount = price * discount;
                 String formatted = Utils.formatDouble(unitDiscount);
                 if (prod instanceof CustomizableProduct cp){
-                    for (int i = 0; i <it.getCuantity(); i++) {
+                    for (int i = 0; i <it.getQuantity(); i++) {
                         sb.append(String.format(Locale.US, "%n%s **discount -%s", cp.toString(it.getPersonalizedTexts(), price), formatted));
                         productDiscount += unitDiscount;
                     }
                 }else {
-                    for (int i = 0; i <it.getCuantity(); i++) {
+                    for (int i = 0; i <it.getQuantity(); i++) {
                         sb.append(String.format(Locale.US, "%n%s **discount -%s", it.getProduct(), formatted));
                         productDiscount += unitDiscount;
                     }

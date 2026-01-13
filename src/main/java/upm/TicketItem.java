@@ -8,42 +8,50 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "ticketItems")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "tipo", discriminatorType = DiscriminatorType.STRING)
-
+@Table(name = "ticket_items")
 public class TicketItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private final String ticketId;
+    private Long id; // ID técnico, no de negocio
+
+    @ManyToOne
+    @JoinColumn(name = "ticket_id")
+    private Ticket ticket;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
-    private final Product product;
+    private Product product;
 
-    private int cuantity;
+    private int quantity;
 
-    private List<String> personalizedTexts;
+    @ElementCollection
+    @CollectionTable(
+            name = "ticket_item_texts",
+            joinColumns = @JoinColumn(name = "ticket_item_id")
+    )
+    @Column(name = "text")
+    private List<String> personalizedTexts = new ArrayList<>();
 
+    public TicketItem() {}
 
-    public TicketItem(Product p, int cuantity, String ticketId){
+    public TicketItem(Product p, int cuantity, Ticket ticket){
         personalizedTexts=new ArrayList<>();
         this.product=p;
-        this.cuantity = cuantity;
-        this.ticketId=ticketId;
+        this.quantity = quantity;
+        this.ticket=ticket;
     }
 
     public String getTicketId() {
-        return ticketId;
+        return ticket.getId();
     }
 
     public Product getProduct() {
         return product;
     }
 
-    public int getCuantity() {
-        return cuantity;
+    public int getQuantity() {
+        return quantity;
     }
     public ProductCategory getCategory() {
         return product.getCategory();
@@ -83,11 +91,11 @@ public class TicketItem {
     }
 
     public void updateCuantity(int amount) {
-        this.cuantity+=amount;
+        this.quantity+=amount;
     }
 
     public double getPrice() {
-       return product.getPrice()*cuantity;
+       return product.getPrice()*quantity;
     }
 
     public List<String> getPersonalizedTexts() {
@@ -97,10 +105,10 @@ public class TicketItem {
     @Override
     public String toString() {
         if (product instanceof  ProductMeeting pM){
-            return pM.toString(cuantity);
+            return pM.toString(quantity);
         } else if (product instanceof ProductCampusFood pCF) {
 
-            return pCF.toString(cuantity);
+            return pCF.toString(quantity);
 
         }
         return "";
