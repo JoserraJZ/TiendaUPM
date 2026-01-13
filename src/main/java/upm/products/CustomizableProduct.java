@@ -14,13 +14,16 @@ import java.util.Locale;
 public class CustomizableProduct extends Product {
 
     private final int maxTexts;
+    List<String> personalizedTexts = new ArrayList<>();
 
     public CustomizableProduct(String stringId, String productName, ProductCategory category, double basePrice, int maxTexts) {
         super(stringId, productName, category, basePrice);
         this.maxTexts = maxTexts;
     }
 
-
+    public void addText(String text){
+        personalizedTexts.add(text);
+    }
 
     public int getMaxTexts() {
         return maxTexts;
@@ -28,20 +31,19 @@ public class CustomizableProduct extends Product {
 
     @Override
     public double getPrice() {
-        return super.getPrice();
+        return super.getPrice() + 0.1 * super.getPrice() * personalizedTexts.size();
     }
 
     @SuppressWarnings("MethodDoesntCallSuperMethod")
     @Override
     public CustomizableProduct clone() {
-        CustomizableProduct copy = new CustomizableProduct(
+        return new CustomizableProduct(
                 String.valueOf(super.getId()),
                 super.getName(),
                 super.getCategory(),
                 super.getPrice(),
                 this.maxTexts
         );
-        return copy;
     }
 
     @Override
@@ -63,17 +65,15 @@ public class CustomizableProduct extends Product {
     }
 
 
-    public String toString(List<String> personalizedTexts, double precioCalculado) {
-        if (!personalizedTexts.isEmpty()){
+    public String toString() {
+        if (personalizedTexts.isEmpty()){
+            return String.format(Locale.US,
+                    "{class:%s, id:%d, name:'%s', category:%s, price:%.1f, maxPersonal:%d}",
+                    "ProductPersonalized", super.getId(), super.getName(), super.getCategory(), getPrice(), getMaxTexts());
+        } else {
             return String.format(Locale.US,
                     "{class:%s, id:%d, name:'%s', category:%s, price:%.1f, maxPersonal:%d, personalizationList:%s}",
-                    "ProductPersonalized", super.getId(), super.getName(), super.getCategory(), precioCalculado, getMaxTexts(), personalizedTexts);
-        }else {
-            return String.format(Locale.US,
-                "{class:%s, id:%d, name:'%s', category:%s, price:%.1f, maxPersonal:%d}",
-                "ProductPersonalized", super.getId(), super.getName(), super.getCategory(), getPrice(), getMaxTexts());
+                    "ProductPersonalized", super.getId(), super.getName(), super.getCategory(), getPrice(), getMaxTexts(), personalizedTexts);
         }
     }
-
-
 }

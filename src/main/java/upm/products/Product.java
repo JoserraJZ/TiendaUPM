@@ -66,20 +66,22 @@ public class Product {
 
     @Override
     public String toString() {
+
         return String.format(Locale.US,
                 "{class:%s, id:%d, name:'%s', category:%s, price:%.1f}",
                 "Product", id, name, category, price);
     }
 
+    public String toParametersString() {return toString();}
+
     @Override
     public Product clone() {
-        Product copy = new Product(
+        return new Product(
                 String.valueOf(getId()),
                 getName(),
                 getCategory(),
                 getPrice()
         );
-        return copy;
     }
 
 }
