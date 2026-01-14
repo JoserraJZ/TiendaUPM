@@ -1,6 +1,9 @@
 package upm;
 
 import upm.products.*;
+import upm.ticketitems.ProductItem;
+import upm.ticketitems.ServiceItem;
+import upm.ticketitems.TicketItem;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -104,9 +107,128 @@ public class TiendaUtils {
         cashierList.forEach(System.out::println);
     }
 
+    public static void ticketAdd(String[] params, Catalog<Product> productCatalog, Catalog<Service> servicesCatalog, Set<Cashier> cashiers) {
+        if (!params[2].toLowerCase().endsWith("s")) {
+            //CAMBIAR FECHA, DE FIXEDDATETIME A NOW()
+
+            // COMPROBAR SI EL TICKET ES DE PRODUCTO, SERVICIO O MIXTO
+
+            ///////////////////////////////////////////////////////////////////////////////////
+            DateTimeFormatter fixedFmt = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
+            LocalDateTime fixedDateTime = LocalDateTime.parse("25-12-07-22:32", fixedFmt);
+            ///////////////////////////////////////////////////////////////////////////////////
+
+            int productId = Integer.parseInt(params[2]);
+            Product prod = productCatalog.getById(productId);
+
+            if (prod != null) {
+                int amount = Integer.parseInt(params[3]);
+                Ticket ticket = Tienda.getTicketById(params[1], params[0]);
+                if (params.length > 4) {
+                    CustomizableProduct pPersonalizado = ((CustomizableProduct) prod.clone());
+
+                    TicketItem itemToAdd = new ProductItem(pPersonalizado,amount);
+
+                    for (int i = 4; i < params.length; i++) {
+                        pPersonalizado.addText(params[i]);
+                    }
+                    ticket.addItem(itemToAdd);
+                } else {
+                    if (prod instanceof ProductMeeting prodM) {
+                        if (prodM.getExpirationDateTime().isAfter(fixedDateTime) ||
+                                prodM.getExpirationDateTime().isEqual(fixedDateTime)) {
+                            TicketItem meetingToAdd = new ProductItem(prodM, amount);
+                            ticket.addItem(meetingToAdd);
+                        } else {
+                            Tienda.printError("La reunion que se está tratando de añadir ha prescrito");
+                        }
+
+                    } else if (prod instanceof ProductCampusFood prodCF) {
+                        if (prodCF.getExpirationDate().isAfter(fixedDateTime) ||
+                                prodCF.getExpirationDate().isEqual(fixedDateTime)) {
+                            TicketItem foodToAdd = new ProductItem(prodCF, amount);
+                            ticket.addItem(foodToAdd);
+                        } else {
+                            Tienda.printError("La comida que se está tratando de añadir ha prescrito");
+                        }
+
+                    } else {
+                        ticket.addItem(new ProductItem(prod,amount));
+                    }
+
+                }
+                System.out.println(ticket);
+            } else Tienda.printError("Producto no encontrado en catálogo");
+        }
+        else{
+
+            DateTimeFormatter fixedFmt = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
+            LocalDateTime fixedDateTime = LocalDateTime.parse("25-12-07-22:32", fixedFmt);
+
+            // params: [0]=ticketId, [1]=cashId, [2]=serviceId (ej. "1S"), [3]=amount (opcional)
+            String svcIdRaw = params[2];
+            int serviceId;
+            try {
+                serviceId = Integer.parseInt(svcIdRaw.replaceAll("\\D+", ""));
+            } catch (NumberFormatException e) {
+                Tienda.printError("ID de servicio inválido");
+                return;
+            }
+
+            Service svc = servicesCatalog.getById(serviceId);
+            if (svc == null) {
+                Tienda.printError("Servicio no encontrado");
+                return;
+            }
+            Service servicetoAdd = svc.cloneService();
+
+            Ticket ticket = Tienda.getTicketById(params[1], params[0]); // (cashId, ticketId)
+            if (ticket == null) return;
+
+            LocalDateTime svcExpiry = servicetoAdd.getExpirationDate().toLocalDateTime();
+            if (svcExpiry.isBefore(fixedDateTime)) {
+                Tienda.printError("El servicio que se está tratando de añadir ha prescrito");
+                return;
+            }
+
+            // Solo tickets de tipo SERVICE o COMPOUND admiten servicios
+            if (ticket.getTicketType() == TicketType.PRODUCT) {
+                Tienda.printError("El ticket no admite servicios");
+                return;
+            }
+
+            // Forzar apertura del ticket (currentState es privado en Ticket)
+            try {
+                java.lang.reflect.Field f = Ticket.class.getDeclaredField("currentState");
+                f.setAccessible(true);
+                f.set(ticket, TicketState.OPEN);
+            } catch (Exception ignored) {
+            }
+
+            TicketItem serviceItem = new ServiceItem(svc);
+            ticket.addItem(serviceItem);
+
+            System.out.println(ticket);
+
+        }
+    }
+
     public static void ticketList(Set<Cashier> cashiers) {
         System.out.println("Ticket List:");
 
+        for (Cashier c : cashiers) {
+            List<Ticket> list = new ArrayList<>(c.getTickets());
+
+            list.sort(Comparator.comparing(Ticket::getCurrentState,
+                            Comparator.comparingInt(s -> s == TicketState.EMPTY ? 0
+                                    : s == TicketState.OPEN ? 1 : 2))
+                    .thenComparing(Ticket::getId, Comparator.reverseOrder()));
+
+            for (Ticket t : list) {
+                System.out.println(t.getId() + " - " + t.getCurrentState());
+            }
+        }
+        /*
         for (Cashier c : cashiers) {
             List<Ticket> list = new ArrayList<>(c.getTickets());
 
@@ -116,6 +238,8 @@ public class TiendaUtils {
                 System.out.println(t.getId() + " - " + t.getCurrentState());
             }
         }
+
+         */
     }
 
     static ClientType getClientTypeFromId(String id) {

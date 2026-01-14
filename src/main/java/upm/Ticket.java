@@ -70,7 +70,6 @@ public class Ticket {
         return null;
     }
 
-
     public boolean removeProduct(int productId) {
         if (currentState != TicketState.CLOSE) {
 
@@ -84,7 +83,6 @@ public class Ticket {
             boolean removed = items.removeIf(
                     item -> item.getItemId().equals(id)
             );
-
 
             if (it.getClassStr().equals("Service")) productServiceSeparator -=1;
 

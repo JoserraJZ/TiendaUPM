@@ -88,7 +88,6 @@ public class Tienda {
             case CLIENT_ADD -> {
                 TiendaUtils.clientAdd(params, clients, cashiers);
             }
-
             case CLIENT_LIST -> {
                 TiendaUtils.clientList(clients);
             }
@@ -135,108 +134,7 @@ public class Tienda {
                 System.out.println(nuevo);
             }
             case TICKET_ADD -> {
-                if (!params[2].toLowerCase().endsWith("s")) {
-                    //CAMBIAR FECHA, DE FIXEDDATETIME A NOW()
-
-                    // COMPROBAR SI EL TICKET ES DE PRODUCTO, SERVICIO O MIXTO
-
-                    ///////////////////////////////////////////////////////////////////////////////////
-                    DateTimeFormatter fixedFmt = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
-                    LocalDateTime fixedDateTime = LocalDateTime.parse("25-12-07-22:32", fixedFmt);
-                    ///////////////////////////////////////////////////////////////////////////////////
-
-                    int productId = Integer.parseInt(params[2]);
-                    Product prod = productCatalog.getById(productId);
-
-                    if (prod != null) {
-                        int amount = Integer.parseInt(params[3]);
-                        Ticket ticket = getTicketById(params[1], params[0]);
-                        if (params.length > 4) {
-                            CustomizableProduct pPersonalizado = ((CustomizableProduct) prod.clone());
-
-                            TicketItem itemToAdd = new ProductItem(pPersonalizado,amount);
-
-                            for (int i = 4; i < params.length; i++) {
-                                pPersonalizado.addText(params[i]);
-                            }
-                            ticket.addItem(itemToAdd);
-                        } else {
-                            if (prod instanceof ProductMeeting prodM) {
-                                if (prodM.getExpirationDateTime().isAfter(fixedDateTime) ||
-                                        prodM.getExpirationDateTime().isEqual(fixedDateTime)) {
-                                    TicketItem meetingToAdd = new ProductItem(prodM, amount);
-                                    ticket.addItem(meetingToAdd);
-                                } else {
-                                    printError("La reunion que se está tratando de añadir ha prescrito");
-                                }
-
-                            } else if (prod instanceof ProductCampusFood prodCF) {
-                                if (prodCF.getExpirationDate().isAfter(fixedDateTime) ||
-                                        prodCF.getExpirationDate().isEqual(fixedDateTime)) {
-                                    TicketItem foodToAdd = new ProductItem(prodCF, amount);
-                                    ticket.addItem(foodToAdd);
-                                } else {
-                                    printError("La comida que se está tratando de añadir ha prescrito");
-                                }
-
-                            } else {
-                                ticket.addItem(new ProductItem(prod,amount));
-                            }
-
-                        }
-                        System.out.println(ticket);
-                    } else printError("Producto no encontrado en catálogo");
-                }
-                else{
-
-                    DateTimeFormatter fixedFmt = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
-                    LocalDateTime fixedDateTime = LocalDateTime.parse("25-12-07-22:32", fixedFmt);
-
-                    // params: [0]=ticketId, [1]=cashId, [2]=serviceId (ej. "1S"), [3]=amount (opcional)
-                    String svcIdRaw = params[2];
-                    int serviceId;
-                    try {
-                        serviceId = Integer.parseInt(svcIdRaw.replaceAll("\\D+", ""));
-                    } catch (NumberFormatException e) {
-                        printError("ID de servicio inválido");
-                        break;
-                    }
-
-                    Service svc = servicesCatalog.getById(serviceId);
-                    if (svc == null) {
-                        printError("Servicio no encontrado");
-                        break;
-                    }
-                    Service servicetoAdd = svc.cloneService();
-
-                    Ticket ticket = getTicketById(params[1], params[0]); // (cashId, ticketId)
-                    if (ticket == null) break;
-
-                    LocalDateTime svcExpiry = servicetoAdd.getExpirationDate().toLocalDateTime();
-                    if (svcExpiry.isBefore(fixedDateTime)) {
-                        printError("El servicio que se está tratando de añadir ha prescrito");
-                        break;
-                    }
-
-                    // Solo tickets de tipo SERVICE o COMPOUND admiten servicios
-                    if (ticket.getTicketType() == TicketType.PRODUCT) {
-                        printError("El ticket no admite servicios");
-                        break;
-                    }
-
-                    // Forzar apertura del ticket (currentState es privado en Ticket)
-                    try {
-                        java.lang.reflect.Field f = Ticket.class.getDeclaredField("currentState");
-                        f.setAccessible(true);
-                        f.set(ticket, TicketState.OPEN);
-                    } catch (Exception ignored) {
-                    }
-
-                    TicketItem serviceItem = new ServiceItem(svc);
-                    ticket.addItem(serviceItem);
-
-                    System.out.println(ticket);
-                }
+                TiendaUtils.ticketAdd(params, productCatalog, servicesCatalog, cashiers);
             }
             case TICKET_REMOVE -> {
                 Ticket ticket = getTicketById(params[1], params[0]);
