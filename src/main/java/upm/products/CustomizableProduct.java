@@ -1,8 +1,7 @@
 package upm.products;
 
 
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,15 +9,17 @@ import java.util.Locale;
 
 
 @Entity
-@DiscriminatorValue("CustomizableProduct")
+@Table(name = "CustomizableProduct")
 public class CustomizableProduct extends Product {
 
-    private final int maxTexts;
+    private int maxTexts;
     List<String> personalizedTexts = new ArrayList<>();
 
     public CustomizableProduct(String stringId, String productName, ProductCategory category, double basePrice, int maxTexts) {
         super(stringId, productName, category, basePrice);
         this.maxTexts = maxTexts;
+    }
+    protected CustomizableProduct() {
     }
 
     public void addText(String text){

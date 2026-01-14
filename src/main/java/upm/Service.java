@@ -15,8 +15,7 @@ import java.util.Locale;
 public class Service {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private final int id;
+    private int id;
 
 
     private String category;
@@ -28,6 +27,9 @@ public class Service {
         this.expirationDate = maxDate.atZone(ZoneId.of("CET"));
     }
 
+    protected Service() {
+        // Constructor requerido por Hibernate
+    }
     public int getId() {
         return id;
     }

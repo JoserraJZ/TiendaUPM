@@ -72,6 +72,10 @@ public class Tienda {
             case CASH_ADD -> {
                 if(!cashiers.add(new Cashier(params[0], params[1], params[2])))
                     printError("El id introducido ya existe");
+                else {
+                    h.addCashierToDb(new Cashier(params[0], params[1], params[2]));
+                }
+
             }
             case CASH_LIST -> {
                 TiendaUtils.productList(cashiers);
@@ -86,7 +90,7 @@ public class Tienda {
             }
 
             case CLIENT_ADD -> {
-                TiendaUtils.clientAdd(params, clients, cashiers);
+                TiendaUtils.clientAdd(params, clients, cashiers, h);
             }
             case CLIENT_LIST -> {
                 TiendaUtils.clientList(clients);
@@ -99,23 +103,26 @@ public class Tienda {
             case PROD_ADD -> {
                 Product prod = TiendaUtils.prodAdd(params, productCatalog);
                 if (prod == null) printError("No se pueden añadir más de 200 productos");
-                else System.out.println(prod);
+                else {
+                    h.addProductToDb(prod);
+                    System.out.println(prod);
+                }
             }
             case PROD_ADD_ALT_SERVICE -> {
                 LocalDateTime date = LocalDate.parse(params[0], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
                 Service service = new Service(RandomGenerator.generateServiceId(), date, params[1]);
                 servicesCatalog.add(service.getId(), service);
-                //h.addServiceToDb(service);
+                h.addServiceToDb(service);
                 System.out.println(service);
             }
             case PROD_UPDATE -> {
                 TiendaUtils.prodUpdate(params, productCatalog);
             }
             case PROD_ADDFOOD -> {
-                TiendaUtils.addFood(params, productCatalog);
+                TiendaUtils.addFood(params, productCatalog, h);
             }
             case PROD_ADDMEETING -> {
-                TiendaUtils.addMeeting(params, productCatalog);
+                TiendaUtils.addMeeting(params, productCatalog, h);
             }
             case PROD_LIST -> productCatalog.list();
             case PROD_REMOVE -> {
@@ -130,11 +137,11 @@ public class Tienda {
                 TicketType ticketType = TiendaUtils.getTicketTypeFromParams(params);
                 Ticket nuevo = new Ticket(params[0], ticketType);
                 getCashierById(params[1]).addTicket(nuevo);
-                //h.addTicketToDb(nuevo);
+                h.addTicketToDb(nuevo);
                 System.out.println(nuevo);
             }
             case TICKET_ADD -> {
-                TiendaUtils.ticketAdd(params, productCatalog, servicesCatalog, cashiers);
+                TiendaUtils.ticketAdd(params, productCatalog, servicesCatalog, cashiers, h);
             }
             case TICKET_REMOVE -> {
                 Ticket ticket = getTicketById(params[1], params[0]);

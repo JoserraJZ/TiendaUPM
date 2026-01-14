@@ -10,14 +10,15 @@ import java.util.*;
 public class Cashier implements Comparable<Cashier>{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private final String id;
+    private String id;
 
-    private final String name;
-    private final String businessEmail;
+    private String name;
+    private String businessEmail;
 
     @Transient
     private final Set<Ticket> tickets = new HashSet<>();
+
+
 
     public Cashier(String id, String newName, String newBusinessEmail){
         this.id = (id == null) ? RandomGenerator.generateCashierId() : id;
@@ -26,6 +27,9 @@ public class Cashier implements Comparable<Cashier>{
         this.businessEmail = newBusinessEmail;
 
         System.out.println(this);
+    }
+
+    protected Cashier(){
     }
 
     public String getName() {

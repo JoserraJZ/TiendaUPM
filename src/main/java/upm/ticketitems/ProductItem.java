@@ -1,12 +1,19 @@
 package upm.ticketitems;
 
 
+import jakarta.persistence.*;
 import upm.products.Product;
 import upm.products.ProductCategory;
 
+//@Entity
 public class ProductItem implements TicketItem{
 
+    //@Id
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    //private Long id;
 
+
+    //@ManyToOne
     private final Product prod;
     private int quantity = -1;
 

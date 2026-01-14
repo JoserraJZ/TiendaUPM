@@ -2,14 +2,14 @@ package upm.products;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 @Entity
-@DiscriminatorValue("ProductMeeting")
-
+@Table(name = "ProductMeeting")
 
 public class ProductMeeting extends Product {
     private LocalDateTime expirationDateTime;

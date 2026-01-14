@@ -8,6 +8,7 @@
         <property name="hibernate.connection.driver_class">org.sqlite.JDBC</property>
         <property name="hibernate.connection.url">jdbc:sqlite:tienda.db</property>
         <property name="hibernate.dialect">org.hibernate.community.dialect.SQLiteDialect</property>
+        <property name="hibernate.current_session_context_class">thread</property>
 
         <!-- SOLO create -->
         <property name="hibernate.hbm2ddl.auto">update</property>
@@ -20,6 +21,11 @@
         <mapping class="upm.Client"/>
         <mapping class="upm.Service"/>
         <mapping class="upm.Ticket"/>
+        <mapping class="upm.ServiceAdded"/>
+        <mapping class="upm.ProductAdded"/>
+        <mapping class="upm.products.CustomizableProduct"/>
+        <mapping class="upm.products.ProductMeeting"/>
+        <mapping class="upm.products.ProductCampusFood"/>
 
     </session-factory>
 </hibernate-configuration>

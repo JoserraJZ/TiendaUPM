@@ -12,17 +12,17 @@ import java.util.Objects;
 public class Client {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private final String id;
+    private String id;
 
-    private final String name;
-    private final String email;
+    private String name;
+    private String email;
 
-    @ManyToOne
-    @JoinColumn(name = "cashier_id")
-    private final Cashier cashier;
+    @Transient
+    private Cashier cashier;
 
-    private final ClientType clientType;
+    private String cashierId;
+
+    private ClientType clientType;
 
     public Client(String name, String DNI, String email, Cashier cashier, ClientType type){
         this.name=name;
@@ -30,8 +30,12 @@ public class Client {
         this.email=email;
         this.cashier=cashier;
         this.clientType=type;
+        this.cashierId= cashier.getId();
 
         System.out.println(this);
+    }
+
+    protected Client(){
     }
     public String getName() {
         return name;

@@ -6,8 +6,16 @@ import upm.products.ProductCategory;
 
 import java.util.Locale;
 
+//@Entity
+//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class ServiceItem implements TicketItem{
 
+    //@Id
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    //private Long id;
+
+
+    //@ManyToOne
     private final Service service;
 
     public ServiceItem(Service service) {

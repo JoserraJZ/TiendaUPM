@@ -14,8 +14,7 @@ import java.util.Locale;
 public class Product {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private final int id;
+    private int id;
 
     private String name;
     private ProductCategory category;
@@ -26,6 +25,10 @@ public class Product {
         this.name = productName;
         this.category = category;
         this.price = price;
+    }
+
+    protected Product() {
+
     }
 
     public int getId() {

@@ -1,6 +1,8 @@
 package upm.ticketitems;
 
+import jakarta.persistence.Entity;
 import upm.products.ProductCategory;
+
 
 public interface TicketItem {
     String getClassStr();

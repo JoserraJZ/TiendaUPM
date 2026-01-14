@@ -24,6 +24,8 @@ public class Ticket {
 
     @Transient
     private List<TicketItem> items = new ArrayList<>();
+
+    @Transient
     private static final Comparator<TicketItem> ITEM_ORDER =
             Comparator
                     .comparing((TicketItem t) -> !t.getItemId().endsWith("s"))
@@ -41,6 +43,9 @@ public class Ticket {
         this.items = new ArrayList<>();
         this.currentState = TicketState.EMPTY;
         this.ticketType = type;
+    }
+    protected Ticket() {
+        // Constructor requerido por Hibernate
     }
 
     public void addItem(TicketItem ti) {
