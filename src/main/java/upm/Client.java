@@ -20,17 +20,12 @@ public class Client {
     @Transient
     private Cashier cashier;
 
-    private String cashierId;
 
-    private ClientType clientType;
-
-    public Client(String name, String DNI, String email, Cashier cashier, ClientType type){
+    public Client(String name, String DNI, String email, Cashier cashier){
         this.name=name;
         this.id = (DNI == null) ? RandomGenerator.generateDNI() : DNI;
         this.email=email;
         this.cashier=cashier;
-        this.clientType=type;
-        this.cashierId= cashier.getId();
 
         System.out.println(this);
     }
