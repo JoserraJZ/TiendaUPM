@@ -75,7 +75,6 @@ public class Tienda {
                 else {
                     h.addCashierToDb(new Cashier(params[0], params[1], params[2]));
                 }
-
             }
             case CASH_LIST -> {
                 TiendaUtils.productList(cashiers);
