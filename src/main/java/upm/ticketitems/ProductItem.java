@@ -22,6 +22,10 @@ public class ProductItem implements TicketItem{
         this.quantity = quantity;
     }
 
+    public Product getProd() {
+        return prod;
+    }
+
     @Override
     public String getClassStr() { return prod.getClass().getSimpleName(); }
 

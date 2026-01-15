@@ -136,15 +136,11 @@ public class TiendaUtils {
                     }
 
                     ticket.addItem(itemToAdd);
-                    ProductAdded pA= new ProductAdded(ticket.getId(),pPersonalizado, amount);
-                    h.addProductItemtoDb(pA);
                 } else {
                     if (prod instanceof ProductMeeting prodM) {
                         if (prodM.getExpirationDateTime().isAfter(fixedDateTime) ||
                                 prodM.getExpirationDateTime().isEqual(fixedDateTime)) {
                             TicketItem meetingToAdd = new ProductItem(prodM, amount);
-                            ProductAdded tA= new ProductAdded(ticket.getId(),prod, amount);
-                            h.addProductItemtoDb(tA);
                             ticket.addItem(meetingToAdd);
                         } else {
                             Tienda.printError("La reunion que se está tratando de añadir ha prescrito");
@@ -154,8 +150,7 @@ public class TiendaUtils {
                         if (prodCF.getExpirationDate().isAfter(fixedDateTime) ||
                                 prodCF.getExpirationDate().isEqual(fixedDateTime)) {
                             TicketItem foodToAdd = new ProductItem(prodCF, amount);
-                            ProductAdded tA= new ProductAdded(ticket.getId(),prod, amount);
-                            h.addProductItemtoDb(tA);
+
                             ticket.addItem(foodToAdd);
 
                         } else {
@@ -164,8 +159,7 @@ public class TiendaUtils {
 
                     } else {
                         ticket.addItem(new ProductItem(prod,amount));
-                        ProductAdded tA= new ProductAdded(ticket.getId(),prod, amount);
-                        h.addProductItemtoDb(tA);
+
                     }
 
                 }

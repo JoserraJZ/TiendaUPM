@@ -1,10 +1,6 @@
 package upm;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import upm.products.Product;
 
 import java.util.ArrayList;
@@ -15,6 +11,9 @@ import java.util.List;
 public class ProductAdded {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;   // ID autogenerado
+
     private String idTicket;
 
     @ManyToOne
@@ -30,10 +29,11 @@ public class ProductAdded {
         // Constructor requerido por Hibernate
     }
 
-    public ProductAdded(String idTicket, Product product, int cuantity) {
+    public ProductAdded(String idTicket, Product product, int cuantity, List<String> personalizedTexts) {
         this.idTicket = idTicket;
         this.product = product;
         this.cuantity=cuantity;
+        this.personalizedTexts = personalizedTexts;
     }
 
     public void addText(String text){

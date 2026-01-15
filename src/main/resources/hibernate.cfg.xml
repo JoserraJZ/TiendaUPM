@@ -26,6 +26,8 @@
         <mapping class="upm.products.CustomizableProduct"/>
         <mapping class="upm.products.ProductMeeting"/>
         <mapping class="upm.products.ProductCampusFood"/>
+        <mapping class="upm.AssignedTickets"/>
+        <mapping class="upm.ClientCompany"/>
 
     </session-factory>
 </hibernate-configuration>

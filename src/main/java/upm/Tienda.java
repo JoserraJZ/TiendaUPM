@@ -40,6 +40,7 @@ public class Tienda {
         }
 
         System.out.println("Closing application.\nGoodbye!");
+        h.SaveApp(productCatalog, servicesCatalog, cashiers, clients);
         h.endConnection();
     }
 

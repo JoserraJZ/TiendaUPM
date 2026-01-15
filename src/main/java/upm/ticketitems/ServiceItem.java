@@ -22,6 +22,9 @@ public class ServiceItem implements TicketItem{
         this.service = service;
     }
 
+    public Service getService() {
+        return service;
+    }
 
     @Override
     public String getClassStr() { return "Service"; }

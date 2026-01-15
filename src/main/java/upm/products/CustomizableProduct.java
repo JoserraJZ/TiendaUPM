@@ -30,6 +30,10 @@ public class CustomizableProduct extends Product {
         return maxTexts;
     }
 
+    public List<String> getPersonalizedTexts() {
+        return personalizedTexts;
+    }
+
     @Override
     public double getPrice() {
         return super.getPrice() + 0.1 * super.getPrice() * personalizedTexts.size();
