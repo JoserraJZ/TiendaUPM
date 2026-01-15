@@ -22,7 +22,6 @@ public class Cashier implements Comparable<Cashier>{
 
     public Cashier(String id, String newName, String newBusinessEmail){
         this.id = (id == null) ? RandomGenerator.generateCashierId() : id;
-
         this.name = newName;
         this.businessEmail = newBusinessEmail;
 
@@ -71,7 +70,7 @@ public class Cashier implements Comparable<Cashier>{
         return new Cashier(
                 this.id,              // mismo id
                 this.name,            // mismo nombre
-                this.businessEmail    // mismo email
+                this.businessEmail   // mismo email
         );
     }
     @Override

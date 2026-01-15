@@ -90,9 +90,12 @@ public final class HibernateUtils {
 
 
 
-    public void endConnection(){
-        factory.close();
+    public void endConnection() {
+        if (factory != null) {
+            factory.close();
+        }
     }
+
 
     public void saveCurrentState(){
         /*if (factory != null) {
@@ -113,11 +116,45 @@ public final class HibernateUtils {
         }*/
     }
 
-    public void SaveApp(Catalog<Product> productCatalog, Catalog<Service> serviceCatalog,
-                        Set<Cashier> cashiers, Set<Client> clients ) {
+    public void emptyTables(){
 
         if (factory != null) {
             Session session = factory.getCurrentSession();
+            try {
+                session.beginTransaction();
+                session.createNativeQuery("DELETE FROM ProductAdded").executeUpdate();
+                //session.createNativeQuery("DELETE FROM sqlite_sequence WHERE name = 'ProductAdded'").executeUpdate();
+
+                session.createNativeQuery("DELETE FROM ServiceAdded").executeUpdate();
+                //session.createNativeQuery("DELETE FROM sqlite_sequence WHERE name = 'ServiceAdded'").executeUpdate();
+
+                session.createNativeQuery("DELETE FROM AssignedTickets").executeUpdate();
+                session.createNativeQuery("DELETE FROM Tickets").executeUpdate();
+                session.createNativeQuery("DELETE FROM Client").executeUpdate();
+                session.createNativeQuery("DELETE FROM Cashier").executeUpdate();
+
+                session.createNativeQuery("DELETE FROM productCatalog").executeUpdate();
+                session.createNativeQuery("DELETE FROM Service").executeUpdate();
+
+                session.getTransaction().commit();
+                session.close();
+            } catch (Exception e) {
+                if (session.getTransaction() != null && session.getTransaction().isActive()) {
+                    session.getTransaction().rollback();
+                }
+                throw new RuntimeException("No se ha podido guardar el estado actual por el error " + e);
+            } finally {
+                try {
+                    if (session.isOpen()) session.close();
+                } catch (Exception ignored) {}
+            }
+        }
+    }
+
+    public void SaveApp(Catalog<Product> productCatalog, Catalog<Service> serviceCatalog,
+                        Set<Cashier> cashiers, Set<Client> clients ) {
+        if (factory != null) {
+            Session session = factory.openSession();
             try {
                 session.beginTransaction();
                 for (Product p : productCatalog.items.values()) {
@@ -125,9 +162,6 @@ public final class HibernateUtils {
                 }
                 for (Service s : serviceCatalog.items.values()) {
                     session.merge(s);
-                }
-                for(Client c : clients){
-                    session.merge(c);
                 }
                 for (Cashier c : cashiers) {
                     for (Ticket t : c.getTickets()) {
@@ -155,6 +189,10 @@ public final class HibernateUtils {
                     }
                     session.merge(c);
                 }
+                for(Client c : clients){
+                    session.merge(c);
+                }
+
 
                 session.getTransaction().commit();
             } catch (Exception e) {
@@ -179,7 +217,7 @@ public final class HibernateUtils {
                 session.beginTransaction();
 
                 List<Product> listaProductsFromDB = session
-                        .createQuery("FROM productCatalog", Product.class)
+                        .createQuery("FROM Product", Product.class)
                         .getResultList();
                 for (Product p: listaProductsFromDB) {
                     if (p instanceof CustomizableProduct){
@@ -197,7 +235,7 @@ public final class HibernateUtils {
                     }
                 }
                 List<Service> listaServicesFromDb = session
-                        .createQuery("FROM service", Service.class)
+                        .createQuery("FROM Service", Service.class)
                         .getResultList();
                 for (Service s: listaServicesFromDb) {
                     Service serv = s.clone();
@@ -205,23 +243,22 @@ public final class HibernateUtils {
                 }
 
                 List<Cashier> listaCashiersFromDb = session
-                        .createQuery("FROM cashier", Cashier.class)
+                        .createQuery("FROM Cashier", Cashier.class)
                         .getResultList();
                 for (Cashier c: listaCashiersFromDb) {
                     Cashier cash = c.clone();
                     cashiers.add(cash);
                 }
                 List<Client> listaClientsFromDb = session
-                        .createQuery("FROM client", Client.class)
+                        .createQuery("FROM Client", Client.class)
                         .getResultList();
                 for (Client c: listaClientsFromDb) {
                     Client cli = c.clone();
-                    cli.setCashier(Tienda.getCashierById(c.getCashierId()));
                     clients.add(cli);
                 }
 
                 List<Ticket> listaTicketsFromDb = session
-                        .createQuery("FROM tickets", Ticket.class)
+                        .createQuery("FROM Ticket", Ticket.class)
                         .getResultList();
                 List<Ticket> ticketCargados= new ArrayList<>();
                 for(Ticket t: listaTicketsFromDb){
@@ -248,10 +285,12 @@ public final class HibernateUtils {
                         .getResultList();
                 for(ProductAdded pa: listaProductsAddedFromDb){
                     Product prod= productCatalog.getById(pa.getProduct().getId()).clone();
-                    if (!pa.getPersonalizedTexts().isEmpty()){
-                        CustomizableProduct cp= (CustomizableProduct) prod;
-                        for (String text: pa.getPersonalizedTexts()) {
-                            cp.addText(text);
+                    if (pa.getPersonalizedTexts()!=null){
+                        if (!pa.getPersonalizedTexts().isEmpty()){
+                            CustomizableProduct cp= (CustomizableProduct) prod;
+                            for (String text: pa.getPersonalizedTexts()) {
+                                cp.addText(text);
+                            }
                         }
                     }
                     Ticket assignationTicket= ticketCargados.stream()

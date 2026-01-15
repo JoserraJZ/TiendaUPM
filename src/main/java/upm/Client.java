@@ -17,7 +17,8 @@ public class Client {
     private String name;
     private String email;
 
-    @Transient
+    @ManyToOne
+    @JoinColumn(name = "cashier_id")
     private Cashier cashier;
 
 
@@ -26,8 +27,11 @@ public class Client {
         this.id = (DNI == null) ? RandomGenerator.generateDNI() : DNI;
         this.email=email;
         this.cashier=cashier;
-
         System.out.println(this);
+    }
+
+    public Cashier getCashier() {
+        return cashier;
     }
 
     protected Client(){
@@ -47,10 +51,6 @@ public class Client {
         );
     }
 
-    public String getCashierId() {
-        return cashierId;
-    }
-
     public void setCashier(Cashier cashier) {
         this.cashier = cashier;
     }
@@ -60,8 +60,7 @@ public class Client {
                 this.name,
                 this.id,          // mismo DNI/id
                 this.email,
-                this.cashier,     // mismo cashier en memoria (transient)
-                this.clientType
+                this.cashier    // mismo cashier en memoria (transient)
         );
         return copy;
     }

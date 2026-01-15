@@ -18,8 +18,8 @@ public class Tienda {
     private static boolean errorOccurred = false;
 
     public static void main(String[] args) {
-        HibernateUtils hUtils = new HibernateUtils();
-
+        HibernateUtils hUtils = HibernateUtils.getInstance();
+        hUtils.loadDb(productCatalog, servicesCatalog, cashiers, clients);
         System.out.println("Welcome to the ticket module App.\n" + "Ticket module. Type 'help' to see commands.");
 
         RandomGenerator.Init(productCatalog, cashiers, clients);
@@ -33,6 +33,8 @@ public class Tienda {
         }
 
         System.out.println("Closing application.\nGoodbye!");
+
+        hUtils.emptyTables();
         hUtils.SaveApp(productCatalog, servicesCatalog, cashiers, clients);
         hUtils.endConnection();
     }
