@@ -16,7 +16,7 @@ import java.util.Set;
 
 public class TiendaUtils {
 
-    public static void clientAdd(String[] params, Set<Client> clients, Set<Cashier> cashiers, HibernateUtils h) {
+    public static void clientAdd(String[] params, Set<Client> clients, Set<Cashier> cashiers) {
         String id = params[1];
         boolean isDNI = id.matches("\\d{8}[A-Za-z]");
         boolean isNIE = id.matches("[XY]\\d{7}[A-Za-z]");
@@ -32,10 +32,8 @@ public class TiendaUtils {
                 Client newClient;
                 if (isNIF) {
                     newClient = new ClientCompany(params[0], params[1], params[2], cash, type);
-                    h.addClientToDb(newClient);
                 } else {
                     newClient = new Client(params[0], params[1], params[2], cash, type);
-                    h.addClientToDb(newClient);
                 }
                 if (!clients.add(newClient))
                     Tienda.printError("El identificador de usuario introducido ya existe");
@@ -74,7 +72,7 @@ public class TiendaUtils {
         }
     }
 
-    public static void addFood(String[] params, Catalog<Product> productCatalog, HibernateUtils h) {
+    public static void addFood(String[] params, Catalog<Product> productCatalog) {
         //CAMBIAR FECHA, DE FIXEDDATETIME A NOW()
 
         Product prod = null;
@@ -93,8 +91,6 @@ public class TiendaUtils {
                     expiration,
                     Integer.parseInt(params[4]));
             productCatalog.add(prod.getId(), prod);
-
-            h.addProductToDb(prod);
         }
         if (prod == null)
             Tienda.printError("Error processing ->prod addFood ->Error adding product");
@@ -109,7 +105,7 @@ public class TiendaUtils {
         cashierList.forEach(System.out::println);
     }
 
-    public static void ticketAdd(String[] params, Catalog<Product> productCatalog, Catalog<Service> servicesCatalog, Set<Cashier> cashiers, HibernateUtils h) {
+    public static void ticketAdd(String[] params, Catalog<Product> productCatalog, Catalog<Service> servicesCatalog, Set<Cashier> cashiers) {
         if (!params[2].toLowerCase().endsWith("s")) {
             //CAMBIAR FECHA, DE FIXEDDATETIME A NOW()
 
@@ -215,7 +211,6 @@ public class TiendaUtils {
             TicketItem serviceItem = new ServiceItem(svc);
             ticket.addItem(serviceItem);
             ServiceAdded tA= new ServiceAdded(ticket.getId(),servicetoAdd);
-            h.addServiceAddedDb(tA);
 
             System.out.println(ticket);
 
@@ -274,7 +269,7 @@ public class TiendaUtils {
     }
 
     public static Product prodAdd(String[] params, Catalog<Product> productCatalog) {
-        Product prod;
+        Product prod = null;
         if (params[4] != null && Integer.parseInt(params[4]) > 0) {
             prod = new CustomizableProduct(
                     params[0],
@@ -314,7 +309,7 @@ public class TiendaUtils {
         }
     }
 
-    public static void addMeeting(String[] params, Catalog<Product> productCatalog, HibernateUtils h) {
+    public static void addMeeting(String[] params, Catalog<Product> productCatalog) {
         ProductMeeting prod = null;
         LocalDateTime expiration = LocalDate.parse(params[3], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
 
@@ -333,8 +328,6 @@ public class TiendaUtils {
                     Integer.parseInt(params[4]),
                     fixedDateTime);
             productCatalog.add(prod.getId(), prod);
-
-            h.addProductToDb(prod);
         }
         if (prod == null)
             Tienda.printError("Error processing ->prod addMeeting ->Error adding meeting");

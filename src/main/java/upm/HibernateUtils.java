@@ -13,11 +13,21 @@ import upm.ticketitems.TicketItem;
 
 import java.util.Set;
 
-public class HibernateUtils {
+public final class HibernateUtils {
 
     private SessionFactory factory = null;
 
+    private static HibernateUtils instance;
+    public static HibernateUtils getInstance(){
+        if (instance == null){
+            instance = new HibernateUtils();
+        }
+
+        return instance;
+    }
+
     public HibernateUtils () {
+        this.instance = this;
 
         try {
             // Intento normal: si la BD existe, Hibernate la abre
@@ -71,6 +81,7 @@ public class HibernateUtils {
                 ex.printStackTrace();
             }
         }
+
 
 
     }

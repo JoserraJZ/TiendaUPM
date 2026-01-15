@@ -22,10 +22,9 @@ public class Tienda {
 
     private static boolean exit = false;
     private static boolean errorOccurred = false;
-    private static HibernateUtils h;
 
     public static void main(String[] args) {
-        h = new HibernateUtils();
+        HibernateUtils hUtils = new HibernateUtils();
 
         System.out.println("Welcome to the ticket module App.\n" + "Ticket module. Type 'help' to see commands.");
 
@@ -40,8 +39,8 @@ public class Tienda {
         }
 
         System.out.println("Closing application.\nGoodbye!");
-        h.SaveApp(productCatalog, servicesCatalog, cashiers, clients);
-        h.endConnection();
+        hUtils.SaveApp(productCatalog, servicesCatalog, cashiers, clients);
+        hUtils.endConnection();
     }
 
     public static void commandLoop(Scanner scanner){
@@ -73,9 +72,6 @@ public class Tienda {
             case CASH_ADD -> {
                 if(!cashiers.add(new Cashier(params[0], params[1], params[2])))
                     printError("El id introducido ya existe");
-                else {
-                    h.addCashierToDb(new Cashier(params[0], params[1], params[2]));
-                }
             }
             case CASH_LIST -> {
                 TiendaUtils.productList(cashiers);
@@ -90,7 +86,7 @@ public class Tienda {
             }
 
             case CLIENT_ADD -> {
-                TiendaUtils.clientAdd(params, clients, cashiers, h);
+                TiendaUtils.clientAdd(params, clients, cashiers);
             }
             case CLIENT_LIST -> {
                 TiendaUtils.clientList(clients);
@@ -104,7 +100,6 @@ public class Tienda {
                 Product prod = TiendaUtils.prodAdd(params, productCatalog);
                 if (prod == null) printError("No se pueden añadir más de 200 productos");
                 else {
-                    h.addProductToDb(prod);
                     System.out.println(prod);
                 }
             }
@@ -112,17 +107,16 @@ public class Tienda {
                 LocalDateTime date = LocalDate.parse(params[0], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
                 Service service = new Service(RandomGenerator.generateServiceId(), date, params[1]);
                 servicesCatalog.add(service.getId(), service);
-                h.addServiceToDb(service);
                 System.out.println(service);
             }
             case PROD_UPDATE -> {
                 TiendaUtils.prodUpdate(params, productCatalog);
             }
             case PROD_ADDFOOD -> {
-                TiendaUtils.addFood(params, productCatalog, h);
+                TiendaUtils.addFood(params, productCatalog);
             }
             case PROD_ADDMEETING -> {
-                TiendaUtils.addMeeting(params, productCatalog, h);
+                TiendaUtils.addMeeting(params, productCatalog);
             }
             case PROD_LIST -> productCatalog.list();
             case PROD_REMOVE -> {
