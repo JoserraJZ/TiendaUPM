@@ -2,15 +2,15 @@ package upm;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+
 
 public final class Utils {
 
@@ -55,5 +55,16 @@ public final class Utils {
             System.clearProperty("isfromfile");
         }
     }
+    public static IdentifierType identifyType (String identifier){
+        identifier = identifier.toUpperCase();
 
+        if (identifier.matches("\\d{8}[A-Z]"))
+            return IdentifierType.DNI;
+        else if (identifier.matches("[XYZ]\\d{7}[A-Z]"))
+            return IdentifierType.NIE;
+        else if (identifier.matches("[A-Z]\\d{7}[A-Z0-9]"))
+            return IdentifierType.NIF;
+
+        return IdentifierType.UNIDENTIFIED;
+    }
 }

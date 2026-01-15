@@ -197,7 +197,7 @@ public enum Command {
                 int wordCount = cmd.commandText.trim().split("\\s+").length;
 
                 if(cmd.matchesLength(splitted.length)){
-                    String[] returnParams = new String[Math.max(cmd.maxLength, splitted.length-wordCount)];
+                    String[] returnParams = new String[Math.max(cmd.parameters.length, splitted.length-wordCount)];
                     if (matchesFormat(cmd.parameters, splitted, wordCount, returnParams)) {
                         return new ValidatedCommand(cmd, returnParams);
                     }

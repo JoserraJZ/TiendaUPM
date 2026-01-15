@@ -16,6 +16,8 @@ public class ProductMeeting extends Product {
     private LocalDateTime creationDateTime;
     private int maxParticipants;
 
+    protected ProductMeeting(){    }
+
     public ProductMeeting(String stringId, String productName, double pricePerPerson, LocalDateTime expirationDateTime, int maxParticipants, LocalDateTime creationDateTime) {
         super(stringId, productName, null, pricePerPerson);
         this.expirationDateTime = expirationDateTime;

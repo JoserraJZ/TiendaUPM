@@ -10,13 +10,16 @@ public class Catalog<T> {
     public Catalog(int maxElements) { this.maxElements = maxElements; }
     public Catalog() { this.maxElements = Integer.MAX_VALUE; }
 
-    public void add(int id, T item) {
+    public boolean add(int id, T item) {
         if (id == -1) {
             id = items.isEmpty() ? 0 : items.lastKey() + 1;
         }
-        if (items.size()<maxElements){
+        if (items.containsKey(id) || items.size()<maxElements)
             items.put(id, item);
-        }
+        else
+            return false;
+
+        return true;
     }
 
     public T remove(int id) {

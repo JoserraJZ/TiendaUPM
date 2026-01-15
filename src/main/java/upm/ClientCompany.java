@@ -8,8 +8,8 @@ import jakarta.persistence.Entity;
 
 public class ClientCompany extends Client{
 
-    public ClientCompany(String name, String NIF, String email, Cashier cashier, ClientType type) {
-        super(name, NIF, email, cashier, type);
+    public ClientCompany(String name, String NIF, String email, Cashier cashier) {
+        super(name, NIF, email, cashier);
     }
     protected ClientCompany() {
         // Constructor requerido por Hibernate
