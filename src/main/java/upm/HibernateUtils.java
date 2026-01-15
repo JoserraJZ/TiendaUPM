@@ -200,7 +200,7 @@ public final class HibernateUtils {
                         .createQuery("FROM service", Service.class)
                         .getResultList();
                 for (Service s: listaServicesFromDb) {
-                    Service serv = s.cloneService();
+                    Service serv = s.clone();
                     serviceCatalog.add(serv.getId(), serv);
                 }
 
@@ -234,7 +234,7 @@ public final class HibernateUtils {
                         .getResultList();
 
                 for(ServiceAdded sa: listaAddedServicesFromDB){
-                    Service serv= serviceCatalog.getById(sa.getService().getId()).cloneService();
+                    Service serv= serviceCatalog.getById(sa.getService().getId()).clone();
                     Ticket assignationTicket= ticketCargados.stream()
                             .filter(tt -> tt.getId().equals(sa.getTicketId()))
                             .findFirst()

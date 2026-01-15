@@ -116,16 +116,6 @@ public class Tienda {
             }
 
             case TICKET_NEW -> {
-<<<<<<< HEAD
-                //comprobar si el tipo de ticket que se quiere se puede para el tipo de cliente
-                TicketType ticketType = TiendaUtils.getTicketTypeFromParams(params);
-                Ticket nuevo = new Ticket(params[0], ticketType);
-                getCashierById(params[1]).addTicket(nuevo);
-                System.out.println(nuevo);
-            }
-            case TICKET_ADD -> {
-                TiendaUtils.ticketAdd(params, productCatalog, servicesCatalog, cashiers);
-=======
                 //TODO: comprobar si el tipo de ticket que se quiere se puede para el tipo de cliente
                 TicketType ticketType = TiendaUtils.getTicketTypeFromParams(params[3]);
                 if (ticketType != null){
@@ -136,7 +126,7 @@ public class Tienda {
             }
             case TICKET_ADD -> {
                 TiendaUtils.ticketAdd(getTicketById(params[1], params[0]), params[2], params[3], params[4]!=null?Arrays.asList(params).subList(4, params.length):Collections.emptyList(), productCatalog, servicesCatalog);
->>>>>>> 0316bb268e56fb94cad877f841122b9671982713
+
             }
             case TICKET_REMOVE -> {
                 TiendaUtils.ticketRemove(getTicketById(params[1], params[0]), params[2]);
