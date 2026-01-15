@@ -14,7 +14,7 @@ public class Catalog<T> {
         if (id == -1) {
             id = items.isEmpty() ? 0 : items.lastKey() + 1;
         }
-        if (items.values().size()<maxElements){
+        if (items.size()<maxElements){
             items.put(id, item);
         }
     }
