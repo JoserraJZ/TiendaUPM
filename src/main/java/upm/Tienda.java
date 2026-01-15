@@ -131,11 +131,10 @@ public class Tienda {
                 TicketType ticketType = TiendaUtils.getTicketTypeFromParams(params);
                 Ticket nuevo = new Ticket(params[0], ticketType);
                 getCashierById(params[1]).addTicket(nuevo);
-                h.addTicketToDb(nuevo);
                 System.out.println(nuevo);
             }
             case TICKET_ADD -> {
-                TiendaUtils.ticketAdd(params, productCatalog, servicesCatalog, cashiers, h);
+                TiendaUtils.ticketAdd(params, productCatalog, servicesCatalog, cashiers);
             }
             case TICKET_REMOVE -> {
                 Ticket ticket = getTicketById(params[1], params[0]);

@@ -67,6 +67,14 @@ public class Cashier implements Comparable<Cashier>{
     }
 
     @Override
+    public Cashier clone() {
+        return new Cashier(
+                this.id,              // mismo id
+                this.name,            // mismo nombre
+                this.businessEmail    // mismo email
+        );
+    }
+    @Override
     public int compareTo(Cashier o) {
         return this.id.compareTo(o.id);
     }

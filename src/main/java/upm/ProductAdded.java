@@ -40,11 +40,20 @@ public class ProductAdded {
         personalizedTexts.add(text);
     }
 
-    public String getIdTicket() {
+    public String getTicketId() {
         return idTicket;
     }
 
     public Product getProduct() {
         return product;
     }
+
+    public int getCuantity() {
+        return cuantity;
+    }
+
+    public List<String> getPersonalizedTexts() {
+        return personalizedTexts;
+    }
+
 }

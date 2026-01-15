@@ -11,6 +11,8 @@ import upm.ticketitems.ProductItem;
 import upm.ticketitems.ServiceItem;
 import upm.ticketitems.TicketItem;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public final class HibernateUtils {
@@ -86,144 +88,6 @@ public final class HibernateUtils {
 
     }
 
-    public void addClientToDb(Client c) {
-        /*if (factory != null) {
-            Session session = factory.getCurrentSession();
-            try {
-                session.beginTransaction();
-                session.merge(c); // Reemplaza a save en Hibernate 7
-                session.getTransaction().commit();
-            } catch (Exception e) {
-                if (session.getTransaction() != null && session.getTransaction().isActive()) {
-                    session.getTransaction().rollback();
-                }
-                throw new RuntimeException("No se ha podido añadir a la bd por el error " + e);
-            } finally {
-                try {
-                    if (session.isOpen()) session.close();
-                } catch (Exception ignored) {}
-            }
-        }*/
-    }
-
-
-    public void addCashierToDb(Cashier ca){
-       /* if (factory != null) {
-            Session session = factory.getCurrentSession();
-            try {
-                session.beginTransaction();
-                session.merge(ca); // Reemplaza a save en Hibernate 7
-                session.getTransaction().commit();
-            } catch (Exception e) {
-                if (session.getTransaction() != null && session.getTransaction().isActive()) {
-                    session.getTransaction().rollback();
-                }
-                throw new RuntimeException("No se ha podido añadir el cajero a la bd por el error " + e);
-            } finally {
-                try {
-                    if (session.isOpen()) session.close();
-                } catch (Exception ignored) {}
-            }
-        }*/
-    }
-    public void addServiceToDb(Service s){
-        /*if (factory != null) {
-            Session session = factory.getCurrentSession();
-            try {
-                session.beginTransaction();
-                session.merge(s); // Reemplaza a save en Hibernate 7
-                session.getTransaction().commit();
-            } catch (Exception e) {
-                if (session.getTransaction() != null && session.getTransaction().isActive()) {
-                    session.getTransaction().rollback();
-                }
-                throw new RuntimeException("No se ha podido añadir el servicio a la bd por el error " + e);
-            } finally {
-                try {
-                    if (session.isOpen()) session.close();
-                } catch (Exception ignored) {}
-            }
-        }*/
-    }
-    public void addProductToDb(Product p){
-       /* if (factory != null) {
-            Session session = factory.getCurrentSession();
-            try {
-                session.beginTransaction();
-                session.merge(p); // Reemplaza a save en Hibernate 7
-                session.getTransaction().commit();
-            } catch (Exception e) {
-                if (session.getTransaction() != null && session.getTransaction().isActive()) {
-                    session.getTransaction().rollback();
-                }
-                throw new RuntimeException("No se ha podido añadir el producto a la bd por el error " + e);
-            } finally {
-                try {
-                    if (session.isOpen()) session.close();
-                } catch (Exception ignored) {}
-            }
-        }*/
-    }
-
-    public void addTicketToDb(Ticket t){
-        /*if (factory != null) {
-            Session session = factory.getCurrentSession();
-            try {
-                session.beginTransaction();
-                session.merge(t); // Reemplaza a save en Hibernate 7
-                session.getTransaction().commit();
-            } catch (Exception e) {
-                if (session.getTransaction() != null && session.getTransaction().isActive()) {
-                    session.getTransaction().rollback();
-                }
-                throw new RuntimeException("No se ha podido el ticket añadir a la bd por el error " + e);
-            } finally {
-                try {
-                    if (session.isOpen()) session.close();
-                } catch (Exception ignored) {}
-            }
-        }*/
-    }
-
-    public void addServiceAddedDb(ServiceAdded sA){
-        /*if (factory != null) {
-            Session session = factory.getCurrentSession();
-            try {
-                session.beginTransaction();
-                session.merge(sA); // Reemplaza a save en Hibernate 7
-                session.getTransaction().commit();
-            } catch (Exception e) {
-                if (session.getTransaction() != null && session.getTransaction().isActive()) {
-                    session.getTransaction().rollback();
-                }
-                throw new RuntimeException("No se ha podido el servicio añadir a la bd por el error " + e);
-            } finally {
-                try {
-                    if (session.isOpen()) session.close();
-                } catch (Exception ignored) {}
-            }
-        }*/
-    }
-
-    public void addProductItemtoDb(ProductAdded pa){
-        /*if (factory != null) {
-            Session session = factory.getCurrentSession();
-            try {
-                session.beginTransaction();
-                session.merge(pa); // Reemplaza a save en Hibernate 7
-                session.getTransaction().commit();
-            } catch (Exception e) {
-                if (session.getTransaction() != null && session.getTransaction().isActive()) {
-                    session.getTransaction().rollback();
-                }
-                throw new RuntimeException("No se ha podido el producto añadir a la bd por el error " + e);
-            } finally {
-                try {
-                    if (session.isOpen()) session.close();
-                } catch (Exception ignored) {}
-            }
-        }*/
-    }
 
 
     public void endConnection(){
@@ -306,6 +170,125 @@ public final class HibernateUtils {
         }
 
     }
+
+    public void loadDb(Catalog<Product> productCatalog, Catalog<Service> serviceCatalog,
+                       Set<Cashier> cashiers, Set<Client> clients ){
+        if (factory != null) {
+            Session session = factory.getCurrentSession();
+            try {
+                session.beginTransaction();
+
+                List<Product> listaProductsFromDB = session
+                        .createQuery("FROM productCatalog", Product.class)
+                        .getResultList();
+                for (Product p: listaProductsFromDB) {
+                    if (p instanceof CustomizableProduct){
+                        CustomizableProduct cp= (CustomizableProduct) p.clone();
+                        productCatalog.add(cp.getId(), cp);
+                    }else if(p instanceof ProductCampusFood){
+                        ProductCampusFood pcf= (ProductCampusFood) p.clone();
+                        productCatalog.add(pcf.getId(), pcf);
+                    } else if (p instanceof  ProductMeeting) {
+                        ProductMeeting pm= (ProductMeeting) p.clone();
+                        productCatalog.add(pm.getId(), pm);
+                    }else {
+                        Product prod = p.clone();
+                        productCatalog.add(prod.getId(), prod);
+                    }
+                }
+                List<Service> listaServicesFromDb = session
+                        .createQuery("FROM service", Service.class)
+                        .getResultList();
+                for (Service s: listaServicesFromDb) {
+                    Service serv = s.cloneService();
+                    serviceCatalog.add(serv.getId(), serv);
+                }
+
+                List<Cashier> listaCashiersFromDb = session
+                        .createQuery("FROM cashier", Cashier.class)
+                        .getResultList();
+                for (Cashier c: listaCashiersFromDb) {
+                    Cashier cash = c.clone();
+                    cashiers.add(cash);
+                }
+                List<Client> listaClientsFromDb = session
+                        .createQuery("FROM client", Client.class)
+                        .getResultList();
+                for (Client c: listaClientsFromDb) {
+                    Client cli = c.clone();
+                    cli.setCashier(Tienda.getCashierById(c.getCashierId()));
+                    clients.add(cli);
+                }
+
+                List<Ticket> listaTicketsFromDb = session
+                        .createQuery("FROM tickets", Ticket.class)
+                        .getResultList();
+                List<Ticket> ticketCargados= new ArrayList<>();
+                for(Ticket t: listaTicketsFromDb){
+                    Ticket tNew= new Ticket(t.getId(), t.getTicketType());
+                    ticketCargados.add(tNew);
+                }
+
+                List<ServiceAdded> listaAddedServicesFromDB= session
+                        .createQuery("FROM ServiceAdded", ServiceAdded.class)
+                        .getResultList();
+
+                for(ServiceAdded sa: listaAddedServicesFromDB){
+                    Service serv= serviceCatalog.getById(sa.getService().getId()).cloneService();
+                    Ticket assignationTicket= ticketCargados.stream()
+                            .filter(tt -> tt.getId().equals(sa.getTicketId()))
+                            .findFirst()
+                            .orElse(null);
+                    TicketItem ti = new ServiceItem(serv);
+                    assignationTicket.getItems().add(ti);
+                }
+
+                List<ProductAdded> listaProductsAddedFromDb= session
+                        .createQuery("FROM ProductAdded", ProductAdded.class)
+                        .getResultList();
+                for(ProductAdded pa: listaProductsAddedFromDb){
+                    Product prod= productCatalog.getById(pa.getProduct().getId()).clone();
+                    if (!pa.getPersonalizedTexts().isEmpty()){
+                        CustomizableProduct cp= (CustomizableProduct) prod;
+                        for (String text: pa.getPersonalizedTexts()) {
+                            cp.addText(text);
+                        }
+                    }
+                    Ticket assignationTicket= ticketCargados.stream()
+                            .filter(tt -> tt.getId().equals(pa.getTicketId()))
+                            .findFirst()
+                            .orElse(null);
+                    TicketItem ti = new ProductItem(prod, pa.getCuantity());
+                    assignationTicket.getItems().add(ti);
+                }
+
+                List<AssignedTickets> listaAssignedTicketsFromDb = session
+                        .createQuery("FROM AssignedTickets", AssignedTickets.class)
+                        .getResultList();
+                for(AssignedTickets at: listaAssignedTicketsFromDb){
+                    Cashier cash= Tienda.getCashierById(at.getCashierId());
+                    Ticket ticketToAssign= ticketCargados.stream()
+                            .filter(tt -> tt.getId().equals(at.getTicketId()))
+                            .findFirst()
+                            .orElse(null);
+                    cash.addTicket(ticketToAssign);
+                }
+
+
+                session.getTransaction().commit();
+            } catch (Exception e) {
+                if (session.getTransaction() != null && session.getTransaction().isActive()) {
+                    session.getTransaction().rollback();
+                }
+                throw new RuntimeException("No se ha podido guardar el estado actual por el error " + e);
+            } finally {
+                try {
+                    if (session.isOpen()) session.close();
+                } catch (Exception ignored) {}
+            }
+        }
+    }
+
 
 }
 

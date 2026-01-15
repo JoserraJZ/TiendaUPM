@@ -52,6 +52,24 @@ public class Client {
         );
     }
 
+    public String getCashierId() {
+        return cashierId;
+    }
+
+    public void setCashier(Cashier cashier) {
+        this.cashier = cashier;
+    }
+
+    public Client clone() {
+        Client copy = new Client(
+                this.name,
+                this.id,          // mismo DNI/id
+                this.email,
+                this.cashier,     // mismo cashier en memoria (transient)
+                this.clientType
+        );
+        return copy;
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -26,7 +26,7 @@ public class ServiceAdded {
         this.service = service;
     }
 
-    public String getIdTicket() {
+    public String getTicketId() {
         return idTicket;
     }
 
