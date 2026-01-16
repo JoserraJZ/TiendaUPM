@@ -21,9 +21,9 @@
         <mapping class="upm.Client"/>
         <mapping class="upm.Service"/>
         <mapping class="upm.Ticket"/>
-        <mapping class="upm.ServiceAdded"/>
-        <mapping class="upm.ProductAdded"/>
-        <mapping class="upm.AssignedTickets"/>
+        <mapping class="upm.Tables.ServiceAdded"/>
+        <mapping class="upm.Tables.ProductAdded"/>
+        <mapping class="upm.Tables.AssignedTickets"/>
         <mapping class="upm.products.CustomizableProduct"/>
         <mapping class="upm.products.ProductMeeting"/>
         <mapping class="upm.products.ProductCampusFood"/>

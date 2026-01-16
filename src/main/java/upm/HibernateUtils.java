@@ -3,6 +3,9 @@ package upm;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import upm.Tables.AssignedTickets;
+import upm.Tables.ProductAdded;
+import upm.Tables.ServiceAdded;
 import upm.products.CustomizableProduct;
 import upm.products.Product;
 import upm.products.ProductCampusFood;
@@ -96,26 +99,6 @@ public final class HibernateUtils {
         }
     }
 
-
-    public void saveCurrentState(){
-        /*if (factory != null) {
-            Session session = factory.getCurrentSession();
-            try {
-                session.beginTransaction();
-                session.getTransaction().commit();
-            } catch (Exception e) {
-                if (session.getTransaction() != null && session.getTransaction().isActive()) {
-                    session.getTransaction().rollback();
-                }
-                throw new RuntimeException("No se ha podido guardar el estado actual por el error " + e);
-            } finally {
-                try {
-                    if (session.isOpen()) session.close();
-                } catch (Exception ignored) {}
-            }
-        }*/
-    }
-
     public void emptyTables(){
 
         if (factory != null) {
@@ -142,7 +125,7 @@ public final class HibernateUtils {
                 if (session.getTransaction() != null && session.getTransaction().isActive()) {
                     session.getTransaction().rollback();
                 }
-                throw new RuntimeException("No se ha podido guardar el estado actual por el error " + e);
+                throw new RuntimeException("No se ha podido borrar las tablas por el error " + e);
             } finally {
                 try {
                     if (session.isOpen()) session.close();
@@ -199,7 +182,7 @@ public final class HibernateUtils {
                 if (session.getTransaction() != null && session.getTransaction().isActive()) {
                     session.getTransaction().rollback();
                 }
-                throw new RuntimeException("No se ha podido guardar el estado actual del catalogo por el error " + e);
+                throw new RuntimeException("No se ha podido guardar la aplicación por el error " + e);
             } finally {
                 try {
                     if (session.isOpen()) session.close();
@@ -319,7 +302,7 @@ public final class HibernateUtils {
                 if (session.getTransaction() != null && session.getTransaction().isActive()) {
                     session.getTransaction().rollback();
                 }
-                throw new RuntimeException("No se ha podido guardar el estado actual por el error " + e);
+                throw new RuntimeException("No se ha podido cargar los datos de la base de datos por el error " + e);
             } finally {
                 try {
                     if (session.isOpen()) session.close();

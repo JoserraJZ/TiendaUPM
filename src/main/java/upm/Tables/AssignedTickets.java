@@ -1,4 +1,4 @@
-package upm;
+package upm.Tables;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

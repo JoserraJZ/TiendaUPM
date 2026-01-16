@@ -1,4 +1,4 @@
-package upm;
+package upm.Tables;
 
 import jakarta.persistence.*;
 import upm.products.Product;
