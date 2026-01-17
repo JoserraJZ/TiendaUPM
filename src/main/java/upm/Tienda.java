@@ -118,12 +118,16 @@ public class Tienda {
             }
 
             case TICKET_NEW -> {
-                //TODO: comprobar si el tipo de ticket que se quiere se puede para el tipo de cliente
                 TicketType ticketType = TiendaUtils.getTicketTypeFromParams(params[3]);
                 if (ticketType != null){
                     Ticket nuevo = new Ticket(params[0], ticketType);
-                    getCashierById(params[1]).addTicket(nuevo);
-                    System.out.println(nuevo);
+                    Cashier cash = getCashierById(params[1]);
+                    if (cash!=null) {
+                        cash.addTicket(nuevo);
+                        System.out.println(nuevo);
+                    }else {
+                        System.out.println("No se encontro un cajero con ese id");
+                    }
                 }
             }
             case TICKET_ADD -> {
