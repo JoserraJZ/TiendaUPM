@@ -72,7 +72,7 @@ public class TiendaUtils {
     public static void addCampusFood(String id, String name, String price, String expirationDate, String maxParticipants, Catalog<Product> productCatalog) {
         int maxParticipantsInt = Integer.parseInt(maxParticipants);
         if (maxParticipantsInt > 100){
-            Tienda.printError("No se pueden añadir más de 100 participantes");
+            Tienda.printError("Error processing ->prod addFood ->Error adding product");
             return;
         }
 
