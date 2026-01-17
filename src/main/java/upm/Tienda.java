@@ -20,7 +20,7 @@ public class Tienda {
     public static void main(String[] args) {
         HibernateUtils hUtils = HibernateUtils.getInstance();
         hUtils.loadDb(productCatalog, servicesCatalog, cashiers, clients);
-        System.out.println("Welcome to the ticket module App.\n" + "Ticket module. Type 'help' to see commands.");
+        System.out.print("Welcome to the ticket module App.\n" + "Ticket module. Type 'help' to see commands.");
 
         RandomGenerator.Init(productCatalog, cashiers, clients);
 

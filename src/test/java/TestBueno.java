@@ -562,7 +562,7 @@ class TestBueno {
                 
                         tUPM> ticket add 212127 UW1234567 23456 20
                         Ticket : 212127
-                          {class:Meeting, id:23456, name:'Reunion Rotonda', price:240.0, date of Event:2025-12-21, max people allowed:100, actual people in event:20}
+                          {class:Meeting, id:23456, name:'Reunion Rotonda', price:240,0, date of Event:2025-12-21, max people allowed:100, actual people in event:20}
                           Total price: 240.0
                           Total discount: 0.0
                           Final Price: 240.0
@@ -573,9 +573,9 @@ class TestBueno {
                           {class:Product, id:2, name:'Camiseta talla:M UPM', category:CLOTHES, price:15.0} **discount -1.05
                           {class:Product, id:2, name:'Camiseta talla:M UPM', category:CLOTHES, price:15.0} **discount -1.05
                           {class:Product, id:2, name:'Camiseta talla:M UPM', category:CLOTHES, price:15.0} **discount -1.05
-                          {class:Meeting, id:23456, name:'Reunion Rotonda', price:240.0, date of Event:2025-12-21, max people allowed:100, actual people in event:20}
+                          {class:Meeting, id:23456, name:'Reunion Rotonda', price:240,0, date of Event:2025-12-21, max people allowed:100, actual people in event:20}
                           Total price: 285.0
-                          Total discount: 3.1499999
+                          Total discount: 3.15
                           Final Price: 281.85
                         ticket add: ok
                 
@@ -584,16 +584,16 @@ class TestBueno {
                           {class:Product, id:2, name:'Camiseta talla:M UPM', category:CLOTHES, price:15.0} **discount -1.05
                           {class:Product, id:2, name:'Camiseta talla:M UPM', category:CLOTHES, price:15.0} **discount -1.05
                           {class:Product, id:2, name:'Camiseta talla:M UPM', category:CLOTHES, price:15.0} **discount -1.05
-                          {class:Meeting, id:23456, name:'Reunion Rotonda', price:240.0, date of Event:2025-12-21, max people allowed:100, actual people in event:20}
+                          {class:Meeting, id:23456, name:'Reunion Rotonda', price:240,0, date of Event:2025-12-21, max people allowed:100, actual people in event:20}
                           Total price: 285.0
-                          Total discount: 3.1499999
+                          Total discount: 3.15
                           Final Price: 281.85
                         ticket print: ok
                 
                         tUPM> ticket list
                         Ticket List:
-                          212127-25-12-07-22:32 - CLOSE
                           25-12-07-22:32-47570 - EMPTY
+                          212127-25-12-07-22:32 - CLOSE
                           212123-25-12-07-22:32 - CLOSE
                           212121-25-12-07-22:32 - CLOSE
                         ticket list: ok
@@ -645,7 +645,7 @@ class TestBueno {
                           {class:ProductPersonalized, id:5, name:'Camiseta talla:M UPM', category:CLOTHES, price:19.5, maxPersonal:3, personalizationList:[red, blue, green]} **discount -1.365
                           {class:ProductPersonalized, id:5, name:'Camiseta talla:M UPM', category:CLOTHES, price:19.5, maxPersonal:3, personalizationList:[red, blue, green]} **discount -1.365
                           Total price: 145.5
-                          Total discount: 10.184999
+                          Total discount: 10.185
                           Final Price: 135.315
                         ticket add: ok
                 
@@ -659,7 +659,7 @@ class TestBueno {
                           {class:ProductPersonalized, id:5, name:'Camiseta talla:M UPM', category:CLOTHES, price:19.5, maxPersonal:3, personalizationList:[red, blue, green]} **discount -1.365
                           {class:ProductPersonalized, id:5, name:'Camiseta talla:M UPM', category:CLOTHES, price:19.5, maxPersonal:3, personalizationList:[red, blue, green]} **discount -1.365
                           Total price: 145.5
-                          Total discount: 10.184999
+                          Total discount: 10.185
                           Final Price: 135.315
                         ticket print: ok
                 
@@ -728,7 +728,7 @@ class TestBueno {
                           {class:ProductService, id:1, category:INSURANCE, expiration:Sun Dec 21 00:00:00 CET 2025}
                           {class:ProductService, id:2, category:TRANSPORT, expiration:Wed Dec 24 00:00:00 CET 2025}
                         Product Included
-                          {class:Meeting, id:23456, name:'Reunion Rotonda', price:240.0, date of Event:2025-12-21, max people allowed:100, actual people in event:20}
+                          {class:Meeting, id:23456, name:'Reunion Rotonda', price:240,0, date of Event:2025-12-21, max people allowed:100, actual people in event:20}
                           Total price: 240.0
                           Extra Discount from services:72.0 **discount -72.0
                           Total discount: 72.0
@@ -741,7 +741,7 @@ class TestBueno {
                           {class:ProductService, id:1, category:INSURANCE, expiration:Sun Dec 21 00:00:00 CET 2025}
                           {class:ProductService, id:2, category:TRANSPORT, expiration:Wed Dec 24 00:00:00 CET 2025}
                         Product Included
-                          {class:Meeting, id:23456, name:'Reunion Rotonda', price:240.0, date of Event:2025-12-21, max people allowed:100, actual people in event:20}
+                          {class:Meeting, id:23456, name:'Reunion Rotonda', price:240,0, date of Event:2025-12-21, max people allowed:100, actual people in event:20}
                           Total price: 240.0
                           Extra Discount from services:72.0 **discount -72.0
                           Total discount: 72.0
