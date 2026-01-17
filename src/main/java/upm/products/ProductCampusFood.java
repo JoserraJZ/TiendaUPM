@@ -18,9 +18,8 @@ public class ProductCampusFood extends Product {
 
     protected ProductCampusFood() {}
 
-    public ProductCampusFood(String stringId, String productName, double pricePerPerson, LocalDateTime expirationDate, int maxParticipants, LocalDateTime creationDateTime) {
+    public ProductCampusFood(String stringId, String productName, double pricePerPerson, LocalDateTime expirationDate, int maxParticipants) {
         super(stringId, productName, null, pricePerPerson);
-        LocalDateTime fechaCreacion= LocalDateTime.now();
         this.expirationDate = expirationDate;
         this.maxParticipants = Math.min(maxParticipants, 100);
     }
@@ -50,8 +49,7 @@ public class ProductCampusFood extends Product {
                 getName(),
                 super.getPrice(),
                 getExpirationDate(),
-                getMaxParticipants(),
-                LocalDateTime.now()//TODO:CAMBIAR ESTO
+                getMaxParticipants()
         );
         return copy;
     }

@@ -89,8 +89,7 @@ public class TiendaUtils {
                 name,
                 Double.parseDouble(price),
                 expiration,
-                Integer.parseInt(maxParticipants),
-                creationDateTime
+                Integer.parseInt(maxParticipants)
         );
 
         if (!productCatalog.add(prod.getId(), prod))

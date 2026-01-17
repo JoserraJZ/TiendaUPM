@@ -50,7 +50,7 @@ public class Ticket {
 
     public void addItem(TicketItem ti) {
         boolean isService = ti.getClassStr().equals("Service");
-        if ((isService && ticketType==TicketType.PRODUCT) || ((!isService) && (ticketType==TicketType.SERVICE || ticketType==TicketType.COMPOUND))) {
+        if ((isService && ticketType==TicketType.PRODUCT) || ((!isService) && ticketType==TicketType.SERVICE)) {
             Tienda.printError("El tipo de item que se desea añadir no es compatible con el ticket");
         }
 
