@@ -17,6 +17,9 @@ public class Client {
     private String name;
     private String email;
 
+    private final ClientType type = ClientType.USER;
+    public ClientType getType() {return type;}
+
     @ManyToOne
     @JoinColumn(name = "cashier_id")
     private Cashier cashier;

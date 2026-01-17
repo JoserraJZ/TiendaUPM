@@ -8,6 +8,10 @@ import jakarta.persistence.Entity;
 
 public class ClientCompany extends Client{
 
+
+    private final ClientType type = ClientType.COMPANY;
+    public ClientType getType() {return type;}
+
     public ClientCompany(String name, String NIF, String email, Cashier cashier) {
         super(name, NIF, email, cashier);
     }
