@@ -115,6 +115,7 @@ class TestBueno {
         //HE MODIFICADO LOS COMANDOS PARA QUE FUNCIONE
         // ----- 2. Expected output (use the exact text you provided) -----
         String expected = """
+                Base de datos encontrada y cargada correctamente.
                 Welcome to the ticket module App.
                         Ticket module. Type 'help' to see commands.
                         tUPM> help
