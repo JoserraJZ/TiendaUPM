@@ -32,7 +32,7 @@ public final class HibernateUtils {
     }
 
     public HibernateUtils () {
-        this.instance = this;
+        instance = this;
 
         try {
             // Intento normal: si la BD existe, Hibernate la abre
@@ -86,11 +86,7 @@ public final class HibernateUtils {
                 ex.printStackTrace();
             }
         }
-
-
-
     }
-
 
 
     public void endConnection() {
@@ -105,19 +101,19 @@ public final class HibernateUtils {
             Session session = factory.openSession();
             try {
                 session.beginTransaction();
-                session.createNativeQuery("DELETE FROM ProductAdded").executeUpdate();
-                //session.createNativeQuery("DELETE FROM sqlite_sequence WHERE name = 'ProductAdded'").executeUpdate();
+                session.createNativeMutationQuery("DELETE FROM ProductAdded").executeUpdate();
+                // session.createNativeMutationQuery("DELETE FROM sqlite_sequence WHERE name = 'ProductAdded'").executeUpdate();
 
-                session.createNativeQuery("DELETE FROM ServiceAdded").executeUpdate();
-                //session.createNativeQuery("DELETE FROM sqlite_sequence WHERE name = 'ServiceAdded'").executeUpdate();
+                session.createNativeMutationQuery("DELETE FROM ServiceAdded").executeUpdate();
+                // session.createNativeMutationQuery("DELETE FROM sqlite_sequence WHERE name = 'ServiceAdded'").executeUpdate();
 
-                session.createNativeQuery("DELETE FROM AssignedTickets").executeUpdate();
-                session.createNativeQuery("DELETE FROM Tickets").executeUpdate();
-                session.createNativeQuery("DELETE FROM Client").executeUpdate();
-                session.createNativeQuery("DELETE FROM Cashier").executeUpdate();
+                session.createNativeMutationQuery("DELETE FROM AssignedTickets").executeUpdate();
+                session.createNativeMutationQuery("DELETE FROM Tickets").executeUpdate();
+                session.createNativeMutationQuery("DELETE FROM Client").executeUpdate();
+                session.createNativeMutationQuery("DELETE FROM Cashier").executeUpdate();
 
-                session.createNativeQuery("DELETE FROM productCatalog").executeUpdate();
-                session.createNativeQuery("DELETE FROM Service").executeUpdate();
+                session.createNativeMutationQuery("DELETE FROM productCatalog").executeUpdate();
+                session.createNativeMutationQuery("DELETE FROM Service").executeUpdate();
 
                 session.getTransaction().commit();
                 session.close();

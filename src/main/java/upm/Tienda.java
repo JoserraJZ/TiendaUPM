@@ -93,24 +93,20 @@ public class Tienda {
                     printError("No se ha encontrado ningún cliente con el identificador introducido");
             }
 
-            case PROD_ADD -> {
-                TiendaUtils.prodAdd(params[0], params[1], params[2], params[3], params.length>4?params[4]:null, productCatalog);
-            }
+            case PROD_ADD -> TiendaUtils.prodAdd(params[0], params[1], params[2], params[3], params.length>4?params[4]:null, productCatalog);
+
             case PROD_ADD_ALT_SERVICE -> {
                 LocalDateTime date = LocalDate.parse(params[0], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
                 Service service = new Service(RandomGenerator.generateServiceId(), date, params[1]);
                 servicesCatalog.add(service.getId(), service);
                 System.out.println(service);
             }
-            case PROD_UPDATE -> {
-                TiendaUtils.prodUpdate(params[0], params[1], params[2], productCatalog);
-            }
-            case PROD_ADDFOOD -> {
-                TiendaUtils.addCampusFood(params[0], params[1], params[2], params[3], params[4], productCatalog);
-            }
-            case PROD_ADDMEETING -> {
-                TiendaUtils.addMeeting(params[0], params[1], params[2], params[3], params[4], productCatalog);
-            }
+            case PROD_UPDATE -> TiendaUtils.prodUpdate(params[0], params[1], params[2], productCatalog);
+
+            case PROD_ADDFOOD -> TiendaUtils.addCampusFood(params[0], params[1], params[2], params[3], params[4], productCatalog);
+
+            case PROD_ADDMEETING -> TiendaUtils.addMeeting(params[0], params[1], params[2], params[3], params[4], productCatalog);
+
             case PROD_LIST -> productCatalog.list();
             case PROD_REMOVE -> {
                 Product prod = productCatalog.remove(Integer.parseInt(params[0]));
@@ -133,18 +129,10 @@ public class Tienda {
                     }
                 }
             }
-            case TICKET_ADD -> {
-                TiendaUtils.ticketAdd(getTicketById(params[1], params[0]), params[2], params[3], params[4]!=null?Arrays.asList(params).subList(4, params.length):Collections.emptyList(), productCatalog, servicesCatalog);
-            }
-            case TICKET_REMOVE -> {
-                TiendaUtils.ticketRemove(getTicketById(params[1], params[0]), params[2]);
-            }
-            case TICKET_PRINT -> {
-                TiendaUtils.printTicket(getTicketById(params[1], params[0]));
-            }
-            case TICKET_LIST -> {
-                TiendaUtils.ticketList(cashiers);
-            }
+            case TICKET_ADD -> TiendaUtils.ticketAdd(getTicketById(params[1], params[0]), params[2], params[3], params[4]!=null?Arrays.asList(params).subList(4, params.length):Collections.emptyList(), productCatalog, servicesCatalog);
+            case TICKET_REMOVE -> TiendaUtils.ticketRemove(getTicketById(params[1], params[0]), params[2]);
+            case TICKET_PRINT -> TiendaUtils.printTicket(getTicketById(params[1], params[0]));
+            case TICKET_LIST -> TiendaUtils.ticketList(cashiers);
 
             case HELP -> help();
             case ECHO -> System.out.println(rawInput.substring(5));
