@@ -136,8 +136,6 @@ public class TiendaUtils {
     }
 
     public static void ticketAdd(Ticket ticket, String productIdStr, String amountStr, List<String> personalizedTexts, Catalog<Product> productCatalog, Catalog<Service> servicesCatalog) {
-        //TODO:COMPROBAR SI EL TICKET ES DE PRODUCTO, SERVICIO O MIXTO
-
         if (ticket == null) {
             Tienda.printError("El identificador del ticket introducido no existe");
             return;

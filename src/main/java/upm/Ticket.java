@@ -49,7 +49,10 @@ public class Ticket {
     }
 
     public void addItem(TicketItem ti) {
-        //TODO: COMPROBAR EL TIPO DE TICKET
+        boolean isService = ti.getClassStr().equals("Service");
+        if ((isService && ticketType==TicketType.PRODUCT) || ((!isService) && (ticketType==TicketType.SERVICE || ticketType==TicketType.COMPOUND))) {
+            Tienda.printError("El tipo de item que se desea añadir no es compatible con el ticket");
+        }
 
         if (currentState == TicketState.CLOSE) return;
         this.currentState = TicketState.OPEN;
@@ -59,7 +62,7 @@ public class Ticket {
             items.add(ti);
             items.sort(ITEM_ORDER);
 
-            if (ti.getClassStr().equals("Service")) productServiceSeparator +=1;
+            if (isService) productServiceSeparator +=1;
         }else {
             ti.addQuantity(ti.getQuantity());
         }
