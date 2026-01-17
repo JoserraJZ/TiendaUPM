@@ -102,7 +102,7 @@ public final class HibernateUtils {
     public void emptyTables(){
 
         if (factory != null) {
-            Session session = factory.getCurrentSession();
+            Session session = factory.openSession();
             try {
                 session.beginTransaction();
                 session.createNativeQuery("DELETE FROM ProductAdded").executeUpdate();
@@ -221,23 +221,24 @@ public final class HibernateUtils {
                         .createQuery("FROM Service", Service.class)
                         .getResultList();
                 for (Service s: listaServicesFromDb) {
-                    Service serv = s.clone();
-                    serviceCatalog.add(serv.getId(), serv);
+                    serviceCatalog.add(s.getId(), s);
                 }
 
                 List<Cashier> listaCashiersFromDb = session
                         .createQuery("FROM Cashier", Cashier.class)
                         .getResultList();
                 for (Cashier c: listaCashiersFromDb) {
-                    Cashier cash = c.clone();
-                    cashiers.add(cash);
+                    cashiers.add(c);
                 }
                 List<Client> listaClientsFromDb = session
                         .createQuery("FROM Client", Client.class)
                         .getResultList();
                 for (Client c: listaClientsFromDb) {
-                    Client cli = c.clone();
-                    clients.add(cli);
+                    if (c instanceof ClientCompany cc){
+                        clients.add(cc);
+                        continue;
+                    }
+                    clients.add(c);
                 }
 
                 List<Ticket> listaTicketsFromDb = session
@@ -245,8 +246,7 @@ public final class HibernateUtils {
                         .getResultList();
                 List<Ticket> ticketCargados= new ArrayList<>();
                 for(Ticket t: listaTicketsFromDb){
-                    Ticket tNew= new Ticket(t.getId(), t.getTicketType());
-                    ticketCargados.add(tNew);
+                    ticketCargados.add(t);
                 }
 
                 List<ServiceAdded> listaAddedServicesFromDB= session
