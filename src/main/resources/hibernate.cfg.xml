@@ -13,7 +13,7 @@
         <!-- SOLO create -->
         <property name="hibernate.hbm2ddl.auto">update</property>
 
-        <property name="show_sql">true</property>
+        <property name="show_sql">false</property>
 
         <!-- Tus entidades -->
         <mapping class="upm.products.Product"/>
