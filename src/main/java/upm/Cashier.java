@@ -42,20 +42,24 @@ public class Cashier implements Comparable<Cashier>{
         return Collections.unmodifiableSet(tickets);
     }
 
-    public boolean addTicket(Ticket ticket) {
+    public boolean addTicket(Ticket ticket, Client client) {
         if (ticket == null) return false;
+        TicketType ticketType = ticket.getTicketType(); ClientType clientType = client.getType();
+        if ((clientType==ClientType.USER && (ticketType==TicketType.COMPOUND || ticketType==TicketType.SERVICE))
+                || (clientType==ClientType.COMPANY && ticketType==TicketType.PRODUCT)) return false;
         return tickets.add(ticket);
     }
 
-    public void listTicket() {
-        if (this != null) {
-            List<Ticket> tickets = new ArrayList<>(this.getTickets());
-            tickets.sort(Comparator.comparing(Ticket::getId));
+    protected void addTicket(Ticket ticket) {
+        tickets.add(ticket);
+    }
 
-            System.out.println("Tickets: ");
-            tickets.forEach(t -> System.out.println(t.getId() + " ->" + t.getCurrentState()));
-        }
-        else Tienda.printError("El identificador de cajero introducido no existe");
+    public void listTicket() {
+        List<Ticket> tickets = new ArrayList<>(this.getTickets());
+        tickets.sort(Comparator.comparing(Ticket::getId));
+
+        System.out.println("Tickets: ");
+        tickets.forEach(t -> System.out.println(t.getId() + " ->" + t.getCurrentState()));
     }
 
     @Override

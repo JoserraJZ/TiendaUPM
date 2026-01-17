@@ -122,17 +122,17 @@ public class Tienda {
                 if (ticketType != null){
                     Ticket nuevo = new Ticket(params[0], ticketType);
                     Cashier cash = getCashierById(params[1]);
+                    Client client = getClientById(params[2]);
                     if (cash!=null) {
-                        cash.addTicket(nuevo);
-                        System.out.println(nuevo);
-                    }else {
-                        System.out.println("No se encontro un cajero con ese id");
+                        if (client!=null){
+                            if (cash.addTicket(nuevo, client))
+                                System.out.println(nuevo);
+                        }
                     }
                 }
             }
             case TICKET_ADD -> {
                 TiendaUtils.ticketAdd(getTicketById(params[1], params[0]), params[2], params[3], params[4]!=null?Arrays.asList(params).subList(4, params.length):Collections.emptyList(), productCatalog, servicesCatalog);
-
             }
             case TICKET_REMOVE -> {
                 TiendaUtils.ticketRemove(getTicketById(params[1], params[0]), params[2]);
@@ -177,6 +177,15 @@ public class Tienda {
             }
         }
         printError("No se ha encontrado ningún cajero con el identificador introducido");
+        return null;
+    }
+    public static Client getClientById(String id) {
+        for (Client c : clients) {
+            if (id.equals(c.getId())) {
+                return c;
+            }
+        }
+        printError("No se ha encontrado ningún cliente con el identificador introducido");
         return null;
     }
 
