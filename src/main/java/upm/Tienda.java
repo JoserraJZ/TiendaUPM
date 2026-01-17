@@ -20,7 +20,7 @@ public class Tienda {
     public static void main(String[] args) {
         HibernateUtils hUtils = HibernateUtils.getInstance();
         hUtils.loadDb(productCatalog, servicesCatalog, cashiers, clients);
-        System.out.print("Welcome to the ticket module App.\n" + "Ticket module. Type 'help' to see commands.");
+        System.out.println("Welcome to the ticket module App.\n" + "Ticket module. Type 'help' to see commands.");
 
         RandomGenerator.Init(productCatalog, cashiers, clients);
 
@@ -40,20 +40,22 @@ public class Tienda {
     }
 
     public static void commandLoop(Scanner scanner){
+        System.out.print("tUPM> ");
         while (scanner.hasNextLine()) {
             try {
                 errorOccurred = false;
                 if (executeCommand(scanner.nextLine())) {
-                    break; // salir si executeCommand devuelve true
+                    break; // salir si executeCommand devuelve truegi
                 }
             } catch (Exception e) {
                 System.err.println("Se ha dado el error: " + e.getMessage());
             }
+            System.out.print("\ntUPM> ");
         }
     }
 
     private static boolean executeCommand(String rawInput) {
-        System.out.print("\ntUPM> ");
+
 
         ValidatedCommand validatedCommand = Command.validateCommand(rawInput);
         if(validatedCommand==null)return false;
