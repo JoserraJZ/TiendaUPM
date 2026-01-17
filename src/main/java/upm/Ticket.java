@@ -33,7 +33,10 @@ public class Ticket {
                     .thenComparing(TicketItem::getItemId).reversed()
                     .thenComparing(TicketItem::getItemId);
 
+    @Enumerated(EnumType.STRING)
     private TicketState currentState;
+
+    @Enumerated(EnumType.STRING)
     private TicketType ticketType;
 
     private int productServiceSeparator = 0;
