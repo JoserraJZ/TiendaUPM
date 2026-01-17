@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
-public enum Command {
+public enum     Command {
     CLIENT_ADD("client add", new String[]{"\"<nombre>\"", "(<DNI>|<NIF>)", "<email>", "<cashId>"}, 6, 6),
     CLIENT_REMOVE("client remove", new String[]{"<DNI>"}, 3, 3),
     CLIENT_LIST("client list", new String[]{}, 2, 2),

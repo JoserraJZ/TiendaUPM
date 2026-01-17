@@ -1,3 +1,5 @@
+//package upm;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -8,8 +10,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @Disabled("Ignorado temporalmente para generar el JAR")
-class AppTest {
-
+public class TestBueno {
 
     String normalize(String s) {
         // Step 1: Trim lines and collapse spaces/tabs
