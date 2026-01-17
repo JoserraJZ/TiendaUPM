@@ -95,10 +95,6 @@ public class RandomGenerator {
         return datePart + "-" + randPart;
     }
 
-    //TODO: MIRAR COMO HACER ESTO
-    // java
-// Inserta/actualiza estas líneas dentro de `RandomGenerator.java`
-
     private static final Set<Integer> usedServiceIds = new LinkedHashSet<>();
 
     public static synchronized int generateServiceId() {
@@ -112,10 +108,4 @@ public class RandomGenerator {
         usedServiceIds.add(id);
         return id;
     }
-
-    // opcional: método para liberar ids si se quiere permitir reutilización
-    public static synchronized void releaseServiceId(int id) {
-        usedServiceIds.remove(id);
-    }
-
 }

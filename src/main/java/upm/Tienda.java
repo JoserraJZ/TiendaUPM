@@ -104,7 +104,7 @@ public class Tienda {
                 TiendaUtils.prodUpdate(params[0], params[1], params[2], productCatalog);
             }
             case PROD_ADDFOOD -> {
-                TiendaUtils.addFood(params[0], params[1], params[2], params[3], params[4], productCatalog);
+                TiendaUtils.addCampusFood(params[0], params[1], params[2], params[3], params[4], productCatalog);
             }
             case PROD_ADDMEETING -> {
                 TiendaUtils.addMeeting(params[0], params[1], params[2], params[3], params[4], productCatalog);

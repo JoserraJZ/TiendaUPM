@@ -3,7 +3,6 @@ package upm;
 import upm.products.*;
 import upm.ticketitems.ProductItem;
 import upm.ticketitems.ServiceItem;
-import upm.ticketitems.TicketItem;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -70,7 +69,7 @@ public class TiendaUtils {
         System.out.println(prod);
     }
 
-    public static void addFood(String id, String name, String price, String expirationDate, String maxParticipants, Catalog<Product> productCatalog) {
+    public static void addCampusFood(String id, String name, String price, String expirationDate, String maxParticipants, Catalog<Product> productCatalog) {
         int maxParticipantsInt = Integer.parseInt(maxParticipants);
         if (maxParticipantsInt > 100){
             Tienda.printError("No se pueden añadir más de 100 participantes");
@@ -120,8 +119,7 @@ public class TiendaUtils {
                 name,
                 Double.parseDouble(price),
                 expiration,
-                Integer.parseInt(maxParticipants),
-                creationDateTime
+                Integer.parseInt(maxParticipants)
         );
 
         if (!productCatalog.add(prod.getId(), prod))

@@ -18,7 +18,6 @@ public enum     Command {
 
     TICKET_NEW("ticket new", new String[]{"[<id>]", "<cashId>", "<userId>", "-[c|p|s] (default -p option)"}, 4, 6),
     TICKET_ADD("ticket add", new String[]{"<ticketId>", "<cashId>", "<prodId>", "[<amount>]", "[--p<txt> --p<txt>]"}, 5, 0),
-    //TICKER_ADD_ALT_SERVICE("ticket add", new String[]{"<ticketId>", "<cashId>", "<serviceId>", "[--p<txt> --p<txt>]"}, 5, 0),
     TICKET_REMOVE("ticket remove", new String[]{"<ticketId>", "<cashId>", "<prodId>"}, 5, 5),
     TICKET_PRINT("ticket print", new String[]{"<ticketId>", "<cashId>"}, 4, 4),
     TICKET_LIST("ticket list", new String[]{}, 2, 2),
@@ -156,6 +155,12 @@ public enum     Command {
                         matches = false;
                     }
                 }
+                case "(<DNI>|<NIF>)" ->{
+                    if (Utils.identifyType(commandGiven[i + offsetAmount]) == IdentifierType.UNIDENTIFIED) {
+                        errorCode = String.format("El documento de identidad: '%s' no es un DNI, NIE ni NIF%n", commandGiven[i + offsetAmount]);
+                        matches = false;
+                    }
+                }
                 case "--p<txt> --p<txt>" ->{
                     for (int j = i + offsetAmount; j < commandGiven.length; j++) {
                         if (!commandGiven[j].matches("^--p\\S+$")) {
@@ -166,7 +171,6 @@ public enum     Command {
                         }
                     }
                 }
-                //TODO: AÑADIR CASE PARA NIE NIF
             }
 
             if (!matches && isOptional){

@@ -13,24 +13,18 @@ import java.util.Locale;
 
 public class ProductMeeting extends Product {
     private LocalDateTime expirationDateTime;
-    private LocalDateTime creationDateTime;
     private int maxParticipants;
 
     protected ProductMeeting(){    }
 
-    public ProductMeeting(String stringId, String productName, double pricePerPerson, LocalDateTime expirationDateTime, int maxParticipants, LocalDateTime creationDateTime) {
+    public ProductMeeting(String stringId, String productName, double pricePerPerson, LocalDateTime expirationDateTime, int maxParticipants) {
         super(stringId, productName, null, pricePerPerson);
         this.expirationDateTime = expirationDateTime;
         this.maxParticipants = Math.min(maxParticipants, 100);
-        this.creationDateTime = creationDateTime;
     }
 
     public LocalDateTime getExpirationDateTime() {
         return expirationDateTime;
-    }
-
-    public LocalDateTime getCreationDateTime() {
-        return creationDateTime;
     }
 
     public int getMaxParticipants() {
@@ -43,15 +37,13 @@ public class ProductMeeting extends Product {
 
     @Override
     public ProductMeeting clone() {
-        ProductMeeting copy = new ProductMeeting(
+        return new ProductMeeting(
                 String.valueOf(getId()),
                 getName(),
                 super.getPrice(),
                 getExpirationDateTime(),
-                getMaxParticipants(),
-                getCreationDateTime()
+                getMaxParticipants()
         );
-        return copy;
     }
 
 
