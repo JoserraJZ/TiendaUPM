@@ -4,6 +4,9 @@ import upm.products.*;
 import upm.ticketitems.ProductItem;
 import upm.ticketitems.ServiceItem;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -152,10 +155,12 @@ public class TiendaUtils {
             amount = Integer.parseInt(amountStr);
         } catch (NumberFormatException e) {
             amount = 1;
+            TiendaUtils.logError(e.getMessage());
+
         }
 
         //TODO:CAMBIAR FECHA, DE FIXEDDATETIME A NOW()
-        LocalDateTime currentDateTime = LocalDateTime.parse("25-12-07-22:32", DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm"));
+        LocalDateTime currentDateTime = LocalDateTime.now();
 
         if (!productIdStr.toLowerCase().endsWith("s")) {
             Product prod = productCatalog.getById(Integer.parseInt(productIdStr));
@@ -201,6 +206,7 @@ public class TiendaUtils {
             try {
                 serviceId = Integer.parseInt(productIdStr.replaceAll("\\D+", ""));
             } catch (NumberFormatException e) {
+                TiendaUtils.logError(e.getMessage());
                 Tienda.printError("ID de servicio inválido");
                 return;
             }
@@ -309,5 +315,15 @@ public class TiendaUtils {
         else
             ticket.closeAndPrint();
     }
+
+    public static void logError(String errorMessage) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("../resources/LogsTienda.txt", true))) {
+            writer.write(errorMessage);
+            writer.newLine();
+        } catch (IOException e) {
+            System.err.println("Error al escribir en el archivo: " + e.getMessage());
+        }
+    }
+
 
 }

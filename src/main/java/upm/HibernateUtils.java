@@ -89,23 +89,21 @@ public final class HibernateUtils {
     }
 
 
-    public void endConnection() {
+    public void endDbConnection() {
         if (factory != null) {
             factory.close();
         }
     }
 
-    public void emptyTables(){
+    public void emptyDbTables(){
 
         if (factory != null) {
             Session session = factory.openSession();
             try {
                 session.beginTransaction();
                 session.createNativeMutationQuery("DELETE FROM ProductAdded").executeUpdate();
-                // session.createNativeMutationQuery("DELETE FROM sqlite_sequence WHERE name = 'ProductAdded'").executeUpdate();
 
                 session.createNativeMutationQuery("DELETE FROM ServiceAdded").executeUpdate();
-                // session.createNativeMutationQuery("DELETE FROM sqlite_sequence WHERE name = 'ServiceAdded'").executeUpdate();
 
                 session.createNativeMutationQuery("DELETE FROM AssignedTickets").executeUpdate();
                 session.createNativeMutationQuery("DELETE FROM Tickets").executeUpdate();
@@ -121,7 +119,7 @@ public final class HibernateUtils {
                 if (session.getTransaction() != null && session.getTransaction().isActive()) {
                     session.getTransaction().rollback();
                 }
-                throw new RuntimeException("No se ha podido borrar las tablas por el error " + e);
+                TiendaUtils.logError(e.getMessage());
             } finally {
                 try {
                     if (session.isOpen()) session.close();
@@ -130,7 +128,7 @@ public final class HibernateUtils {
         }
     }
 
-    public void SaveApp(Catalog<Product> productCatalog, Catalog<Service> serviceCatalog,
+    public void SaveAppToDB(Catalog<Product> productCatalog, Catalog<Service> serviceCatalog,
                         Set<Cashier> cashiers, Set<Client> clients ) {
         if (factory != null) {
             Session session = factory.openSession();
@@ -161,7 +159,6 @@ public final class HibernateUtils {
                             }
 
                         }
-                        //GuardarLosTickets
                         AssignedTickets as = new AssignedTickets(t.getId(), c.getId());
                         session.merge(as);
                         session.merge(t);
@@ -178,7 +175,7 @@ public final class HibernateUtils {
                 if (session.getTransaction() != null && session.getTransaction().isActive()) {
                     session.getTransaction().rollback();
                 }
-                throw new RuntimeException("No se ha podido guardar la aplicación por el error " + e);
+                TiendaUtils.logError(e.getMessage());
             } finally {
                 try {
                     if (session.isOpen()) session.close();
@@ -188,7 +185,7 @@ public final class HibernateUtils {
 
     }
 
-    public void loadDb(Catalog<Product> productCatalog, Catalog<Service> serviceCatalog,
+    public void loadDbToLists(Catalog<Product> productCatalog, Catalog<Service> serviceCatalog,
                        Set<Cashier> cashiers, Set<Client> clients ){
         if (factory != null) {
             Session session = factory.getCurrentSession();
@@ -199,19 +196,7 @@ public final class HibernateUtils {
                         .createQuery("FROM Product", Product.class)
                         .getResultList();
                 for (Product p: listaProductsFromDB) {
-                    if (p instanceof CustomizableProduct){
-                        CustomizableProduct cp= (CustomizableProduct) p.clone();
-                        productCatalog.add(cp.getId(), cp);
-                    }else if(p instanceof ProductCampusFood){
-                        ProductCampusFood pcf= (ProductCampusFood) p.clone();
-                        productCatalog.add(pcf.getId(), pcf);
-                    } else if (p instanceof  ProductMeeting) {
-                        ProductMeeting pm= (ProductMeeting) p.clone();
-                        productCatalog.add(pm.getId(), pm);
-                    }else {
-                        Product prod = p.clone();
-                        productCatalog.add(prod.getId(), prod);
-                    }
+                        productCatalog.add(p.getId(), p);
                 }
                 List<Service> listaServicesFromDb = session
                         .createQuery("FROM Service", Service.class)
@@ -241,9 +226,8 @@ public final class HibernateUtils {
                         .createQuery("FROM Ticket", Ticket.class)
                         .getResultList();
                 List<Ticket> ticketCargados= new ArrayList<>();
-                for(Ticket t: listaTicketsFromDb){
-                    ticketCargados.add(t);
-                }
+                    ticketCargados.addAll(listaTicketsFromDb);
+
 
                 List<ServiceAdded> listaAddedServicesFromDB= session
                         .createQuery("FROM ServiceAdded", ServiceAdded.class)
@@ -298,7 +282,7 @@ public final class HibernateUtils {
                 if (session.getTransaction() != null && session.getTransaction().isActive()) {
                     session.getTransaction().rollback();
                 }
-                throw new RuntimeException("No se ha podido cargar los datos de la base de datos por el error " + e);
+                TiendaUtils.logError(e.getMessage());
             } finally {
                 try {
                     if (session.isOpen()) session.close();
