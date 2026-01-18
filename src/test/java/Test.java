@@ -1,6 +1,5 @@
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -8,23 +7,20 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @Disabled("Ignorado temporalmente para generar el JAR")
-class TestBueno {
+class Test {
 
-
+    // Normaliza un texto eliminando espacios, tabulaciones y \n innecesarios
     String normalize(String s) {
-        // Step 1: Trim lines and collapse spaces/tabs
-        String normalizedLines = Arrays.stream(s.split("\n"))
-                .map(String::trim)
-                .map(line -> line.replaceAll("[ \t]+", " "))
-                .collect(Collectors.joining("\n")); // join lines back
+        String normalizedLines = Arrays.stream(s.split("\n")) // separa lineas
+                .map(String::trim) // elimina espacios al inicio y fin
+                .map(line -> line.replaceAll("[ \t]+", " ")) // elimina tabulaciones/espacios duplicados
+                .collect(Collectors.joining("\n")); // une todas las lineas separadas por un salto de linea
 
-        // Step 2: Collapse 3+ consecutive newlines into 2
-        return normalizedLines.replaceAll("\n{3,}", "\n\n");
+        return normalizedLines.replaceAll("\n{3,}", "\n\n"); // hace que haya maximo una linea de espacio entre 2 lineas
     }
 
-    @Test
-    void main() {
-        // ----- 1. Input commands -----
+    @org.junit.jupiter.api.Test
+    void mainTest() {
         String input =
                 """
                         help
@@ -110,8 +106,6 @@ class TestBueno {
                         exit
                         """;
 
-        //HE MODIFICADO LOS COMANDOS PARA QUE FUNCIONE
-        // ----- 2. Expected output (use the exact text you provided) -----
         String expected = """
                 Base de datos encontrada y cargada correctamente.
                 Welcome to the ticket module App.
@@ -732,21 +726,20 @@ class TestBueno {
                         Closing application.
                         Goodbye!
                 """;
+
+        // Redirige la entrada para usar como input el texto proporcionado
         System.setIn(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)));
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(baos);
-        System.setOut(ps);
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream(); // Crea un stream de salida para capturar System.out
+        PrintStream printStream = new PrintStream(outStream); // Crea un PrintStream que escribirá en outStream
+        System.setOut(printStream); // Redirige la salida System.out a printStream
 
-        // ----- 4. Run the application -----
-        upm.Tienda.main(new String[0]);
+        upm.Tienda.main(new String[0]); // Ejecuta el programa
 
-
-        // ----- 6. Compare actual vs expected ----
-        String actualOutput = baos.toString();
+        // Compara la salida real con la esperada, ambas normalizadas
         Assertions.assertEquals(
                 normalize(expected),
-                normalize(actualOutput)
+                normalize(outStream.toString())
         );
     }
 }
