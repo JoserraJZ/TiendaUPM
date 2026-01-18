@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -19,7 +20,7 @@ class AppTest {
         return normalizedLines.replaceAll("\n{3,}", "\n\n"); // hace que haya maximo una linea de espacio entre 2 lineas
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void mainTest() {
         String input =
                 """
