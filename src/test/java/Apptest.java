@@ -1,5 +1,4 @@
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -7,7 +6,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-@Disabled("Ignorado temporalmente para generar el JAR")
 class AppTest {
 
     // Normaliza un texto eliminando espacios, tabulaciones y \n innecesarios
