@@ -63,8 +63,8 @@ public class Tienda {
         if ("true".equals(System.getProperty("isfromfile")))
             System.out.println(rawInput);
 
-        try {
-            switch (command) {
+
+        switch (command) {
                 case CASH_ADD -> {
                     if (!cashiers.add(new Cashier(params[0], params[1], params[2])))
                         printError("El id introducido ya existe");
@@ -144,13 +144,11 @@ public class Tienda {
                 case ECHO -> System.out.println(rawInput.substring(5));
                 case EXIT -> exit = true;
 
-            }
-            if (!errorOccurred && (command.commandText.contains("prod") || command.commandText.contains("ticket") ||
+        }
+        if (!errorOccurred && (command.commandText.contains("prod") || command.commandText.contains("ticket") ||
                     command.commandText.contains("cash") || command.commandText.contains("client"))) {
                 System.out.println(command.commandText + ": ok");
-            }
-        }catch (Exception e){
-            TiendaUtils.logError(e.getMessage());
+
         }
         return exit;
     }

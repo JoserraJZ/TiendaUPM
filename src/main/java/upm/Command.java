@@ -113,6 +113,8 @@ public enum     Command {
                     try{ ProductCategory.valueOf(commandGiven[i+offsetAmount]); } catch (IllegalArgumentException e) {
                         errorCode = String.format("El parámetro %d ('%s') debería ser una categoría válida%n", i+1, commandGiven[i+offsetAmount]);
                         matches = false;
+                        TiendaUtils.logError(e.getMessage());
+
                     }
                 }
                 case "<price>" -> {
@@ -153,6 +155,8 @@ public enum     Command {
                         errorCode = String.format(
                                 "El parámetro %d ('%s') debería ser una fecha con formato yyyy-MM-dd%n", i + 1, commandGiven[i + offsetAmount]);
                         matches = false;
+                        TiendaUtils.logError(e.getMessage());
+
                     }
                 }
                 case "(<DNI>|<NIF>)" ->{
