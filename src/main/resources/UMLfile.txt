@@ -1,0 +1,443 @@
+@startuml
+
+' ===========================
+'        CLASES BASE
+' ===========================
+
+class Product {
+    - id : int
+    - name : String
+    - category : ProductCategory
+    - price : double
+
+    + Product(stringId : String, productName : String, category : ProductCategory, price : double)
+    + getId() : int
+    + getName() : String
+    + getCategory() : ProductCategory
+    + getPrice() : double
+
+    + setName(newName : String) : void
+    + setCategory(newCat : ProductCategory) : void
+    + setPrice(newPrice : int) : void
+
+    + equals(obj : Object) : boolean
+    + hashCode() : int
+    + toString() : String
+    + toParametersString() : String
+    + clone() : Product
+}
+
+
+
+class CustomizableProduct {
+    - maxTexts : int
+    - personalizedTexts : List<String>
+
+    + CustomizableProduct(stringId : String, productName : String, category : ProductCategory, basePrice : double, maxTexts : int)
+    + addText(text : String) : void
+    + getMaxTexts() : int
+    + getPersonalizedTexts() : List<String>
+    + getPrice() : double
+    + clone() : CustomizableProduct
+    + equals(other : Object) : boolean
+    + toString() : String
+}
+
+
+
+class ProductCampusFood {
+    - expirationDate : LocalDateTime
+    - maxParticipants : int
+
+    + ProductCampusFood(stringId : String, productName : String, pricePerPerson : double, expirationDate : LocalDateTime, maxParticipants : int)
+    + getMaxParticipants() : int
+    + getExpirationDate() : LocalDateTime
+    + calculateCurrentPrice(participants : int) : double
+    + getPrice() : double
+    + clone() : ProductCampusFood
+    + toString() : String
+}
+
+
+class ProductMeeting {
+    - expirationDateTime : LocalDateTime
+    - maxParticipants : int
+
+    + ProductMeeting(stringId : String, productName : String, pricePerPerson : double, expirationDateTime : LocalDateTime, maxParticipants : int)
+    + getExpirationDateTime() : LocalDateTime
+    + getMaxParticipants() : int
+    + setExpirationDateTime(expirationDateTime : LocalDateTime) : void
+    + clone() : ProductMeeting
+    + toParametersString() : String
+    + toString() : String
+}
+
+enum ProductCategory {
+    MERCH
+    STATIONERY
+    CLOTHES
+    BOOK
+    ELECTRONICS
+
+    --
+    + discountPercent : int
+    + getDiscountPercent() : int
+}
+
+class Cashier {
+    - id : String
+    - name : String
+    - businessEmail : String
+    - tickets : Set<Ticket> <<transient>>
+
+    + Cashier(id : String, newName : String, newBusinessEmail : String)
+    + getName() : String
+    + getId() : String
+    + getTickets() : Set<Ticket>
+    + addTicket(ticket : Ticket, client : Client) : boolean
+    # addTicket(ticket : Ticket) : void
+    + listTicket() : void
+    + toString() : String
+    + clone() : Cashier
+    + compareTo(o : Cashier) : int
+    + equals(o : Object) : boolean
+    + hashCode() : int
+}
+
+class Catalog<T> {
+    - items : TreeMap<Integer, T>
+    - maxElements : int
+
+    + Catalog(maxElements : int)
+    + Catalog()
+    + add(id : int, item : T) : boolean
+    + remove(id : int) : T
+    + list() : void
+    + getById(id : int) : T
+    + doesIdExist(id : int) : boolean
+}
+
+class Client {
+    - id : String
+    - name : String
+    - email : String
+    - type : ClientType <<final>>
+    - cashier : Cashier
+
+    + Client(name : String, DNI : String, email : String, cashier : Cashier)
+    + getType() : ClientType
+    + getCashier() : Cashier
+    + getName() : String
+    + getId() : String
+    + setCashier(cashier : Cashier) : void
+    + toString() : String
+    + clone() : Client
+    + equals(o : Object) : boolean
+    + hashCode() : int
+}
+
+class ClientCompany {
+    - type : ClientType <<final>>
+
+    + ClientCompany(name : String, NIF : String, email : String, cashier : Cashier)
+    + getType() : ClientType
+    + toString() : String
+}
+
+
+enum ClientType {
+    USER
+    COMPANY
+}
+
+enum Command {
+    CLIENT_ADD
+    CLIENT_REMOVE
+    CLIENT_LIST
+
+    CASH_ADD
+    CASH_REMOVE
+    CASH_LIST
+    CASH_TICKETS
+
+    TICKET_NEW
+    TICKET_ADD
+    TICKET_REMOVE
+    TICKET_PRINT
+    TICKET_LIST
+
+    PROD_ADD
+    PROD_ADD_ALT_SERVICE
+    PROD_UPDATE
+    PROD_ADDFOOD
+    PROD_ADDMEETING
+    PROD_LIST
+    PROD_REMOVE
+
+    HELP
+    ECHO
+    EXIT
+
+    --
+    + commandText : String
+    - parameters : String[]
+    - minLength : int
+    - maxLength : int
+
+    + getCommandText() : String
+    + getParameters() : String
+    + getHelp() : String
+    + getAllCommandsHelp() : String
+    + matchesLength(length : int) : boolean
+    - matchesFormat(commandExpected : String[], commandGiven : String[], offsetAmount : int, returnParams : String[]) : boolean
+    + validateCommand(command : String) : ValidatedCommand
+}
+
+class HibernateUtils {
+    - factory : SessionFactory
+    - instance : HibernateUtils
+
+    + HibernateUtils()
+    + getInstance() : HibernateUtils
+    + emptyTables() : void
+    + SaveApp(productCatalog : Catalog<Product>, serviceCatalog : Catalog<Service>, cashiers : Set<Cashier>, clients : Set<Client>) : void
+    + loadDb(productCatalog : Catalog<Product>, serviceCatalog : Catalog<Service>, cashiers : Set<Cashier>, clients : Set<Client>) : void
+}
+
+enum IdentifierType{
+    DNI
+    NIE
+    NIF
+    UNIDENTIFIED
+}
+
+class RandomGenerator {
+    - random : Random <<static, final>>
+    - catalog : Catalog<Product> <<static>>
+    - cashiers : Set<Cashier> <<static>>
+    - clients : Set<Client> <<static>>
+    - usedServiceIds : Set<Integer> <<static, final>>
+
+    + Init(productCatalog : Catalog<Product>, cashiers : Set<Cashier>, clients : Set<Client>) <<static>>
+    + generateCashierId() : String <<static>>
+    + generateDNI() : String <<static>>
+    + generateTicketId() : String <<static>>
+    + generateServiceId() : int <<static, synchronized>>
+}
+
+class Service {
+    - id : int
+    - category : String
+    - expirationDate : ZonedDateTime
+
+    + Service(id : int, maxDate : LocalDateTime, category : String)
+    + getId() : int
+    + getCategory() : String
+    + getExpirationDate() : ZonedDateTime
+    + toString() : String
+    + clone() : Service
+}
+class Ticket {
+    - id : String
+    - items : List<TicketItem> <<transient>>
+    - ITEM_ORDER : Comparator<TicketItem> <<static, transient, final>>
+    - currentState : TicketState
+    - ticketType : TicketType
+    - productServiceSeparator : int
+
+    + Ticket(id : String, type : TicketType)
+    + addItem(ti : TicketItem) : void
+    + getTicketItem(it : TicketItem) : TicketItem
+    + removeProduct(productId : int) : boolean
+    + closeAndPrint() : void
+}
+
+enum TicketState {
+    EMPTY
+    CLOSE
+    OPEN
+}
+
+enum TicketType{
+    COMPOUND
+    PRODUCT
+    SERVICE
+}
+class Tienda {
+    - productCatalog : Catalog<Product> <<static, final>>
+    - servicesCatalog : Catalog<Service> <<static, final>>
+    - cashiers : Set<Cashier> <<static, final>>
+    - clients : Set<Client> <<static, final>>
+    - exit : boolean <<static>>
+    - errorOccurred : boolean <<static>>
+
+    + main(args : String[]) : void <<static>>
+    + commandLoop(scanner : Scanner) : void <<static>>
+    - executeCommand(rawInput : String) : boolean <<static>>
+    + getTicketById(cashId : String, id : String) : Ticket <<static>>
+    + getCashierById(id : String) : Cashier <<static>>
+    + getClientById(id : String) : Client <<static>>
+    + printError(message : String) : void <<static>>
+    - help() : void <<static>>
+}
+
+
+class TiendaUtils {
+
+    + clientAdd(name : String, identifier : String, email : String, cashId : String, clients : Set<Client>) : void <<static>>
+
+    + prodUpdate(productId : String, tochangeParameter : String, newValue : String, productCatalog : Catalog<Product>) : void <<static>>
+
+    + addCampusFood(id : String, name : String, price : String, expirationDate : String, maxParticipants : String, productCatalog : Catalog<Product>) : void <<static>>
+
+    + addMeeting(id : String, name : String, price : String, expirationDate : String, maxParticipants : String, productCatalog : Catalog<Product>) : void <<static>>
+
+    + productList(cashiers : Set<Cashier>) : void <<static>>
+
+    + ticketAdd(ticket : Ticket, productIdStr : String, amountStr : String, personalizedTexts : List<String>, productCatalog : Catalog<Product>, servicesCatalog : Catalog<Service>) : void <<static>>
+
+    + ticketRemove(ticket : Ticket, productId : String) : void <<static>>
+
+    + ticketList(cashiers : Set<Cashier>) : void <<static>>
+
+    + getTicketTypeFromParams(paramsStr : String) : TicketType <<static>>
+
+    + prodAdd(productId : String, name : String, category : String, price : String, maxPersonalization : String, productCatalog : Catalog<Product>) : void <<static>>
+
+    + printTicket(ticket : Ticket) : void <<static>>
+}
+
+
+
+class Utils {
+
+    + formatDouble(d : double) : String <<static>>
+    + splitText(text : String) : String[] <<static>>
+    + runFromFile(filePath : String) : boolean <<static>>
+    + identifyType(identifier : String) : IdentifierType <<static>>
+
+}
+
+class ValidatedCommand {
+    + command : Command <<final>>
+    + parameters : String[] <<final>>
+
+    + ValidatedCommand(command : Command, parameters : String[])
+}
+
+
+
+
+' -------------------------
+' Herencia
+' -------------------------
+
+Product <|-- ProductCampusFood
+Product <|-- ProductMeeting
+Client <|-- ClientCompany
+
+' -------------------------
+' Asociaciones
+' -------------------------
+
+' Client → Cashier (Many-to-One)
+Client --> Cashier : cashier
+
+' Cashier → Ticket (1..* transient)
+Cashier --> "0..*" Ticket : tickets
+
+' Ticket → TicketItem (1..* transient)
+Ticket --> "0..*" TicketItem : items
+
+' TicketItem → ProductItem / ServiceItem (herencia)
+TicketItem <|-- ProductItem
+TicketItem <|-- ServiceItem
+
+' ProductItem → Product
+ProductItem --> Product : product
+
+' ServiceItem → Service
+ServiceItem --> Service : service
+
+' Catalog<T> → Product / Service
+Catalog --> Product : items
+Catalog --> Service : items
+
+' Tienda (static) → Catalog<Product>, Catalog<Service>, Cashier, Client
+Tienda --> Catalog : productCatalog
+Tienda --> Catalog : servicesCatalog
+Tienda --> Cashier : cashiers
+Tienda --> Client : clients
+
+
+' Tienda usa Command y ValidatedCommand
+Tienda ..> Command
+Tienda ..> ValidatedCommand
+
+' Tienda usa TiendaUtils
+Tienda ..> TiendaUtils
+
+' Tienda crea Cashier
+Tienda ..> Cashier
+
+' Tienda usa Set<Cashier> (colección)
+Tienda ..> Cashier : cashiers
+
+' Tienda usa Client
+Tienda ..> Client : clients
+
+' Tienda usa Product
+Tienda ..> Product : productCatalog
+
+' Tienda usa Service
+Tienda ..> Service : servicesCatalog
+
+' Tienda usa RandomGenerator
+Tienda ..> RandomGenerator
+
+' Tienda crea Ticket
+Tienda ..> Ticket
+Tienda ..> HibernateUtils
+' Tienda usa TicketType
+Tienda ..> TicketType
+
+' Tienda usa LocalDate, LocalDateTime, DateTimeFormatter
+Tienda ..> LocalDate
+Tienda ..> LocalDateTime
+Tienda ..> DateTimeFormatter
+
+' Tienda usa Arrays y Collections
+Tienda ..> Arrays
+Tienda ..> Collections
+
+' Tienda usa System (System.out)
+Tienda ..> System
+
+
+
+RandomGenerator --> Catalog : catalog
+RandomGenerator --> Cashier : cashiers
+RandomGenerator --> Client : clients
+
+icket --> TicketState
+Ticket --> TicketType
+
+Client --> ClientType : type
+
+' Client tiene una relación Many-to-One con Cashier
+Client --> Cashier : cashier
+
+' Client usa RandomGenerator para generar DNI
+Client --> RandomGenerator : generateDNI()
+
+
+' Command → ValidatedCommand
+ValidatedCommand --> Command
+
+Command --> Utils
+Ticket --> Utils
+
+
+ProductCategory "1" --> "*" Product : categorizes >
+
+@enduml
