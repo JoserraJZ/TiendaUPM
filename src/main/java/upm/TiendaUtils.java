@@ -80,8 +80,7 @@ public class TiendaUtils {
         }
 
         LocalDateTime expiration = LocalDate.parse(expirationDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
-        //TODO: CAMBIAR FECHA, DE FIXEDDATETIME A NOW()
-        LocalDateTime creationDateTime = LocalDateTime.parse("25-12-07-22:32", DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm"));
+        LocalDateTime creationDateTime = LocalDateTime.now();
 
         if (Duration.between(creationDateTime, expiration).toHours() < 12){
             Tienda.printError("La duración entre la expiración y la creación es menos de 12 horas");
@@ -108,8 +107,7 @@ public class TiendaUtils {
         }
 
         LocalDateTime expiration = LocalDate.parse(expirationDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
-        //TODO: CAMBIAR FECHA, DE FIXEDDATETIME A NOW()
-        LocalDateTime creationDateTime = LocalDateTime.parse("25-12-07-22:32", DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm"));
+        LocalDateTime creationDateTime = LocalDateTime.now();
 
         if (Duration.between(creationDateTime, expiration).toHours() < 12){
             Tienda.printError("La duración entre la expiración y la creación es menos de 12 horas");

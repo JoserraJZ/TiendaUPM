@@ -42,7 +42,7 @@ public class Tienda {
             try {
                 errorOccurred = false;
                 if (executeCommand(scanner.nextLine())) {
-                    break; // salir si executeCommand devuelve truegi
+                    break;
                 }
             } catch (Exception e) {
                 TiendaUtils.logError(e.getMessage());
