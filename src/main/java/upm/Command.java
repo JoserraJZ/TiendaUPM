@@ -208,7 +208,6 @@ public enum     Command {
                     else return null;
                 }else{
                     output = String.format("Número de parámetros incorrecto (esperados: %d, recibidos: %d)%n", cmd.minLength-wordCount, splitted.length-wordCount);
-                    //return null;
                 }
             }
         }

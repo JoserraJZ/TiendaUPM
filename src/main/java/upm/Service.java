@@ -15,7 +15,6 @@ public class Service {
     @Id
     private int id;
 
-
     private String category;
     private ZonedDateTime expirationDate;
 
@@ -45,7 +44,6 @@ public class Service {
         String formattedDate = expirationDate.format(
                 DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss z yyyy").withLocale(Locale.ENGLISH)
         );
-
         return String.format(Locale.US,
                 "{class:%s, id:%d, category:%s, expiration:%s}",
                 "ProductService", id, category, formattedDate);

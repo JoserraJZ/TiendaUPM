@@ -77,7 +77,6 @@ public class Ticket {
                 return ticketItem;
             }
         }
-
         return null;
     }
 
@@ -104,7 +103,6 @@ public class Ticket {
             System.out.println("El producto con ID " + productId + " no existe en el ticket.");
             return false;
         }
-
         return false;
     }
 
@@ -119,7 +117,6 @@ public class Ticket {
         id = id + "-"+fixedDateTime.format(DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm"));
         ////////////////////////////////////////////////////////////////////////////////////
 
-        //id = id + "-"+LocalDateTime.now().format(DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm"));
         System.out.println(this);
     }
 
@@ -139,7 +136,6 @@ public class Ticket {
         return (productServiceSeparator != 0) && (productServiceSeparator!=items.size());
     }
 
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Ticket : ").append(id);
@@ -153,7 +149,6 @@ public class Ticket {
                 sb.append("\n").append(items.get(i).toString());
             }
         }
-
 
         double ticketTotalPrice = 0.0;
         double productDiscount = 0.0;
@@ -172,8 +167,6 @@ public class Ticket {
                         .mapToInt(TicketItem::getQuantity)
                         .sum();
 
-
-
                 boolean multipleCustomizable = it.getClassStr().equals("CustomizableProduct") && items.stream()
                         .filter(item -> item.getItemId().equals(it.getItemId())).count() > 1;
 
@@ -189,18 +182,15 @@ public class Ticket {
                         productDiscount += unitDiscount;
                     }
 
-
                 } else {
                     sb.append("\n").append(String.format(Locale.US, "%s", it));
                 }
-
                 ticketTotalPrice += priceOfAll;
             }
         }
 
         double servicesDiscount = ticketTotalPrice * servicesDiscountPercent/100f;
 
-        // 3. FINAL SUMMARY
         if (ticketType == TicketType.PRODUCT || (ticketType == TicketType.COMPOUND && productServiceSeparator != items.size())) {
             double finalPrice = max(ticketTotalPrice - productDiscount - servicesDiscount, 0);
 
@@ -218,7 +208,6 @@ public class Ticket {
             formatted = Utils.formatDouble(finalPrice);
             sb.append(String.format(Locale.US, "  Final Price: %s", formatted));
         }
-
         return sb.toString();
     }
 }

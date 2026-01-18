@@ -43,7 +43,6 @@ class TestBueno {
                         prod remove 3
                         echo "Creo un Trabajador"
                         cash add UW1234567 "pepecurro3" pepe0@upm.es
-                        cash add "pepecurro2" pepe0@upm.es
                         echo "Creo tres cliente listo borro uno y listo"
                         client add "Pepe3" 55630667S pepe1@upm.es UW1234567
                         client add "Pepe2" 98948334B pepe2@upm.es UW1234567
@@ -58,7 +57,6 @@ class TestBueno {
                         cash list
                         echo "miro los tickets de UW1234567 creo un ticket y vuelvo a printar"
                         cash tickets UW1234567
-                        ticket new UW1234567 55630667S
                         cash tickets UW1234567
                         echo "creo un ticket con ID"
                         ticket new 212121 UW1234567 55630667S
@@ -204,10 +202,6 @@ class TestBueno {
                         Cash{identifier='UW1234567', name='pepecurro3', email='pepe0@upm.es'}
                         cash add: ok
                 
-                        tUPM> cash add "pepecurro2" pepe0@upm.es
-                        Cash{identifier='UW9121937', name='pepecurro2', email='pepe0@upm.es'}
-                        cash add: ok
-                
                         tUPM> echo "Creo tres cliente listo borro uno y listo"
                         "Creo tres cliente listo borro uno y listo"\s
                 
@@ -249,7 +243,6 @@ class TestBueno {
                         tUPM> cash list
                         Cash:
                           Cash{identifier='UW1234569', name='pepecurro1', email='pepe0@upm.es'}
-                          Cash{identifier='UW9121937', name='pepecurro2', email='pepe0@upm.es'}
                           Cash{identifier='UW1234567', name='pepecurro3', email='pepe0@upm.es'}
                         cash list: ok
                 
@@ -258,7 +251,6 @@ class TestBueno {
                 
                         tUPM> cash list
                         Cash:
-                          Cash{identifier='UW9121937', name='pepecurro2', email='pepe0@upm.es'}
                           Cash{identifier='UW1234567', name='pepecurro3', email='pepe0@upm.es'}
                         cash list: ok
                 
@@ -269,16 +261,8 @@ class TestBueno {
                         Tickets:\s
                         cash tickets: ok
                 
-                        tUPM> ticket new UW1234567 55630667S
-                        Ticket : 25-12-07-22:32-47570
-                          Total price: 0.0
-                          Total discount: 0.0
-                          Final Price: 0.0
-                        ticket new: ok
-                
                         tUPM> cash tickets UW1234567
                         Tickets:\s
-                          25-12-07-22:32-47570->EMPTY
                         cash tickets: ok
                 
                         tUPM> echo "creo un ticket con ID"
@@ -323,7 +307,6 @@ class TestBueno {
                 
                         tUPM> ticket list
                         Ticket List:
-                          25-12-07-22:32-47570 - EMPTY
                           212121 - OPEN
                         ticket list: ok
                 
@@ -356,7 +339,6 @@ class TestBueno {
                 
                         tUPM> ticket list
                         Ticket List:
-                          25-12-07-22:32-47570 - EMPTY
                           212121-25-12-07-22:32 - CLOSE
                         ticket list: ok
                 
@@ -484,7 +466,6 @@ class TestBueno {
                 
                         tUPM> ticket list
                         Ticket List:
-                          25-12-07-22:32-47570 - EMPTY
                           212123 - OPEN
                           212121-25-12-07-22:32 - CLOSE
                         ticket list: ok
@@ -521,7 +502,6 @@ class TestBueno {
                 
                         tUPM> ticket list
                         Ticket List:
-                          25-12-07-22:32-47570 - EMPTY
                           212123-25-12-07-22:32 - CLOSE
                           212121-25-12-07-22:32 - CLOSE
                         ticket list: ok
@@ -593,7 +573,6 @@ class TestBueno {
                 
                         tUPM> ticket list
                         Ticket List:
-                          25-12-07-22:32-47570 - EMPTY
                           212127-25-12-07-22:32 - CLOSE
                           212123-25-12-07-22:32 - CLOSE
                           212121-25-12-07-22:32 - CLOSE

@@ -46,7 +46,6 @@ public class ProductMeeting extends Product {
         );
     }
 
-
     public String toParametersString() {
         return String.format(Locale.US,
                 "{class:%s, id:%d, name:'%s', price:%%.1f, date of Event:%s, max people allowed:%d%%s}",

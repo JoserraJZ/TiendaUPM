@@ -24,7 +24,6 @@ public class Client {
     @JoinColumn(name = "cashier_id")
     private Cashier cashier;
 
-
     public Client(String name, String DNI, String email, Cashier cashier){
         this.name=name;
         this.id = (DNI == null) ? RandomGenerator.generateDNI() : DNI;

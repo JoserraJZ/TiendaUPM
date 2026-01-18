@@ -1,6 +1,5 @@
 package upm;
 
-
 import jakarta.persistence.*;
 
 import java.util.*;
@@ -17,8 +16,6 @@ public class Cashier implements Comparable<Cashier>{
 
     @Transient
     private final Set<Ticket> tickets = new HashSet<>();
-
-
 
     public Cashier(String id, String newName, String newBusinessEmail){
         this.id = (id == null) ? RandomGenerator.generateCashierId() : id;

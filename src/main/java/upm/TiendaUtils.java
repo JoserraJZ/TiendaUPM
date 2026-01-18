@@ -158,7 +158,6 @@ public class TiendaUtils {
                 return;
             }
 
-
             if (!personalizedTexts.isEmpty()) {
                 CustomizableProduct customProd = ((CustomizableProduct) prod.clone());
                 personalizedTexts.forEach(customProd::addText);
@@ -303,6 +302,5 @@ public class TiendaUtils {
         else
             ticket.closeAndPrint();
     }
-
 
 }

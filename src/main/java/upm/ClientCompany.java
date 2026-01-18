@@ -8,7 +8,6 @@ import jakarta.persistence.Entity;
 
 public class ClientCompany extends Client{
 
-
     private final ClientType type = ClientType.COMPANY;
     public ClientType getType() {return type;}
 
@@ -19,15 +18,9 @@ public class ClientCompany extends Client{
         // Constructor requerido por Hibernate
     }
 
-    //Comprobar NIF antes de llegar aquí
-    //Ver como aceptar Servicios o Productos+Servicios
-    //No mostrar precio de Servicios
-    //Identificar por NIF
-
     @Override
     public String toString() {
         return super.toString().replaceFirst("USER", "COMPANY");
     }
-
 
 }

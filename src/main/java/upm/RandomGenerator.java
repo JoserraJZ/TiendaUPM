@@ -36,6 +36,7 @@ public class RandomGenerator {
         }
         throw new RuntimeException("No se pudo generar un ID único en 1000 intentos");
     }
+
     public static String generateDNI(){
         for (int i = 0; i < 1000; i++) { // si en 1000 casos no funciona dar un error
             String possibleId =  String.format("%08d%c", random.nextInt(100_000_000), (char)('A' + random.nextInt(26)));
@@ -53,18 +54,6 @@ public class RandomGenerator {
         }
         throw new RuntimeException("No se pudo generar un ID único en 1000 intentos");
     }
-    /*
-    public static int generateProductId(){
-        for (int i = 0; i < 1000; i++) { // si en 1000 casos no funciona dar un error
-            int possibleId = new Random().nextInt(Integer.MAX_VALUE);
-
-            if (!catalog.doesIdExist(possibleId)) {
-                return possibleId;
-            }
-        }
-        throw new RuntimeException("No se pudo generar un ID único en 1000 intentos");
-    }
-     */
 
     public static int generateProductId() {
         int id = 0;
@@ -76,8 +65,6 @@ public class RandomGenerator {
         }
         throw new RuntimeException("No se pudo generar un ID único: se alcanzó Integer.MAX_VALUE");
     }
-
-
 
     public static String generateTicketId() {
 
