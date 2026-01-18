@@ -96,10 +96,14 @@ public class Tienda {
             case PROD_ADD -> TiendaUtils.prodAdd(params[0], params[1], params[2], params[3], params.length>4?params[4]:null, productCatalog);
 
             case PROD_ADD_ALT_SERVICE -> {
+                TiendaUtils.addService(params, servicesCatalog);
+                /*
                 LocalDateTime date = LocalDate.parse(params[0], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
                 Service service = new Service(RandomGenerator.generateServiceId(), date, params[1]);
                 servicesCatalog.add(service.getId(), service);
                 System.out.println(service);
+
+                 */
             }
             case PROD_UPDATE -> TiendaUtils.prodUpdate(params[0], params[1], params[2], productCatalog);
 

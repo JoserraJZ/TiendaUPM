@@ -126,6 +126,13 @@ public class TiendaUtils {
         else System.out.println(prod);
     }
 
+    static void addService(String[] params, Catalog<Service> servicesCatalog) {
+        LocalDateTime date = LocalDate.parse(params[0], DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
+        Service service = new Service(RandomGenerator.generateServiceId(), date, params[1]);
+        servicesCatalog.add(service.getId(), service);
+        System.out.println(service);
+    }
+
     static void productList(Set<Cashier> cashiers) {
         List<Cashier> cashierList = new ArrayList<>(cashiers);
         cashierList.sort(Comparator.comparing(Cashier::getName));
